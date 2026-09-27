@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +24,9 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
         setContent {
-
+            ReportaCiudadTheme {
+                BienvenidaScreen()
+            }
         }
     }
 }
