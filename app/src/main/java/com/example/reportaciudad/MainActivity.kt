@@ -13,7 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
+import com.example.reportaciudad.ui.screens.inicio.InicioScreen
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,8 +30,18 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             ReportaCiudadTheme {
-                BienvenidaScreen()
+                // Navegación simple entre pantallas; rememberSaveable la conserva al rotar el teléfono
+                var pantalla by rememberSaveable { mutableStateOf(Pantalla.BIENVENIDA) }
+
+                when (pantalla) {
+                    Pantalla.BIENVENIDA -> BienvenidaScreen(
+                        onReportar = { pantalla = Pantalla.INICIO }
+                    )
+                    Pantalla.INICIO -> InicioScreen()
+                }
             }
         }
     }
 }
+
+private enum class Pantalla { BIENVENIDA, INICIO }
