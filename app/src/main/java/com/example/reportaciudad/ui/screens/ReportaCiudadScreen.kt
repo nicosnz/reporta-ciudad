@@ -9,6 +9,8 @@ import androidx.navigation.navArgument
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
 import com.example.reportaciudad.ui.screens.inicio.InicioScreen
+import com.example.reportaciudad.ui.screens.reportar.SeleccionEmergenciaScreen
+import com.example.reportaciudad.ui.screens.reportar.SeleccionProblemaScreen
 import com.example.reportaciudad.ui.screens.reportar.TipoReporteScreen
 
 
@@ -37,8 +39,16 @@ fun ReportaCiudadScreen(){
         }
         composable("reportar"){
             TipoReporteScreen(
-                onVolver = { navController.popBackStack() }
+                onVolver = { navController.popBackStack() },
+                onEmergencia = { navController.navigate("reportar/emergencia") },
+                onRutina = { navController.navigate("reportar/problema") }
             )
+        }
+        composable("reportar/emergencia"){
+            SeleccionEmergenciaScreen(onVolver = { navController.popBackStack() })
+        }
+        composable("reportar/problema"){
+            SeleccionProblemaScreen(onVolver = { navController.popBackStack() })
         }
     }
 }
