@@ -40,11 +40,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.UrbanoClaro
 
 @Composable
-fun BienvenidaScreen(onReportar: () -> Unit = {}) {
+fun BienvenidaScreen(navController: NavController, onReportar: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +101,7 @@ fun BienvenidaScreen(onReportar: () -> Unit = {}) {
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = onReportar,
+                onClick = {navController.navigate("inicio")},
                 modifier = Modifier.defaultMinSize(minHeight = 56.dp),
                 contentPadding = PaddingValues(horizontal = 32.dp)
             ) {

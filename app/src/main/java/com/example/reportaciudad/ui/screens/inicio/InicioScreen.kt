@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
@@ -63,6 +64,7 @@ val reportesDeEjemplo = listOf(
 
 @Composable
 fun InicioScreen(
+    navController: NavController,
     reportes: List<Reporte> = reportesDeEjemplo,
     onReporteClick: (Reporte) -> Unit = {},
     onReportar: () -> Unit = {}
