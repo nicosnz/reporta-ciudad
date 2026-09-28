@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
@@ -53,18 +54,22 @@ import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
 
-// Datos de ejemplo del diseño, hasta que haya un repositorio real
+
 val reportesDeEjemplo = listOf(
-    Reporte(0, "Hueco en Av. Sucre y Junín", "Bache", "hace 14 días", Familia.URBANO),
-    Reporte(1, "Basural en la esquina del mercado", "Basura acumulada", "93 días", Familia.AMBIENTAL),
-    Reporte(2, "Poste de luz apagado", "Alumbrado", "hace 3 días", Familia.URBANO),
-    Reporte(3, "Fuga de agua en la vereda", "Fuga de agua", "hace 5 días", Familia.AMBIENTAL)
+    Reporte(0, "Hueco en Av. Sucre y Junín", "Bache", "hace 14 días", Familia.URBANO,
+        "el 13 de septiembre · 08:14", "Av. Sucre y calle Junín"),
+    Reporte(1, "Basural en la esquina del mercado", "Basura acumulada", "93 días", Familia.AMBIENTAL,
+        "el 26 de junio · 17:40", "Mercado Los Pozos"),
+    Reporte(2, "Poste de luz apagado", "Alumbrado", "hace 3 días", Familia.URBANO,
+        "el 24 de septiembre · 21:05", "Calle Libertad y Florida"),
+    Reporte(3, "Fuga de agua en la vereda", "Fuga de agua", "hace 5 días", Familia.AMBIENTAL,
+        "el 22 de septiembre · 10:30", "Av. Cañoto y Ayacucho")
 )
 
 @Composable
 fun InicioScreen(
+    navController: NavController,
     reportes: List<Reporte> = reportesDeEjemplo,
-    onReporteClick: (Reporte) -> Unit = {},
     onReportar: () -> Unit = {}
 ) {
     Column(
@@ -88,12 +93,12 @@ fun InicioScreen(
                         letterSpacing = (-0.025).em
                     ),
                     color = MaterialTheme.colorScheme.onBackground,
-                    // 16 de separación con la lista = 8 del spacedBy + 8 acá
+
                     modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
                 )
             }
             items(reportes, key = { it.id }) { reporte ->
-                FilaReporte(reporte = reporte, onClick = { onReporteClick(reporte) })
+                FilaReporte(reporte = reporte, onClick = { navController.navigate("detalle/${reporte.id}") })
             }
         }
 
@@ -211,7 +216,7 @@ private fun BarraInferior(onReportar: () -> Unit) {
     }
 }
 
-// Sube el elemento y le quita esa altura al layout, para que sobresalga por encima de la barra
+
 private fun Modifier.sobresalir(alto: Dp) = layout { measurable, constraints ->
     val placeable = measurable.measure(constraints)
     val desplazamiento = alto.roundToPx()

@@ -12,6 +12,12 @@ val Superficie = Color(0xFFEBDDC5)
 val Fondo = Color(0xFFF5EAD8)
 val Texto = Color(0xFF201E1D)
 
+// Etiqueta de categoría: fondo (tono 200) y texto (tono 800) de cada familia
+val UrbanoEtiqueta = Color(0xFFCDEED7)
+val UrbanoEtiquetaTexto = Color(0xFF084A27)
+val AmbientalEtiqueta = Color(0xFFF8E3B4)
+val AmbientalEtiquetaTexto = Color(0xFF5E3F0E)
+
 // Neutros (tonos del sistema de diseño)
 val Neutro200 = Color(0xFFEEE7DB)
 val Neutro300 = Color(0xFFDCD3C4)

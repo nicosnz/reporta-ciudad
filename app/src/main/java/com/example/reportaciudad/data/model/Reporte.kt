@@ -7,5 +7,7 @@ data class Reporte(
     val titulo: String,
     val categoria: String,
     val antiguedad: String,
-    val familia: Familia
+    val familia: Familia,
+    val fecha: String,
+    val lugar: String
 )
