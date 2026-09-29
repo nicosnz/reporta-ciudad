@@ -18,8 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.ui.theme.Neutro300
 import com.example.reportaciudad.ui.theme.Texto
-
-// Barra de pasos del flujo de reporte: segmentos completados en verde y "Paso X de N" a la derecha
 @Composable
 fun BarraProgreso(paso: Int, total: Int, modifier: Modifier = Modifier) {
     Row(
