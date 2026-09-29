@@ -1,50 +1,26 @@
 package com.example.reportaciudad.ui.screens.reportar
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.data.model.TipoEmergencia
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.EmergenciaDeshabilitado
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
-import com.example.reportaciudad.ui.theme.Superficie
 
 @Composable
 fun SeleccionEmergenciaScreen(
@@ -68,9 +44,13 @@ fun SeleccionEmergenciaScreen(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             TipoEmergencia.entries.forEach { tipo ->
-                TarjetaEmergencia(
-                    tipo = tipo,
+                TarjetaOpcion(
+                    nombre = tipo.nombre,
+                    icono = tipo.icono,
                     seleccionada = seleccion == tipo,
+                    colorLleno = Emergencia,
+                    colorFondoIcono = EmergenciaClaro,
+                    colorContenido = Emergencia,
                     onClick = { seleccion = if (seleccion == tipo) null else tipo },
                     modifier = Modifier
                         .weight(1f)
@@ -81,82 +61,14 @@ fun SeleccionEmergenciaScreen(
 
         Spacer(Modifier.weight(1f))
 
-        Button(
+        BotonSeleccionar(
+            texto = "Seleccionar emergencia",
+            habilitado = seleccion != null,
+            color = Emergencia,
+            colorDeshabilitado = EmergenciaDeshabilitado,
             onClick = { seleccion?.let(onSeleccionar) },
-            enabled = seleccion != null,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Emergencia,
-                contentColor = Color.White,
-                disabledContainerColor = EmergenciaDeshabilitado,
-                disabledContentColor = Color.White.copy(alpha = 0.85f)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-                .defaultMinSize(minHeight = 56.dp)
-                .testTag("boton_seleccionar_emergencia")
-        ) {
-            Text(
-                text = "Seleccionar emergencia",
-                style = MaterialTheme.typography.labelLarge.copy(fontSize = 17.sp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun TarjetaEmergencia(
-    tipo: TipoEmergencia,
-    seleccionada: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .aspectRatio(1f)
-            .border(
-                width = 3.dp,
-                color = if (seleccionada) Emergencia else Color.Transparent,
-                shape = RoundedCornerShape(34.dp)
-            )
-            .padding(6.dp)
-    ) {
-        Surface(
-            selected = seleccionada,
-            onClick = onClick,
-            shape = RoundedCornerShape(28.dp),
-            color = if (seleccionada) Emergencia else Superficie,
-            contentColor = if (seleccionada) Color.White else Emergencia,
-            modifier = Modifier
-                .fillMaxSize()
-                .semantics { role = Role.RadioButton }
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(52.dp)
-                        .background(
-                            if (seleccionada) Color.White.copy(alpha = 0.2f) else EmergenciaClaro,
-                            CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = tipo.icono,
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-                Text(
-                    text = tipo.nombre,
-                    style = MaterialTheme.typography.labelLarge.copy(fontSize = 17.sp, lineHeight = 22.sp),
-                    modifier = Modifier.padding(top = 12.dp)
-                )
-            }
-        }
+            modifier = Modifier.testTag("boton_seleccionar_emergencia")
+        )
     }
 }
 

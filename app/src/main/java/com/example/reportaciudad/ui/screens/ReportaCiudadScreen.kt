@@ -67,7 +67,13 @@ fun ReportaCiudadScreen(){
             )
         }
         composable("reportar/problema"){
-            SeleccionProblemaScreen(onVolver = { navController.popBackStack() })
+            SeleccionProblemaScreen(
+                onVolver = { navController.popBackStack() },
+                onSeleccionar = { problema ->
+                    borrador = borrador.copy(problema = problema)
+                    navController.navigate("reportar/fotografia")
+                }
+            )
         }
         composable("reportar/fotografia"){
             FotografiaScreen(onVolver = { navController.popBackStack() })
