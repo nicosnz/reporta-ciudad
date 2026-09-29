@@ -30,7 +30,7 @@ fun ReportaCiudadScreen(){
         startDestination = "bienvenida"
     ){
         composable("bienvenida"){
-            BienvenidaScreen(onReportar = { navController.navigate("reportar") })
+            BienvenidaScreen(onReportar = { navController.navigate("inicio") })
         }
         composable("inicio"){
             InicioScreen(
