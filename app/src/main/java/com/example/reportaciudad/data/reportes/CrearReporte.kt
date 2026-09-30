@@ -1,12 +1,12 @@
 package com.example.reportaciudad.data.reportes
 
-import com.example.reportaciudad.data.model.BorradorReporte
+import com.example.reportaciudad.data.model.ReporteFormulario
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import java.util.Locale
 
 
-fun crearReporte(borrador: BorradorReporte, id: Int): Reporte {
+fun crearReporte(borrador: ReporteFormulario, id: Int): Reporte {
 
     val lugar = String.format(Locale.US, "%.5f, %.5f", borrador.latitud, borrador.longitud)
 

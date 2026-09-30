@@ -51,7 +51,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import coil3.compose.AsyncImage
-import com.example.reportaciudad.data.model.BorradorReporte
+import com.example.reportaciudad.data.model.ReporteFormulario
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
@@ -78,9 +78,9 @@ import com.example.reportaciudad.ui.screens.reportar.problema.icono
 // Paso 5 del flujo de reporte: revisar lo elegido en los pasos anteriores y enviarlo.
 @Composable
 fun ResumenScreen(
-    borrador: BorradorReporte,
+    borrador: ReporteFormulario,
     onVolver: () -> Unit = {},
-    onEnviar: (BorradorReporte) -> Unit = {},
+    onEnviar: (ReporteFormulario) -> Unit = {},
     onVerMisReportes: () -> Unit = {}
 ) {
     var enviado by rememberSaveable { mutableStateOf(false) }
@@ -138,7 +138,7 @@ private class InfoCategoria(
     val colorIcono: Color
 )
 
-private fun BorradorReporte.categoria(): InfoCategoria? {
+private fun ReporteFormulario.categoria(): InfoCategoria? {
     emergencia?.let {
         return InfoCategoria("Emergencia en curso", it.nombre, it.icono, EmergenciaClaro, Emergencia)
     }
@@ -351,7 +351,7 @@ private val IconoCheck = iconoDeLinea("Check", 2.75f, "M20 6L9 17l-5-5")
 private fun ResumenScreenPreview() {
     ReportaCiudadTheme {
         ResumenScreen(
-            borrador = BorradorReporte(
+            borrador = ReporteFormulario(
                 problema = TipoProblema.BACHE,
                 fotoRuta = "",
                 latitud = -17.7833,
