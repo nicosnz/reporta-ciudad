@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 
-// Paso 1 del flujo de reporte: elegir entre emergencia en curso o reporte de rutina
+
 @Composable
 fun TipoReporteScreen(
     onVolver: () -> Unit = {},
@@ -68,8 +68,7 @@ fun TipoReporteScreen(
     }
 }
 
-// Opción grande: mínimo 84 dp de alto y un icono además del color.
-// Texto de 19 sp en 800 cuenta como texto grande para WCAG AA (≥ 3:1): blanco sobre Emergencia 7.6:1, sobre Urbano 4.4:1
+
 @Composable
 private fun BotonOpcion(
     texto: String,
@@ -121,10 +120,3 @@ private val IconoDocumento = iconoDeLinea(
     "M9 17v-5M12 17v-1M15 17v-3"
 )
 
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun TipoReporteScreenPreview() {
-    ReportaCiudadTheme {
-        TipoReporteScreen()
-    }
-}

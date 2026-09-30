@@ -1,9 +1,11 @@
 package com.example.reportaciudad.ui.screens.reportar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -41,6 +43,8 @@ fun PasoReporte(
     titulo: String,
     subtitulo: String,
     onVolver: () -> Unit,
+    // Compacto: volver y título en la misma fila, para pasos que necesitan todo el alto (cámara, mapa)
+    compacto: Boolean = false,
     contenido: @Composable ColumnScope.() -> Unit
 ) {
     Column(
@@ -57,29 +61,56 @@ fun PasoReporte(
             modifier = Modifier.padding(start = 4.dp, top = 12.dp, end = 4.dp)
         )
 
-        BotonVolver(
-            onClick = onVolver,
-            modifier = Modifier.padding(top = 16.dp)
-        )
+        if (compacto) {
+            Row(
+                modifier = Modifier.padding(top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                BotonVolver(onClick = onVolver)
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = titulo,
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontSize = 26.sp,
+                            lineHeight = 30.sp,
+                            letterSpacing = (-0.025).em
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.semantics { heading() }
+                    )
+                    Text(
+                        text = subtitulo,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 20.sp),
+                        color = Neutro700
+                    )
+                }
+            }
+        } else {
+            BotonVolver(
+                onClick = onVolver,
+                modifier = Modifier.padding(top = 16.dp)
+            )
 
-        Text(
-            text = titulo,
-            style = MaterialTheme.typography.headlineLarge.copy(
-                fontSize = 30.sp,
-                lineHeight = 36.sp,
-                letterSpacing = (-0.025).em
-            ),
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier
-                .padding(start = 4.dp, top = 24.dp, end = 4.dp)
-                .semantics { heading() }
-        )
-        Text(
-            text = subtitulo,
-            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 22.sp),
-            color = Neutro700,
-            modifier = Modifier.padding(start = 4.dp, top = 4.dp, end = 4.dp)
-        )
+            Text(
+                text = titulo,
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontSize = 30.sp,
+                    lineHeight = 36.sp,
+                    letterSpacing = (-0.025).em
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .padding(start = 4.dp, top = 24.dp, end = 4.dp)
+                    .semantics { heading() }
+            )
+            Text(
+                text = subtitulo,
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 22.sp),
+                color = Neutro700,
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp, end = 4.dp)
+            )
+        }
 
         contenido()
     }

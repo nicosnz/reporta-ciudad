@@ -1,6 +1,7 @@
 package com.example.reportaciudad.ui.screens.bienvenida
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,30 +22,28 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import com.example.reportaciudad.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.UrbanoClaro
 
 @Composable
-fun BienvenidaScreen(onReportar: () -> Unit = {}) {
+fun BienvenidaScreen(onInicio: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +80,13 @@ fun BienvenidaScreen(onReportar: () -> Unit = {}) {
 
             Spacer(Modifier.height(40.dp))
 
-            LogoReportaCiudad()
+            Image(
+                painter = painterResource(R.drawable.logo_santa_cruz),
+                contentDescription = "Escudo Santa Cruz de la Sierra",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(200.dp)
+            )
+
 
             Spacer(Modifier.height(64.dp))
 
@@ -100,12 +105,12 @@ fun BienvenidaScreen(onReportar: () -> Unit = {}) {
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = onReportar,
+                onClick = onInicio,
                 modifier = Modifier.defaultMinSize(minHeight = 56.dp),
                 contentPadding = PaddingValues(horizontal = 32.dp)
             ) {
                 Text(
-                    text = "Reportar",
+                    text = "Ir al Inicio",
                     style = MaterialTheme.typography.labelLarge.copy(fontSize = 17.sp)
                 )
                 Spacer(Modifier.width(12.dp))
@@ -120,39 +125,6 @@ fun BienvenidaScreen(onReportar: () -> Unit = {}) {
 }
 
 
-@Composable
-private fun LogoReportaCiudad() {
-    val verde = MaterialTheme.colorScheme.primary
-    val crema = MaterialTheme.colorScheme.background
-
-    Canvas(
-        modifier = Modifier
-            .size(132.dp)
-            .shadow(elevation = 6.dp, shape = CircleShape)
-            .background(verde, CircleShape)
-    ) {
-        val u = size.width / 24f
-
-        drawLine(crema, Offset(12 * u, 2 * u), Offset(12 * u, 22 * u), strokeWidth = 0.9f * u)
-        drawLine(crema, Offset(2 * u, 12 * u), Offset(22 * u, 12 * u), strokeWidth = 0.9f * u)
-
-        drawPath(estrella(u, radio = 6.5f, curva = 0.9f), crema)
-        drawPath(estrella(u, radio = 3.4f, curva = 0.4f), verde)
-    }
-}
-
-
-private fun estrella(u: Float, radio: Float, curva: Float): Path {
-    val c = 12f
-    return Path().apply {
-        moveTo(c * u, (c - radio) * u)
-        quadraticTo((c + curva) * u, (c - curva) * u, (c + radio) * u, c * u)
-        quadraticTo((c + curva) * u, (c + curva) * u, c * u, (c + radio) * u)
-        quadraticTo((c - curva) * u, (c + curva) * u, (c - radio) * u, c * u)
-        quadraticTo((c - curva) * u, (c - curva) * u, c * u, (c - radio) * u)
-        close()
-    }
-}
 
 
 private val FlechaDerecha: ImageVector = ImageVector.Builder(

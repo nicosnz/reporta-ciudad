@@ -124,10 +124,3 @@ private val IconoGota = iconoDeLinea(
     "M7.5 19.42c2.6 2.1 6.4 2.1 9 0c2.6-2.1 3.26-5.71 1.57-8.55l-4.9-7.26c-.42-.62-1.28-.8-1.93-.4a1.38 1.38 0 0 0-.41.4l-4.9 7.26c-1.69 2.84-1.03 6.45 1.57 8.55z"
 )
 
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun SeleccionProblemaScreenPreview() {
-    ReportaCiudadTheme {
-        SeleccionProblemaScreen()
-    }
-}
