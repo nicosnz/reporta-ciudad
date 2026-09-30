@@ -143,7 +143,7 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
     }
 }
 
-// Círculo con rayas diagonales (lugar de la foto) y aro del color de la familia
+
 @Composable
 private fun MiniaturaReporte(colorAro: Color) {
     Box(

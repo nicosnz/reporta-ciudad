@@ -88,7 +88,7 @@ fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Int) {
                 .height(240.dp)
                 .clip(RoundedCornerShape(32.dp))
             if (reporte.fotoRuta != null) {
-                // Foto sacada con la cámara al crear el reporte
+
                 AsyncImage(
                     model = File(reporte.fotoRuta),
                     contentDescription = "Foto del reporte",
@@ -96,7 +96,7 @@ fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Int) {
                     modifier = modificadorFoto
                 )
             } else {
-                // Reportes de ejemplo: foto de muestra
+
                 Image(
                     painter = painterResource(R.drawable.bache_foto),
                     contentDescription = "Foto del reporte",
