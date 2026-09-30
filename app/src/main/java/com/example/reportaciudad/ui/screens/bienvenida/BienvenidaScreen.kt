@@ -22,15 +22,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import com.example.reportaciudad.R
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -84,7 +81,7 @@ fun BienvenidaScreen(onInicio: () -> Unit = {}) {
             Spacer(Modifier.height(40.dp))
 
             Image(
-                painter = painterResource(com.example.reportaciudad.R.drawable.logo_santa_cruz),
+                painter = painterResource(R.drawable.logo_santa_cruz),
                 contentDescription = "Escudo Santa Cruz de la Sierra",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(200.dp)

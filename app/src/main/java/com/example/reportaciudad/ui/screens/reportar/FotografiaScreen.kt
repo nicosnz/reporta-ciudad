@@ -70,7 +70,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -81,7 +80,6 @@ import com.example.reportaciudad.data.AlmacenFotos
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro900
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -214,7 +212,7 @@ private fun ColumnScope.ContenidoCamara(
     }
 }
 
-// Marco oscuro redondeado donde va el visor o la foto
+
 @Composable
 private fun ZonaCamara(modifier: Modifier = Modifier, contenido: @Composable BoxScope.() -> Unit) {
     Box(
@@ -227,7 +225,7 @@ private fun ZonaCamara(modifier: Modifier = Modifier, contenido: @Composable Box
     )
 }
 
-// Franja inferior de 148 dp con el botón de disparo o los botones de revisión
+
 @Composable
 private fun ZonaAcciones(contenido: @Composable () -> Unit) {
     Box(
@@ -239,7 +237,7 @@ private fun ZonaAcciones(contenido: @Composable () -> Unit) {
     ) { contenido() }
 }
 
-// Cuatro esquinas blancas que marcan dónde encuadrar el problema
+
 @Composable
 private fun GuiasEncuadre() {
     Canvas(
