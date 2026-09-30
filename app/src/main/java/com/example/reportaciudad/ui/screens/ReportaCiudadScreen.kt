@@ -105,9 +105,9 @@ fun ReportaCiudadScreen(){
                 onVolver = { navController.popBackStack() },
                 onEnviar = { enviarReporte(it) },
                 onVerMisReportes = {
-                    // Vuelve a Mis reportes cerrando todo el flujo de Reportar
+
                     navController.popBackStack("inicio", inclusive = false)
-                    // El reporte ya se envió: se limpia el borrador, pero la foto no se borra (es del reporte)
+
                     borrador = BorradorReporte()
                 }
             )
