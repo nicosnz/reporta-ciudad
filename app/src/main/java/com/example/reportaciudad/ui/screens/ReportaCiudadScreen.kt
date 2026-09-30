@@ -30,7 +30,7 @@ fun ReportaCiudadScreen(){
         startDestination = "bienvenida"
     ){
         composable("bienvenida"){
-            BienvenidaScreen(onReportar = { navController.navigate("inicio") })
+            BienvenidaScreen(onInicio = { navController.navigate("inicio") })
         }
         composable("inicio"){
             InicioScreen(
@@ -42,7 +42,7 @@ fun ReportaCiudadScreen(){
             route = "detalle/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ){ entrada ->
-            DetalleScreen(navController, reporteId = entrada.arguments?.getInt("id") ?: 0)
+            DetalleScreen({ navController.popBackStack() }, reporteId = entrada.arguments?.getInt("id") ?: 0)
         }
         composable("reportar"){
             TipoReporteScreen(

@@ -90,10 +90,3 @@ private val IconoHumo = iconoDeLinea(
     "M8 20h8"
 )
 
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun SeleccionEmergenciaScreenPreview() {
-    ReportaCiudadTheme {
-        SeleccionEmergenciaScreen()
-    }
-}

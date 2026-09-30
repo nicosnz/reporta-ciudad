@@ -56,7 +56,7 @@ import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
 import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
 
 @Composable
-fun DetalleScreen(navController: NavController, reporteId: Int) {
+fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Int) {
 
     val reporte = reportesDeEjemplo.firstOrNull { it.id == reporteId } ?: return
 
@@ -67,7 +67,7 @@ fun DetalleScreen(navController: NavController, reporteId: Int) {
             .statusBarsPadding()
     ) {
         BotonVolver(
-            onClick = { navController.popBackStack() },
+            onClick = onBack,
             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp)
         )
 

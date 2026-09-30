@@ -36,15 +36,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.UrbanoClaro
 
 @Composable
-fun BienvenidaScreen(onReportar: () -> Unit = {}) {
+fun BienvenidaScreen(onInicio: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -100,12 +98,12 @@ fun BienvenidaScreen(onReportar: () -> Unit = {}) {
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = onReportar,
+                onClick = onInicio,
                 modifier = Modifier.defaultMinSize(minHeight = 56.dp),
                 contentPadding = PaddingValues(horizontal = 32.dp)
             ) {
                 Text(
-                    text = "Reportar",
+                    text = "Ir al Inicio",
                     style = MaterialTheme.typography.labelLarge.copy(fontSize = 17.sp)
                 )
                 Spacer(Modifier.width(12.dp))

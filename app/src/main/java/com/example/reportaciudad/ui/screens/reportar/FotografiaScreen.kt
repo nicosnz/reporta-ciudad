@@ -26,11 +26,3 @@ fun FotografiaScreen(onVolver: () -> Unit = {}) {
         )
     }
 }
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun FotografiaScreenPreview() {
-    ReportaCiudadTheme {
-        FotografiaScreen()
-    }
-}
