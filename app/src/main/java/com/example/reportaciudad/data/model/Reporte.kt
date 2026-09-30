@@ -2,7 +2,10 @@ package com.example.reportaciudad.data.model
 
 import com.example.reportaciudad.data.FechaBolivia
 
-enum class Familia { URBANO, AMBIENTAL }
+enum class Familia {
+    URBANO,
+    AMBIENTAL
+}
 
 data class Reporte(
     val id: Int,

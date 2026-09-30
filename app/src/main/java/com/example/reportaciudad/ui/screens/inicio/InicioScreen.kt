@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -86,9 +87,25 @@ fun InicioScreen(
                     modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
                 )
             }
-            items(reportes, key = { it.id }) { reporte ->
-                FilaReporte(reporte = reporte, onClick = { navController.navigate("detalle/${reporte.id}") })
+            if (reportes.isEmpty()) {
+                item {
+                    Text(
+                        text = "Todavía no hiciste ningún reporte.\nToca Reportar para enviar el primero.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Neutro700,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 48.dp)
+                    )
+                }
             }
+            else{
+                items(reportes, key = { it.id }) { reporte ->
+                    FilaReporte(reporte = reporte, onClick = { navController.navigate("detalle/${reporte.id}") })
+                }
+            }
+
         }
 
         BarraInferior(onReportar = onReportar)
