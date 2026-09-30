@@ -9,8 +9,6 @@ data class BorradorReporte(
     val latitud: Double? = null,
     val longitud: Double? = null
 ) : Serializable {
-
-    // Listo para enviar: tiene categoría (emergencia o problema), foto y ubicación
     val estaCompleto: Boolean
         get() = (emergencia != null || problema != null) &&
             fotoRuta != null && latitud != null && longitud != null

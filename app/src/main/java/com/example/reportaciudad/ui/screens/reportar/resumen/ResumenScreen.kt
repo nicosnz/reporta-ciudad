@@ -1,6 +1,5 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.resumen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -66,51 +64,32 @@ import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
 import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import java.io.File
 import java.util.Locale
+import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
+import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
+import com.example.reportaciudad.ui.screens.reportar.localizacion.PinCentral
+import com.example.reportaciudad.ui.screens.reportar.localizacion.ZOOM_CALLE
+import com.example.reportaciudad.ui.screens.reportar.localizacion.crearMapa
+import com.example.reportaciudad.ui.screens.reportar.emergencia.icono
+import com.example.reportaciudad.ui.screens.reportar.problema.icono
 
 // Paso 5 del flujo de reporte: revisar lo elegido en los pasos anteriores y enviarlo.
 @Composable
 fun ResumenScreen(
     borrador: BorradorReporte,
     onVolver: () -> Unit = {},
-    onEnviar: suspend (BorradorReporte) -> Unit = {},
+    onEnviar: (BorradorReporte) -> Unit = {},
     onVerMisReportes: () -> Unit = {}
 ) {
-    val scope = rememberCoroutineScope()
-    var enviando by remember { mutableStateOf(false) }
     var enviado by rememberSaveable { mutableStateOf(false) }
-    var errorEnvio by remember { mutableStateOf(false) }
-
-    fun enviar() {
-        if (enviando) return
-        enviando = true
-        errorEnvio = false
-        scope.launch {
-            try {
-                onEnviar(borrador)
-                enviado = true
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                errorEnvio = true
-            } finally {
-                enviando = false
-            }
-        }
-    }
-
-    // Mientras se envía no se puede salir, para no dejar el envío a medias
-    BackHandler(enabled = enviando) { }
 
     PasoReporte(
         paso = 5,
         titulo = "Resumen",
         subtitulo = "Revisa tu reporte antes de enviarlo.",
-        onVolver = { if (!enviando) onVolver() },
+        onVolver = onVolver,
         compacto = true
     ) {
         Column(
@@ -127,21 +106,13 @@ fun ResumenScreen(
             if (latitud != null && longitud != null) TarjetaUbicacion(latitud, longitud)
         }
 
-        if (errorEnvio) {
-            Text(
-                text = "No se pudo enviar el reporte. Revisa tu conexión e intenta de nuevo.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Emergencia,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-        }
-
         Button(
-            onClick = ::enviar,
-            enabled = borrador.estaCompleto && !enviando,
+            onClick = {
+                onEnviar(borrador)
+                enviado = true
+            },
+            // Una vez enviado queda deshabilitado, para no mandarlo dos veces
+            enabled = borrador.estaCompleto && !enviado,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 4.dp, top = 12.dp, end = 4.dp, bottom = 16.dp)
@@ -149,7 +120,7 @@ fun ResumenScreen(
                 .testTag("boton_enviar_reporte")
         ) {
             Text(
-                text = if (enviando) "Enviando…" else "Enviar reporte",
+                text = "Enviar reporte",
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 17.sp)
             )
         }

@@ -1,4 +1,4 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.emergencia
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -21,6 +21,10 @@ import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.EmergenciaDeshabilitado
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
+import com.example.reportaciudad.ui.screens.reportar.componentes.BotonSeleccionar
+import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
+import com.example.reportaciudad.ui.screens.reportar.componentes.TarjetaOpcion
+import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
 @Composable
 fun SeleccionEmergenciaScreen(

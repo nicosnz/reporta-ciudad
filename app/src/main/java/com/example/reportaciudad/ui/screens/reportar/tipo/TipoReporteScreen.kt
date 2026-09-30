@@ -1,4 +1,4 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.tipo
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
+import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
+import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
 
 @Composable
