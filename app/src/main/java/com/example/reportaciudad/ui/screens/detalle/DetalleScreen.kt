@@ -43,10 +43,12 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import com.example.reportaciudad.R
+import com.example.reportaciudad.data.RepositorioReportes
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
-import com.example.reportaciudad.ui.screens.inicio.reportesDeEjemplo
+import java.io.File
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro700
@@ -58,7 +60,7 @@ import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
 @Composable
 fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Int) {
 
-    val reporte = reportesDeEjemplo.firstOrNull { it.id == reporteId } ?: return
+    val reporte = RepositorioReportes.buscar(reporteId) ?: return
 
     Column(
         modifier = Modifier
@@ -81,15 +83,27 @@ fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Int) {
         ) {
             Encabezado(reporte)
 
-            Image(
-                painter = painterResource(R.drawable.bache_foto),
-                contentDescription = "Foto del reporte",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-                    .clip(RoundedCornerShape(32.dp))
-            )
+            val modificadorFoto = Modifier
+                .fillMaxWidth()
+                .height(240.dp)
+                .clip(RoundedCornerShape(32.dp))
+            if (reporte.fotoRuta != null) {
+                // Foto sacada con la cámara al crear el reporte
+                AsyncImage(
+                    model = File(reporte.fotoRuta),
+                    contentDescription = "Foto del reporte",
+                    contentScale = ContentScale.Crop,
+                    modifier = modificadorFoto
+                )
+            } else {
+                // Reportes de ejemplo: foto de muestra
+                Image(
+                    painter = painterResource(R.drawable.bache_foto),
+                    contentDescription = "Foto del reporte",
+                    contentScale = ContentScale.Crop,
+                    modifier = modificadorFoto
+                )
+            }
 
             TarjetaUbicacion(lugar = reporte.lugar)
         }
