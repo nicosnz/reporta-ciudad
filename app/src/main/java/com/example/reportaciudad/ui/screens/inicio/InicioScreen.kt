@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.reportaciudad.data.RepositorioReportes
+import com.example.reportaciudad.data.reportes.reportes as todosLosReportes
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
@@ -58,7 +58,7 @@ import com.example.reportaciudad.ui.theme.UrbanoOscuro
 @Composable
 fun InicioScreen(
     navController: NavController,
-    reportes: List<Reporte> = RepositorioReportes.reportes,
+    reportes: List<Reporte> = todosLosReportes,
     onReportar: () -> Unit = {}
 ) {
     Column(

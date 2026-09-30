@@ -45,7 +45,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.example.reportaciudad.R
-import com.example.reportaciudad.data.RepositorioReportes
+import com.example.reportaciudad.data.reportes.buscarReporte
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import java.io.File
@@ -60,7 +60,7 @@ import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
 @Composable
 fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Int) {
 
-    val reporte = RepositorioReportes.buscar(reporteId) ?: return
+    val reporte = buscarReporte(reporteId) ?: return
 
     Column(
         modifier = Modifier

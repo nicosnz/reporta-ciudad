@@ -11,17 +11,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.reportaciudad.data.AlmacenFotos
-import com.example.reportaciudad.data.RepositorioReportes
+import com.example.reportaciudad.data.reportes.enviarReporte
 import com.example.reportaciudad.data.model.BorradorReporte
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
 import com.example.reportaciudad.ui.screens.inicio.InicioScreen
-import com.example.reportaciudad.ui.screens.reportar.FotografiaScreen
-import com.example.reportaciudad.ui.screens.reportar.LocalizacionScreen
-import com.example.reportaciudad.ui.screens.reportar.ResumenScreen
-import com.example.reportaciudad.ui.screens.reportar.SeleccionEmergenciaScreen
-import com.example.reportaciudad.ui.screens.reportar.SeleccionProblemaScreen
-import com.example.reportaciudad.ui.screens.reportar.TipoReporteScreen
+import com.example.reportaciudad.ui.screens.reportar.fotografia.FotografiaScreen
+import com.example.reportaciudad.ui.screens.reportar.localizacion.LocalizacionScreen
+import com.example.reportaciudad.ui.screens.reportar.resumen.ResumenScreen
+import com.example.reportaciudad.ui.screens.reportar.emergencia.SeleccionEmergenciaScreen
+import com.example.reportaciudad.ui.screens.reportar.problema.SeleccionProblemaScreen
+import com.example.reportaciudad.ui.screens.reportar.tipo.TipoReporteScreen
 
 
 @Composable
@@ -103,7 +103,7 @@ fun ReportaCiudadScreen(){
             ResumenScreen(
                 borrador = borrador,
                 onVolver = { navController.popBackStack() },
-                onEnviar = { RepositorioReportes.enviar(it) },
+                onEnviar = { enviarReporte(it) },
                 onVerMisReportes = {
                     // Vuelve a Mis reportes cerrando todo el flujo de Reportar
                     navController.popBackStack("inicio", inclusive = false)

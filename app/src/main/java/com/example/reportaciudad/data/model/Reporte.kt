@@ -10,14 +10,12 @@ data class Reporte(
     val categoria: String,
     val familia: Familia,
     val lugar: String,
-    // Foto sacada con la cámara; null en los reportes de ejemplo (usan la foto de muestra)
+
     val fotoRuta: String? = null,
-    // Momento en que se creó el reporte: se completa solo. Se muestra en hora de Bolivia.
+
     val fechaHora: Long = System.currentTimeMillis()
 ) {
-    // "el 13 de septiembre · 08:14"
-    val fecha: String get() = FechaBolivia.textoEnvio(fechaHora)
 
-    // "hace 14 días", calculado cada vez respecto de ahora
+    val fecha: String get() = FechaBolivia.textoEnvio(fechaHora)
     val antiguedad: String get() = FechaBolivia.antiguedad(fechaHora)
 }
