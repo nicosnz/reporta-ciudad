@@ -155,6 +155,10 @@ private fun ColumnScope.ContenidoCamara(
             } catch (e: ImageCaptureException) {
                 archivo.delete()
                 errorCaptura = true
+            } catch (e: IllegalStateException) {
+                // La cámara no llegó a iniciar (sin cámara trasera, o la usa otra app)
+                archivo.delete()
+                errorCaptura = true
             } finally {
                 capturando = false
             }
@@ -428,7 +432,7 @@ private fun tienePermisoCamara(context: Context) =
     ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
         PackageManager.PERMISSION_GRANTED
 
-private fun abrirAjustesDeLaApp(context: Context) {
+internal fun abrirAjustesDeLaApp(context: Context) {
     val intent = Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", context.packageName, null)

@@ -5,5 +5,7 @@ import java.io.Serializable
 data class BorradorReporte(
     val emergencia: TipoEmergencia? = null,
     val problema: TipoProblema? = null,
-    val fotoRuta: String?=null
+    val fotoRuta: String?=null,
+    val latitud: Double? = null,
+    val longitud: Double? = null
 ) : Serializable
