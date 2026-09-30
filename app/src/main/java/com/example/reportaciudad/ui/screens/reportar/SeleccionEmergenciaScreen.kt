@@ -72,7 +72,7 @@ fun SeleccionEmergenciaScreen(
     }
 }
 
-private val TipoEmergencia.icono: ImageVector
+internal val TipoEmergencia.icono: ImageVector
     get() = when (this) {
         TipoEmergencia.INCENDIO -> IconoFuego
         TipoEmergencia.HUMO -> IconoHumo
