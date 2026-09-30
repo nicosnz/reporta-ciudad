@@ -90,7 +90,7 @@ private val Familia.colores: Triple<Color, Color, Color>
         Familia.AMBIENTAL -> Triple(AmbientalOscuro, AmbientalEtiqueta, AmbientalEtiquetaTexto)
     }
 
-private val TipoProblema.icono: ImageVector
+internal val TipoProblema.icono: ImageVector
     get() = when (this) {
         TipoProblema.BASURA -> IconoBasura
         TipoProblema.BACHE -> IconoAuto

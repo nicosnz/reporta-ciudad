@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.reportaciudad.data.AlmacenFotos
+import com.example.reportaciudad.data.RepositorioReportes
 import com.example.reportaciudad.data.model.BorradorReporte
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
@@ -101,7 +102,14 @@ fun ReportaCiudadScreen(){
         composable("reportar/resumen"){
             ResumenScreen(
                 borrador = borrador,
-                onVolver = { navController.popBackStack() }
+                onVolver = { navController.popBackStack() },
+                onEnviar = { RepositorioReportes.enviar(it) },
+                onVerMisReportes = {
+                    // Vuelve a Mis reportes cerrando todo el flujo de Reportar
+                    navController.popBackStack("inicio", inclusive = false)
+                    // El reporte ya se envió: se limpia el borrador, pero la foto no se borra (es del reporte)
+                    borrador = BorradorReporte()
+                }
             )
         }
     }
