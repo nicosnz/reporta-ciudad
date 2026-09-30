@@ -17,6 +17,7 @@ import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
 import com.example.reportaciudad.ui.screens.inicio.InicioScreen
 import com.example.reportaciudad.ui.screens.reportar.FotografiaScreen
 import com.example.reportaciudad.ui.screens.reportar.LocalizacionScreen
+import com.example.reportaciudad.ui.screens.reportar.ResumenScreen
 import com.example.reportaciudad.ui.screens.reportar.SeleccionEmergenciaScreen
 import com.example.reportaciudad.ui.screens.reportar.SeleccionProblemaScreen
 import com.example.reportaciudad.ui.screens.reportar.TipoReporteScreen
@@ -89,7 +90,19 @@ fun ReportaCiudadScreen(){
             )
         }
         composable("reportar/localizacion"){
-            LocalizacionScreen(onVolver = { navController.popBackStack() })
+            LocalizacionScreen(
+                onVolver = { navController.popBackStack() },
+                onConfirmar = { latitud, longitud ->
+                    borrador = borrador.copy(latitud = latitud, longitud = longitud)
+                    navController.navigate("reportar/resumen")
+                }
+            )
+        }
+        composable("reportar/resumen"){
+            ResumenScreen(
+                borrador = borrador,
+                onVolver = { navController.popBackStack() }
+            )
         }
     }
 }
