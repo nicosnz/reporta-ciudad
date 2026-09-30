@@ -1,4 +1,4 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.fotografia
 
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture

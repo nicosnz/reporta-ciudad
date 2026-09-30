@@ -8,4 +8,8 @@ data class BorradorReporte(
     val fotoRuta: String?=null,
     val latitud: Double? = null,
     val longitud: Double? = null
-) : Serializable
+) : Serializable {
+    val estaCompleto: Boolean
+        get() = (emergencia != null || problema != null) &&
+            fotoRuta != null && latitud != null && longitud != null
+}

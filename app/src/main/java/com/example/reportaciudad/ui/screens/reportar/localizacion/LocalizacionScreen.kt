@@ -1,4 +1,4 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.localizacion
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -69,12 +70,16 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.CopyrightOverlay
 import java.io.File
+import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
+import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
+import com.example.reportaciudad.ui.screens.reportar.fotografia.abrirAjustesDeLaApp
 
 // Plaza 24 de Septiembre, Santa Cruz de la Sierra: el mapa se ve aquí mientras no hay ubicación del teléfono
 private val CENTRO_SANTA_CRUZ = GeoPoint(-17.7833, -63.1821)
 private const val ZOOM_CIUDAD = 15.0
-private const val ZOOM_CALLE = 18.0
+internal const val ZOOM_CALLE = 18.0
 
 private val PIN_ANCHO = 44.dp
 private val PIN_ALTO = 56.dp
@@ -212,7 +217,7 @@ private val TILES_OSM = XYTileSource(
 
 // Mapa de OpenStreetMap (osmdroid, tiles de tile.openstreetmap.org), solo para mostrar: ignora los toques.
 @SuppressLint("ClickableViewAccessibility")
-private fun crearMapa(context: Context): MapView {
+internal fun crearMapa(context: Context): MapView {
     Configuration.getInstance().apply {
         load(context, context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
         // La caché de tiles va a la carpeta de caché, sin pedir permiso de almacenamiento
@@ -228,6 +233,8 @@ private fun crearMapa(context: Context): MapView {
         isTilesScaledToDpi = true
         controller.setZoom(ZOOM_CIUDAD)
         controller.setCenter(CENTRO_SANTA_CRUZ)
+        // "© OpenStreetMap contributors": obligatorio por la licencia de los datos y la política de tiles
+        overlays.add(CopyrightOverlay(context))
     }
 }
 
@@ -245,12 +252,12 @@ private fun ZonaMapa(modifier: Modifier = Modifier, contenido: @Composable BoxSc
 
 // La punta del pin queda exactamente en el centro del mapa (el centro de este Canvas).
 @Composable
-private fun PinCentral(modifier: Modifier = Modifier) {
-    Canvas(modifier.size(PIN_ANCHO, PIN_ALTO * 2)) {
+internal fun PinCentral(modifier: Modifier = Modifier, ancho: Dp = PIN_ANCHO, alto: Dp = PIN_ALTO) {
+    Canvas(modifier.size(ancho, alto * 2)) {
         val ancho = size.width
         val radio = ancho / 2
         val punta = size.height / 2
-        val cima = punta - PIN_ALTO.toPx()
+        val cima = punta - alto.toPx()
         val alto = punta - cima
 
         drawOval(

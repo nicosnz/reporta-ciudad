@@ -22,7 +22,7 @@ object UbicacionActual {
         concedido(context, Manifest.permission.ACCESS_FINE_LOCATION) ||
             concedido(context, Manifest.permission.ACCESS_COARSE_LOCATION)
 
-    // GPS si el permiso es preciso (funciona sin internet); si no responde, la red. Null si no hay ubicación.
+
     @SuppressLint("MissingPermission")
     suspend fun obtener(context: Context): Location? {
         if (!tienePermiso(context)) return null

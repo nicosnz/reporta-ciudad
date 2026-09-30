@@ -1,4 +1,4 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.componentes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

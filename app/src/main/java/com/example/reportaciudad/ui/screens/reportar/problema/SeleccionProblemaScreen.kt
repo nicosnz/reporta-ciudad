@@ -1,4 +1,4 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.problema
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,10 @@ import com.example.reportaciudad.ui.theme.UrbanoDeshabilitado
 import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
 import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
+import com.example.reportaciudad.ui.screens.reportar.componentes.BotonSeleccionar
+import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
+import com.example.reportaciudad.ui.screens.reportar.componentes.TarjetaOpcion
+import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
 @Composable
 fun SeleccionProblemaScreen(
@@ -90,7 +94,7 @@ private val Familia.colores: Triple<Color, Color, Color>
         Familia.AMBIENTAL -> Triple(AmbientalOscuro, AmbientalEtiqueta, AmbientalEtiquetaTexto)
     }
 
-private val TipoProblema.icono: ImageVector
+internal val TipoProblema.icono: ImageVector
     get() = when (this) {
         TipoProblema.BASURA -> IconoBasura
         TipoProblema.BACHE -> IconoAuto

@@ -1,4 +1,4 @@
-package com.example.reportaciudad.ui.screens.reportar
+package com.example.reportaciudad.ui.screens.reportar.fotografia
 
 import android.Manifest
 import android.content.Context
@@ -82,6 +82,8 @@ import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro900
 import kotlinx.coroutines.launch
 import java.io.File
+import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
+import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
 @Composable
 fun FotografiaScreen(

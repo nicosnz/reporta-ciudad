@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.reportaciudad.data.reportes.reportes as todosLosReportes
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
@@ -54,22 +55,10 @@ import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
 
-
-val reportesDeEjemplo = listOf(
-    Reporte(0, "Hueco en Av. Sucre y Junín", "Bache", "hace 14 días", Familia.URBANO,
-        "el 13 de septiembre · 08:14", "Av. Sucre y calle Junín"),
-    Reporte(1, "Basural en la esquina del mercado", "Basura acumulada", "93 días", Familia.AMBIENTAL,
-        "el 26 de junio · 17:40", "Mercado Los Pozos"),
-    Reporte(2, "Poste de luz apagado", "Alumbrado", "hace 3 días", Familia.URBANO,
-        "el 24 de septiembre · 21:05", "Calle Libertad y Florida"),
-    Reporte(3, "Fuga de agua en la vereda", "Fuga de agua", "hace 5 días", Familia.AMBIENTAL,
-        "el 22 de septiembre · 10:30", "Av. Cañoto y Ayacucho")
-)
-
 @Composable
 fun InicioScreen(
     navController: NavController,
-    reportes: List<Reporte> = reportesDeEjemplo,
+    reportes: List<Reporte> = todosLosReportes,
     onReportar: () -> Unit = {}
 ) {
     Column(
@@ -154,7 +143,7 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
     }
 }
 
-// Círculo con rayas diagonales (lugar de la foto) y aro del color de la familia
+
 @Composable
 private fun MiniaturaReporte(colorAro: Color) {
     Box(
