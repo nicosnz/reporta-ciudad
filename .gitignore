@@ -21,3 +21,6 @@ local.properties
 
 # Captures
 captures/
+
+# Maquetas HTML/SVG para importar a Figma (referencia local, no se versionan)
+docs/figma/
