@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.reportaciudad.data.reportes.reportes as todosLosReportes
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
@@ -59,8 +58,8 @@ import com.example.reportaciudad.ui.theme.UrbanoOscuro
 
 @Composable
 fun InicioScreen(
-    navController: NavController,
     reportes: List<Reporte> = todosLosReportes,
+    onAbrirReporte: (Long) -> Unit = {},
     onReportar: () -> Unit = {}
 ) {
     Column(
@@ -103,7 +102,7 @@ fun InicioScreen(
             }
             else{
                 items(reportes, key = { it.id }) { reporte ->
-                    FilaReporte(reporte = reporte, onClick = { navController.navigate("detalle/${reporte.id}") })
+                    FilaReporte(reporte = reporte, onClick = { onAbrirReporte(reporte.id) })
                 }
             }
 
