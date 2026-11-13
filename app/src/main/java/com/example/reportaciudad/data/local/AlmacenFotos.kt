@@ -1,4 +1,4 @@
-package com.example.reportaciudad.data
+package com.example.reportaciudad.data.local
 
 import android.content.Context
 import java.io.File

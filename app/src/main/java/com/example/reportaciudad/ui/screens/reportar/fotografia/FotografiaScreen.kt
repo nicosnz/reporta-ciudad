@@ -76,7 +76,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import coil3.compose.AsyncImage
-import com.example.reportaciudad.data.AlmacenFotos
+import com.example.reportaciudad.data.local.AlmacenFotos
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro900

@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.reportaciudad.data.AlmacenFotos
+import com.example.reportaciudad.data.local.AlmacenFotos
 import com.example.reportaciudad.data.reportes.enviarReporte
 import com.example.reportaciudad.data.model.ReporteFormulario
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
