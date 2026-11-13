@@ -44,9 +44,9 @@ fun ReportaCiudadScreen(){
         }
         composable(
             route = "detalle/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
         ){ entrada ->
-            DetalleScreen({ navController.popBackStack() }, reporteId = entrada.arguments?.getInt("id") ?: 0)
+            DetalleScreen({ navController.popBackStack() }, reporteId = entrada.arguments?.getLong("id") ?: 0L)
         }
         composable("reportar"){
             TipoReporteScreen(

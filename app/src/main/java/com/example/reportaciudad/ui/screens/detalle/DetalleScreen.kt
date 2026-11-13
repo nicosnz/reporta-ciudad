@@ -49,6 +49,8 @@ import com.example.reportaciudad.data.reportes.buscarReporte
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import java.io.File
+import com.example.reportaciudad.ui.theme.EmergenciaClaro
+import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro700
@@ -58,7 +60,7 @@ import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
 import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
 
 @Composable
-fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Int) {
+fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Long) {
 
     val reporte = buscarReporte(reporteId) ?: return
 
@@ -135,6 +137,7 @@ private fun Encabezado(reporte: Reporte) {
     val (fondoEtiqueta, textoEtiqueta) = when (reporte.familia) {
         Familia.URBANO -> UrbanoEtiqueta to UrbanoEtiquetaTexto
         Familia.AMBIENTAL -> AmbientalEtiqueta to AmbientalEtiquetaTexto
+        Familia.EMERGENCIA -> EmergenciaClaro to Emergencia
     }
 
     Column(

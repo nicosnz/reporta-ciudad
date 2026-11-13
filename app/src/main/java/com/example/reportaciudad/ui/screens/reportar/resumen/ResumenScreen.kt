@@ -148,6 +148,7 @@ private fun ReporteFormulario.categoria(): InfoCategoria? {
 private fun TipoProblema.infoCategoria() = when (familia) {
     Familia.URBANO -> InfoCategoria("Reporte de rutina · urbano", nombre, icono, UrbanoEtiqueta, UrbanoEtiquetaTexto)
     Familia.AMBIENTAL -> InfoCategoria("Reporte de rutina · ambiental", nombre, icono, AmbientalEtiqueta, AmbientalEtiquetaTexto)
+    Familia.EMERGENCIA -> InfoCategoria("Emergencia en curso", nombre, icono, EmergenciaClaro, Emergencia)
 }
 
 @Composable

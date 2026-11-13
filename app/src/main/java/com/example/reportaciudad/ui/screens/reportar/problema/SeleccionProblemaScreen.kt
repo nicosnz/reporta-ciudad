@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.ui.theme.EmergenciaClaro
+import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
@@ -92,6 +94,7 @@ private val Familia.colores: Triple<Color, Color, Color>
     get() = when (this) {
         Familia.URBANO -> Triple(UrbanoOscuro, UrbanoEtiqueta, UrbanoEtiquetaTexto)
         Familia.AMBIENTAL -> Triple(AmbientalOscuro, AmbientalEtiqueta, AmbientalEtiquetaTexto)
+        Familia.EMERGENCIA -> Triple(Emergencia, EmergenciaClaro, Emergencia)
     }
 
 internal val TipoProblema.icono: ImageVector

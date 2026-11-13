@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import com.example.reportaciudad.data.reportes.reportes as todosLosReportes
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
+import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro300
@@ -130,6 +131,7 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
                 colorAro = when (reporte.familia) {
                     Familia.URBANO -> UrbanoOscuro
                     Familia.AMBIENTAL -> AmbientalOscuro
+                    Familia.EMERGENCIA -> Emergencia
                 }
             )
             Column(
