@@ -44,9 +44,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.example.reportaciudad.data.reportes.reportes as todosLosReportes
+import com.example.reportaciudad.data.model.EstadoEnvio
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
+import com.example.reportaciudad.data.model.TipoEmergencia
+import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
 import com.example.reportaciudad.ui.theme.Neutro200
@@ -58,7 +60,8 @@ import com.example.reportaciudad.ui.theme.UrbanoOscuro
 
 @Composable
 fun InicioScreen(
-    reportes: List<Reporte> = todosLosReportes,
+    reportes: List<Reporte>,
+    cargando: Boolean = false,
     onAbrirReporte: (Long) -> Unit = {},
     onReportar: () -> Unit = {}
 ) {
@@ -87,7 +90,7 @@ fun InicioScreen(
                     modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
                 )
             }
-            if (reportes.isEmpty()) {
+            if (reportes.isEmpty() && !cargando) {
                 item {
                     Text(
                         text = "Todavía no hiciste ningún reporte.\nToca Reportar para enviar el primero.",
@@ -146,7 +149,11 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
                     )
                 )
                 Text(
-                    text = "${reporte.categoria} · ${reporte.antiguedad}",
+                    text = buildString {
+                        append("${reporte.categoria} · ${reporte.antiguedad}")
+                        // Guardado en el teléfono, todavía no llegó al servidor
+                        if (reporte.estadoEnvio != EstadoEnvio.ENVIADO) append(" · sin enviar")
+                    },
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp, lineHeight = 18.sp),
                     color = Neutro700
                 )
@@ -259,3 +266,17 @@ private val IconoCamara = iconoDeLinea(
     "M9 13a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"
 )
 
+@Preview(showBackground = true, widthDp = 390, heightDp = 844)
+@Composable
+private fun InicioScreenPreview() {
+    ReportaCiudadTheme {
+        InicioScreen(
+            reportes = listOf(
+                Reporte(id = 2, problema = TipoProblema.BACHE, latitud = -17.78, longitud = -63.18,
+                    estadoEnvio = EstadoEnvio.ENVIADO),
+                Reporte(id = 1, emergencia = TipoEmergencia.INCENDIO, latitud = -17.78, longitud = -63.18,
+                    estadoEnvio = EstadoEnvio.ERROR)
+            )
+        )
+    }
+}

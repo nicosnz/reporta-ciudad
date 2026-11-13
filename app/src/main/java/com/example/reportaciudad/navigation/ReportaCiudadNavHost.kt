@@ -24,6 +24,7 @@ import com.example.reportaciudad.ui.screens.reportar.resumen.ResumenScreen
 import com.example.reportaciudad.ui.screens.reportar.tipo.TipoReporteScreen
 import com.example.reportaciudad.viewmodel.AppViewModelProvider
 import com.example.reportaciudad.viewmodel.ReporteFormularioViewModel
+import com.example.reportaciudad.viewmodel.ReportesViewModel
 
 // Único lugar que conoce la navegación: las pantallas solo avisan con callbacks
 @Composable
@@ -42,7 +43,11 @@ fun ReportaCiudadNavHost() {
             )
         }
         composable<Ruta.Inicio> {
+            val vm: ReportesViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val estado by vm.estado.collectAsStateWithLifecycle()
             InicioScreen(
+                reportes = estado.reportes,
+                cargando = estado.cargando,
                 onAbrirReporte = { id -> navController.navigate(Ruta.Detalle(id)) },
                 onReportar = { navController.navigate(Ruta.FlujoReportar) }
             )
