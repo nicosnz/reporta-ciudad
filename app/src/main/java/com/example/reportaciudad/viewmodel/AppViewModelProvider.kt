@@ -15,6 +15,7 @@ object AppViewModelProvider {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
         initializer { ReportesViewModel(repositorio()) }
         initializer { DetalleViewModel(createSavedStateHandle(), repositorio()) }
+        initializer { ReporteFormularioViewModel(repositorio()) }
     }
 
     private fun CreationExtras.repositorio(): ReporteRepository =
