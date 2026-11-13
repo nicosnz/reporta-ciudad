@@ -82,8 +82,8 @@ class ReporteFormularioViewModel(private val repository: ReporteRepository) : Vi
         }
     }
 
-    fun confirmarUbicacion(ubicacion: Ubicacion? = _estado.value.ubicacion) {
-        if (ubicacion == null) return
+    fun confirmarUbicacion() {
+        val ubicacion = _estado.value.ubicacion ?: return
         actualizarBorrador { it.copy(latitud = ubicacion.latitud, longitud = ubicacion.longitud) }
     }
 

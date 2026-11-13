@@ -11,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.reportaciudad.data.model.Ubicacion
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
 import com.example.reportaciudad.ui.screens.inicio.InicioScreen
@@ -104,12 +103,17 @@ fun ReportaCiudadNavHost() {
             }
             composable<Ruta.PasoLocalizacion> { entrada ->
                 val vm = entrada.formularioViewModel(navController)
+                val estado by vm.estado.collectAsStateWithLifecycle()
                 LocalizacionScreen(
-                    onVolver = { navController.popBackStack() },
-                    onConfirmar = { latitud, longitud ->
-                        vm.confirmarUbicacion(Ubicacion(latitud, longitud))
+                    ubicacion = estado.ubicacion,
+                    buscando = estado.buscandoUbicacion,
+                    sinUbicacion = estado.sinUbicacion,
+                    onBuscarUbicacion = vm::buscarUbicacion,
+                    onConfirmar = {
+                        vm.confirmarUbicacion()
                         navController.navigate(Ruta.PasoResumen)
-                    }
+                    },
+                    onVolver = { navController.popBackStack() }
                 )
             }
             composable<Ruta.PasoResumen> { entrada ->
