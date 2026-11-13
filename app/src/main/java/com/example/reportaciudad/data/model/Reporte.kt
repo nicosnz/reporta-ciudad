@@ -1,6 +1,6 @@
 package com.example.reportaciudad.data.model
 
-import com.example.reportaciudad.data.FechaBolivia
+import com.example.reportaciudad.util.FechaBolivia
 import java.util.Locale
 
 enum class Familia {

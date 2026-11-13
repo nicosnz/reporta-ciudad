@@ -1,4 +1,4 @@
-package com.example.reportaciudad.data
+package com.example.reportaciudad.util
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
