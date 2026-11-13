@@ -1,10 +1,10 @@
 package com.example.reportaciudad.ui.screens.detalle
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,24 +35,23 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
-import com.example.reportaciudad.R
-import com.example.reportaciudad.data.reportes.buscarReporte
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
+import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.viewmodel.DetalleUiState
 import java.io.File
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
+import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro700
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
@@ -60,10 +59,7 @@ import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
 import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
 
 @Composable
-fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Long) {
-
-    val reporte = buscarReporte(reporteId) ?: return
-
+fun DetalleScreen(estado: DetalleUiState, onBack: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -75,40 +71,48 @@ fun DetalleScreen(onBack:() -> Unit = {}, reporteId: Long) {
             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp)
         )
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
-                .padding(start = 16.dp, top = 20.dp, end = 16.dp, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Encabezado(reporte)
-
-            val modificadorFoto = Modifier
-                .fillMaxWidth()
-                .height(240.dp)
-                .clip(RoundedCornerShape(32.dp))
-            if (reporte.fotoRuta != null) {
-
-                AsyncImage(
-                    model = File(reporte.fotoRuta),
-                    contentDescription = "Foto del reporte",
-                    contentScale = ContentScale.Crop,
-                    modifier = modificadorFoto
-                )
-            } else {
-
-                Image(
-                    painter = painterResource(R.drawable.bache_foto),
-                    contentDescription = "Foto del reporte",
-                    contentScale = ContentScale.Crop,
-                    modifier = modificadorFoto
-                )
-            }
-
-            TarjetaUbicacion(lugar = reporte.lugar)
+        when (estado) {
+            DetalleUiState.Cargando -> Unit
+            DetalleUiState.NoExiste -> Text(
+                text = "Este reporte ya no existe.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Neutro700,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 48.dp)
+            )
+            is DetalleUiState.Encontrado -> ContenidoDetalle(estado.reporte)
         }
+    }
+}
+
+@Composable
+private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
+            .padding(start = 16.dp, top = 20.dp, end = 16.dp, bottom = 32.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Encabezado(reporte)
+
+        reporte.fotoRuta?.let { ruta ->
+            AsyncImage(
+                model = File(ruta),
+                contentDescription = "Foto del reporte",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+                    .clip(RoundedCornerShape(32.dp))
+                    .background(Neutro200)
+            )
+        }
+
+        TarjetaUbicacion(lugar = reporte.lugar)
     }
 }
 
@@ -239,3 +243,14 @@ private val IconoVolver: ImageVector = ImageVector.Builder(
     }
 }.build()
 
+@Preview(showBackground = true, widthDp = 390, heightDp = 844)
+@Composable
+private fun DetalleScreenPreview() {
+    ReportaCiudadTheme {
+        DetalleScreen(
+            estado = DetalleUiState.Encontrado(
+                Reporte(id = 1, problema = TipoProblema.BACHE, latitud = -17.7833, longitud = -63.1821)
+            )
+        )
+    }
+}

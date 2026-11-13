@@ -11,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.example.reportaciudad.data.model.Ubicacion
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
@@ -23,6 +22,7 @@ import com.example.reportaciudad.ui.screens.reportar.problema.SeleccionProblemaS
 import com.example.reportaciudad.ui.screens.reportar.resumen.ResumenScreen
 import com.example.reportaciudad.ui.screens.reportar.tipo.TipoReporteScreen
 import com.example.reportaciudad.viewmodel.AppViewModelProvider
+import com.example.reportaciudad.viewmodel.DetalleViewModel
 import com.example.reportaciudad.viewmodel.ReporteFormularioViewModel
 import com.example.reportaciudad.viewmodel.ReportesViewModel
 
@@ -52,11 +52,11 @@ fun ReportaCiudadNavHost() {
                 onReportar = { navController.navigate(Ruta.FlujoReportar) }
             )
         }
-        composable<Ruta.Detalle> { entrada ->
-            DetalleScreen(
-                onBack = { navController.popBackStack() },
-                reporteId = entrada.toRoute<Ruta.Detalle>().id
-            )
+        composable<Ruta.Detalle> {
+            // DetalleViewModel lee el id de la ruta desde su SavedStateHandle
+            val vm: DetalleViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val estado by vm.estado.collectAsStateWithLifecycle()
+            DetalleScreen(estado = estado, onBack = { navController.popBackStack() })
         }
 
         navigation<Ruta.FlujoReportar>(startDestination = Ruta.PasoTipo) {
