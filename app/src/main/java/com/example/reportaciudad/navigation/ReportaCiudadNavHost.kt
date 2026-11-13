@@ -89,11 +89,16 @@ fun ReportaCiudadNavHost() {
             }
             composable<Ruta.PasoFotografia> { entrada ->
                 val vm = entrada.formularioViewModel(navController)
+                val estado by vm.estado.collectAsStateWithLifecycle()
                 FotografiaScreen(
-                    onVolver = { navController.popBackStack() },
-                    onFotoTomada = { ruta ->
-                        vm.fotoSacada(ruta)
-                        navController.navigate(Ruta.PasoLocalizacion)
+                    fotoRuta = estado.borrador.fotoRuta,
+                    crearArchivoFoto = vm::nuevoArchivoFoto,
+                    onFotoSacada = vm::fotoSacada,
+                    onRepetir = vm::descartarFoto,
+                    onUsarFoto = { navController.navigate(Ruta.PasoLocalizacion) },
+                    onVolver = {
+                        vm.descartarFoto()
+                        navController.popBackStack()
                     }
                 )
             }
