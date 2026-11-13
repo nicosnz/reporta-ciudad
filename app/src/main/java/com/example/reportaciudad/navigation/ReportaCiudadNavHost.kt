@@ -121,8 +121,9 @@ fun ReportaCiudadNavHost() {
                 val estado by vm.estado.collectAsStateWithLifecycle()
                 ResumenScreen(
                     borrador = estado.borrador,
+                    envio = estado.envio,
                     onVolver = { navController.popBackStack() },
-                    onEnviar = { vm.enviar() },
+                    onEnviar = vm::enviar,
                     // Al salir del subgrafo se descarta el ViewModel del formulario
                     onVerMisReportes = { navController.popBackStack(Ruta.Inicio, inclusive = false) }
                 )

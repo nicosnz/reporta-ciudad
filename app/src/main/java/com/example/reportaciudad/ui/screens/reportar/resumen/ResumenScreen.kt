@@ -1,5 +1,6 @@
 package com.example.reportaciudad.ui.screens.reportar.resumen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,11 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +49,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import coil3.compose.AsyncImage
 import com.example.reportaciudad.data.model.ReporteFormulario
+import com.example.reportaciudad.viewmodel.Envio
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
@@ -79,11 +77,13 @@ import com.example.reportaciudad.ui.screens.reportar.problema.icono
 @Composable
 fun ResumenScreen(
     borrador: ReporteFormulario,
+    envio: Envio = Envio.INACTIVO,
     onVolver: () -> Unit = {},
-    onEnviar: (ReporteFormulario) -> Unit = {},
+    onEnviar: () -> Unit = {},
     onVerMisReportes: () -> Unit = {}
 ) {
-    var enviado by rememberSaveable { mutableStateOf(false) }
+    // Mientras se envía no se puede salir: se cortaría el envío a medias
+    BackHandler(enabled = envio == Envio.ENVIANDO) { }
 
     PasoReporte(
         paso = 5,
@@ -107,12 +107,9 @@ fun ResumenScreen(
         }
 
         Button(
-            onClick = {
-                onEnviar(borrador)
-                enviado = true
-            },
-            // Una vez enviado queda deshabilitado, para no mandarlo dos veces
-            enabled = borrador.estaCompleto && !enviado,
+            onClick = onEnviar,
+            // Solo se puede enviar una vez: mientras se envía y después queda deshabilitado
+            enabled = borrador.estaCompleto && envio == Envio.INACTIVO,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 4.dp, top = 12.dp, end = 4.dp, bottom = 16.dp)
@@ -120,13 +117,15 @@ fun ResumenScreen(
                 .testTag("boton_enviar_reporte")
         ) {
             Text(
-                text = "Enviar reporte",
+                text = if (envio == Envio.ENVIANDO) "Enviando…" else "Enviar reporte",
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 17.sp)
             )
         }
     }
 
-    if (enviado) ModalReporteEnviado(onVerMisReportes)
+    if (envio == Envio.ENVIADO || envio == Envio.GUARDADO_SIN_CONEXION) {
+        ModalReporteEnviado(sinConexion = envio == Envio.GUARDADO_SIN_CONEXION, onVerMisReportes = onVerMisReportes)
+    }
 }
 
 // Qué se muestra en la tarjeta de categoría según lo elegido en el paso 2
@@ -282,7 +281,7 @@ private fun MapaFijo(latitud: Double, longitud: Double, modifier: Modifier = Mod
 
 // Ventana que confirma el envío. Desde acá solo se puede ir a Mis reportes (también con Atrás).
 @Composable
-private fun ModalReporteEnviado(onVerMisReportes: () -> Unit) {
+private fun ModalReporteEnviado(sinConexion: Boolean, onVerMisReportes: () -> Unit) {
     Dialog(
         onDismissRequest = onVerMisReportes,
         properties = DialogProperties(
@@ -315,7 +314,7 @@ private fun ModalReporteEnviado(onVerMisReportes: () -> Unit) {
                     Icon(IconoCheck, contentDescription = null, tint = AmbientalEtiquetaTexto, modifier = Modifier.size(40.dp))
                 }
                 Text(
-                    text = "¡Reporte enviado!",
+                    text = if (sinConexion) "¡Reporte guardado!" else "¡Reporte enviado!",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontSize = 26.sp,
                         lineHeight = 30.sp,
@@ -325,7 +324,11 @@ private fun ModalReporteEnviado(onVerMisReportes: () -> Unit) {
                     modifier = Modifier.semantics { heading() }
                 )
                 Text(
-                    text = "Tu reporte ya está en el mapa público. Te avisamos cuando cambie de estado.",
+                    text = if (sinConexion) {
+                        "No hay conexión ahora. Quedó guardado en tu teléfono y lo enviamos cuando vuelva la señal."
+                    } else {
+                        "Tu reporte ya está en el mapa público. Te avisamos cuando cambie de estado."
+                    },
                     style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 22.sp),
                     color = Neutro700,
                     textAlign = TextAlign.Center
