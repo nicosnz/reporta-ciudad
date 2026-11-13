@@ -92,10 +92,11 @@ fun FotografiaScreen(
 ) {
 
     var fotoRuta by rememberSaveable { mutableStateOf<String?>(null) }
+    val almacenFotos = AlmacenFotos(LocalContext.current)
 
 
     val descartarYVolver = {
-        AlmacenFotos.borrar(fotoRuta)
+        almacenFotos.borrar(fotoRuta)
         fotoRuta = null
         onVolver()
     }
@@ -117,7 +118,7 @@ fun FotografiaScreen(
                 fotoRuta = fotoRuta,
                 onFotoSacada = { fotoRuta = it },
                 onRepetir = {
-                    AlmacenFotos.borrar(fotoRuta)
+                    almacenFotos.borrar(fotoRuta)
                     fotoRuta = null
                 },
                 onUsarFoto = { fotoRuta?.let(onFotoTomada) }
@@ -150,7 +151,7 @@ private fun ColumnScope.ContenidoCamara(
                 destello.snapTo(1f)
                 destello.animateTo(0f, tween(durationMillis = 260, easing = LinearOutSlowInEasing))
             }
-            val archivo = AlmacenFotos.crearArchivo(context)
+            val archivo = AlmacenFotos(context).crearArchivo()
             try {
                 controlador.tomarFoto(archivo, ContextCompat.getMainExecutor(context))
                 onFotoSacada(archivo.absolutePath)

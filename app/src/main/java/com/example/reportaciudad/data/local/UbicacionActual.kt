@@ -9,23 +9,26 @@ import android.location.LocationManager
 import android.os.CancellationSignal
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
+import com.example.reportaciudad.data.model.Ubicacion
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
 
-object UbicacionActual {
+// Ubicación actual del teléfono por GPS o, si no responde, por red (sin Google Play Services)
+class UbicacionActual(context: Context) {
 
-    private const val ESPERA_MAXIMA_MS = 10_000L
+    private val context = context.applicationContext
 
-    fun tienePermiso(context: Context) =
+    fun tienePermiso() =
         concedido(context, Manifest.permission.ACCESS_FINE_LOCATION) ||
             concedido(context, Manifest.permission.ACCESS_COARSE_LOCATION)
 
+    suspend fun obtener(): Ubicacion? = obtenerLocation()?.let { Ubicacion(it.latitude, it.longitude) }
 
     @SuppressLint("MissingPermission")
-    suspend fun obtener(context: Context): Location? {
-        if (!tienePermiso(context)) return null
+    private suspend fun obtenerLocation(): Location? {
+        if (!tienePermiso()) return null
         val manager = context.getSystemService(LocationManager::class.java) ?: return null
 
         val proveedores = buildList {
@@ -53,4 +56,8 @@ object UbicacionActual {
 
     private fun concedido(context: Context, permiso: String) =
         ContextCompat.checkSelfPermission(context, permiso) == PackageManager.PERMISSION_GRANTED
+
+    private companion object {
+        const val ESPERA_MAXIMA_MS = 10_000L
+    }
 }

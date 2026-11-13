@@ -124,9 +124,9 @@ private fun ColumnScope.ContenidoMapa(onConfirmar: (Double, Double) -> Unit) {
         sinUbicacion = false
         buscando = true
         scope.launch {
-            val actual = UbicacionActual.obtener(context)
+            val actual = UbicacionActual(context).obtener()
             if (actual != null) {
-                ubicacion = GeoPoint(actual.latitude, actual.longitude)
+                ubicacion = GeoPoint(actual.latitud, actual.longitud)
             } else {
                 sinUbicacion = true
             }
@@ -369,7 +369,7 @@ private class PermisoUbicacion(val concedido: Boolean, val bloqueado: Boolean, v
 private fun rememberPermisoUbicacion(): PermisoUbicacion {
     val context = LocalContext.current
     val activity = LocalActivity.current
-    var concedido by remember { mutableStateOf(UbicacionActual.tienePermiso(context)) }
+    var concedido by remember { mutableStateOf(UbicacionActual(context).tienePermiso()) }
     var bloqueado by remember { mutableStateOf(false) }
     val permisos = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
@@ -381,7 +381,7 @@ private fun rememberPermisoUbicacion(): PermisoUbicacion {
 
     // Si lo activó desde los ajustes, al volver a la app se entera
     LifecycleResumeEffect(Unit) {
-        concedido = UbicacionActual.tienePermiso(context)
+        concedido = UbicacionActual(context).tienePermiso()
         if (concedido) bloqueado = false
         onPauseOrDispose { }
     }

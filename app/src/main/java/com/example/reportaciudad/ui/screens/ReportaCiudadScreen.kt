@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +30,7 @@ fun ReportaCiudadScreen(){
 
     val navController = rememberNavController();
     var borrador by remember { mutableStateOf(ReporteFormulario()) }
+    val almacenFotos = AlmacenFotos(LocalContext.current)
     NavHost(
         navController = navController,
         startDestination = "bienvenida"
@@ -52,12 +54,12 @@ fun ReportaCiudadScreen(){
             TipoReporteScreen(
                 onVolver = { navController.popBackStack() },
                 onEmergencia = {
-                    AlmacenFotos.borrar(borrador.fotoRuta)
+                    almacenFotos.borrar(borrador.fotoRuta)
                     borrador = ReporteFormulario()
                     navController.navigate("reportar/emergencia")
                 },
                 onRutina = {
-                    AlmacenFotos.borrar(borrador.fotoRuta)
+                    almacenFotos.borrar(borrador.fotoRuta)
                     borrador = ReporteFormulario()
                     navController.navigate("reportar/problema")
                 }

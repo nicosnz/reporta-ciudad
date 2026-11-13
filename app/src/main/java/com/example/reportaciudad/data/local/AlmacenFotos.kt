@@ -3,18 +3,21 @@ package com.example.reportaciudad.data.local
 import android.content.Context
 import java.io.File
 
+// Fotos de los reportes en la carpeta privada de la app (files/fotos/)
+class AlmacenFotos(context: Context) {
 
-object AlmacenFotos {
+    private val carpeta = File(context.filesDir, CARPETA)
 
-    private const val CARPETA = "fotos"
-
-
-    fun crearArchivo(context: Context): File {
-        val carpeta = File(context.filesDir, CARPETA).apply { mkdirs() }
+    fun crearArchivo(): File {
+        carpeta.mkdirs()
         return File(carpeta, "reporte_${System.currentTimeMillis()}.jpg")
     }
 
     fun borrar(ruta: String?) {
         ruta?.let { File(it).delete() }
+    }
+
+    private companion object {
+        const val CARPETA = "fotos"
     }
 }
