@@ -9,8 +9,7 @@ import com.example.reportaciudad.data.remote.RetrofitReporteRemoteDataSource
 import com.example.reportaciudad.repository.ReporteRepository
 import com.example.reportaciudad.repository.ReporteRepositoryImpl
 
-// Inyección de dependencias manual: acá se arma cada pieza una sola vez.
-// Para probar sin red, cambiar RetrofitReporteRemoteDataSource por FakeReporteRemoteDataSource().
+
 class AppContainer(context: Context) {
 
     private val appContext = context.applicationContext

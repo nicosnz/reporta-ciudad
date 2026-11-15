@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ReporteDao {
 
-    // Flow: la UI se actualiza sola cada vez que cambia la tabla
+
     @Query("SELECT * FROM reportes ORDER BY fechaHora DESC")
     fun observarTodos(): Flow<List<ReporteEntity>>
 

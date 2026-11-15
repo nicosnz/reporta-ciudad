@@ -9,14 +9,14 @@ enum class Familia {
     EMERGENCIA
 }
 
-// Estado del reporte respecto al servidor: se guarda primero en el teléfono y después se envía
+
 enum class EstadoEnvio {
     PENDIENTE,
     ENVIADO,
     ERROR
 }
 
-// Modelo de dominio: guarda datos crudos; los textos que ve el usuario se calculan a partir de ellos.
+
 data class Reporte(
     val id: Long,
     val emergencia: TipoEmergencia? = null,
@@ -36,7 +36,7 @@ data class Reporte(
     val familia: Familia
         get() = if (emergencia != null) Familia.EMERGENCIA else problema?.familia ?: Familia.URBANO
 
-    // Locale.US: siempre con punto decimal, como se escriben las coordenadas
+
     val lugar: String get() = String.format(Locale.US, "%.5f, %.5f", latitud, longitud)
 
     val fecha: String get() = FechaBolivia.textoEnvio(fechaHora)

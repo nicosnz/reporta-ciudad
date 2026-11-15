@@ -6,7 +6,7 @@ import com.example.reportaciudad.data.model.EstadoEnvio
 import com.example.reportaciudad.data.model.TipoEmergencia
 import com.example.reportaciudad.data.model.TipoProblema
 
-// Tabla "reportes". Los enums se guardan como texto (su nombre); Room los convierte solo.
+
 @Entity(tableName = "reportes")
 data class ReporteEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
