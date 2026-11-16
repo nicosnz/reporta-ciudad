@@ -47,7 +47,11 @@ class ReporteRepositoryImpl(
         // 1) Primero en el teléfono: aparece en la lista aunque no haya señal
         val id = dao.insertar(nuevo)
         // 2) Después al servidor
-        return sincronizando.withLock { sincronizar(nuevo.copy(id = id)) }
+        return sincronizando.withLock {
+            // Mientras esperaba, un reintento pudo haberlo enviado ya: no se manda otra vez
+            if (dao.estadoEnvio(id) == EstadoEnvio.ENVIADO) EstadoEnvio.ENVIADO
+            else sincronizar(nuevo.copy(id = id))
+        }
     }
 
     override suspend fun reintentarPendientes() {

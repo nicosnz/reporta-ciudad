@@ -19,6 +19,9 @@ interface ReporteDao {
     @Query("SELECT * FROM reportes WHERE estadoEnvio != 'ENVIADO'")
     suspend fun pendientes(): List<ReporteEntity>
 
+    @Query("SELECT estadoEnvio FROM reportes WHERE id = :id")
+    suspend fun estadoEnvio(id: Long): EstadoEnvio?
+
     @Insert
     suspend fun insertar(reporte: ReporteEntity): Long
 
