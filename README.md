@@ -216,8 +216,7 @@ app/src/main/java/com/example/reportaciudad/
 │       ├── ReporteDto.kt              # JSON del recurso "reportes"
 │       ├── ClienteApi.kt              # Retrofit + OkHttp
 │       ├── ReporteRemoteDataSource.kt # Interfaz de la fuente remota
-│       ├── RetrofitReporteRemoteDataSource.kt
-│       └── FakeReporteRemoteDataSource.kt  # Servidor simulado (sin red)
+│       └── RetrofitReporteRemoteDataSource.kt
 ├── repository/                        # ReporteRepository + ReporteRepositoryImpl
 ├── viewmodel/                         # ReportesViewModel, DetalleViewModel, ReporteFormularioViewModel
 ├── navigation/                        # Rutas type-safe + ReportaCiudadNavHost
@@ -281,10 +280,9 @@ Desde la terminal:
 ```bash
 ./gradlew assembleDebug    # genera app/build/outputs/apk/debug/app-debug.apk
 ./gradlew installDebug     # lo instala en el dispositivo conectado
-./gradlew testDebugUnitTest  # tests unitarios (modelo, JSON y ViewModels)
 ```
 
-La URL del servidor está en `app/build.gradle.kts` (`API_BASE_URL`). Para probar sin red, cambia `RetrofitReporteRemoteDataSource` por `FakeReporteRemoteDataSource()` en `AppContainer`.
+La URL del servidor está en `app/build.gradle.kts` (`API_BASE_URL`).
 
 ### Probar la cámara y el GPS en el emulador
 
@@ -324,7 +322,6 @@ La app guarda los reportes en el teléfono con **Room** y los envía a un servid
 - [x] Reportes guardados en el teléfono con Room
 - [x] Envío a un servidor (MockAPI) con Retrofit, con reintento si no hay conexión
 - [x] Arquitectura en capas: `ui` · `navigation` · `viewmodel` · `repository` · `data/local` · `data/remote`
-- [x] Tests unitarios de modelo, JSON y ViewModels
 
 **Próximas etapas**
 

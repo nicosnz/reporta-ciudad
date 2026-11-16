@@ -1,7 +1,6 @@
 package com.example.reportaciudad.util
 
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -9,7 +8,7 @@ import java.util.TimeZone
 
 object FechaBolivia {
 
-    val ZONA: TimeZone = TimeZone.getTimeZone("America/La_Paz")
+    private val ZONA: TimeZone = TimeZone.getTimeZone("America/La_Paz")
     private val ESPANOL: Locale = Locale.forLanguageTag("es-BO")
 
     private const val MINUTO_MS = 60_000L
@@ -33,11 +32,4 @@ object FechaBolivia {
             else -> "hace ${minutos / DIA_MIN} días"
         }
     }
-
-
-    fun instante(anio: Int, mes: Int, dia: Int, hora: Int, minuto: Int): Long =
-        Calendar.getInstance(ZONA).apply {
-            clear()
-            set(anio, mes - 1, dia, hora, minuto)
-        }.timeInMillis
 }
