@@ -65,6 +65,22 @@ class ReporteRepositoryImpl(
         }
     }
 
+    override suspend fun actualizarEstados() {
+        dao.enviadosAbiertos().forEach { actualizarDesdeServidor(it) }
+    }
+
+    override suspend fun actualizarEstado(id: Long) {
+        val reporte = dao.porId(id) ?: return
+        if (reporte.estadoEnvio == EstadoEnvio.ENVIADO && !reporte.estado.esFinal) actualizarDesdeServidor(reporte)
+    }
+
+    private suspend fun actualizarDesdeServidor(reporte: ReporteEntity) {
+        val remoteId = reporte.remoteId ?: return
+        remoto.seguimiento(remoteId).onSuccess { s ->
+            dao.actualizarEstado(reporte.id, s.estado, s.motivoRechazo, s.fotoArregloUrl)
+        }
+    }
+
     // 1) Sube la foto a Cloudinary (si todavía no se subió)  2) Manda el reporte a MockAPI con su URL
     private suspend fun sincronizar(reporte: ReporteEntity): EstadoEnvio {
         val fotoUrl = reporte.fotoUrl ?: subirFoto(reporte).getOrElse { return marcarError(reporte) }
