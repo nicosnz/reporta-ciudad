@@ -26,6 +26,7 @@ import com.example.reportaciudad.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -43,7 +44,11 @@ import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.ui.theme.UrbanoClaro
 
 @Composable
-fun BienvenidaScreen(onInicio: () -> Unit = {}) {
+fun BienvenidaScreen(
+    // null mientras se lee la sesión guardada: el botón no se muestra para no cambiar de texto
+    haySesion: Boolean? = false,
+    onInicio: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -106,11 +111,14 @@ fun BienvenidaScreen(onInicio: () -> Unit = {}) {
 
             Button(
                 onClick = onInicio,
-                modifier = Modifier.defaultMinSize(minHeight = 56.dp),
+                enabled = haySesion != null,
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 56.dp)
+                    .alpha(if (haySesion == null) 0f else 1f),
                 contentPadding = PaddingValues(horizontal = 32.dp)
             ) {
                 Text(
-                    text = "Ir al Inicio",
+                    text = if (haySesion == true) "Ir al Inicio" else "Iniciar sesión",
                     style = MaterialTheme.typography.labelLarge.copy(fontSize = 17.sp)
                 )
                 Spacer(Modifier.width(12.dp))

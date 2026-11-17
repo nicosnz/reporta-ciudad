@@ -51,7 +51,9 @@ fun ReportaCiudadNavHost() {
 
     NavHost(navController = navController, startDestination = Ruta.Bienvenida) {
         composable<Ruta.Bienvenida> {
+            val haySesion by sesionVm.haySesion.collectAsStateWithLifecycle()
             BienvenidaScreen(
+                haySesion = haySesion,
                 onInicio = {
                     alcance.launch {
                         // Con sesión guardada se entra directo; si no, al login.

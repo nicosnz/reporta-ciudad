@@ -7,6 +7,7 @@ import com.example.reportaciudad.repository.AuthRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -14,6 +15,11 @@ import kotlinx.coroutines.launch
 class SesionViewModel(private val repository: AuthRepository) : ViewModel() {
 
     val sesion: StateFlow<Sesion?> = repository.sesion
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    // null hasta que DataStore responde; después, si hay alguien con sesión iniciada
+    val haySesion: StateFlow<Boolean?> = repository.sesion
+        .map { it != null }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     // Espera a que DataStore responda: al abrir la app el StateFlow todavía puede estar en null
