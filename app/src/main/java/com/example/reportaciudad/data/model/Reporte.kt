@@ -36,9 +36,6 @@ data class Reporte(
     // El estado solo tiene sentido si el reporte llegó al servidor
     val enviado: Boolean get() = estadoEnvio == EstadoEnvio.ENVIADO
 
-    // La copia del teléfono carga sin internet; si ya no está, la del servidor
-    val foto: String? get() = fotoRuta ?: fotoUrl
-
     val categoria: String get() = emergencia?.nombre ?: problema?.nombre.orEmpty()
 
     val titulo: String

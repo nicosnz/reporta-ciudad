@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -26,8 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
@@ -53,6 +50,8 @@ import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.explicacion
+import com.example.reportaciudad.ui.screens.reportar.localizacion.PinCentral
+import com.example.reportaciudad.ui.screens.reportar.resumen.MapaFijo
 import com.example.reportaciudad.ui.theme.Fondo
 import com.example.reportaciudad.ui.theme.Neutro900
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
@@ -131,7 +130,7 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
             }
         }
 
-        TarjetaUbicacion(lugar = reporte.lugar)
+        TarjetaMapa(latitud = reporte.latitud, longitud = reporte.longitud)
     }
 }
 
@@ -317,53 +316,32 @@ private fun TarjetaSinEnviar() {
     }
 }
 
+// Minimapa fijo en lugar de las coordenadas. Sin conexión queda el fondo gris con el pin:
+// no se muestra ningún error.
 @Composable
-private fun TarjetaUbicacion(lugar: String) {
-    Row(
+private fun TarjetaMapa(latitud: Double, longitud: Double) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Superficie, RoundedCornerShape(28.dp))
-            .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        PinUbicacion()
-        Column {
-            Text(
-                text = lugar,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = "Santa Cruz de la Sierra",
-                style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
-                color = Neutro700
-            )
-        }
-    }
-}
-
-// Gota verde con un punto crema: una forma con tres esquinas redondas y una en punta, girada -45°
-@Composable
-private fun PinUbicacion() {
-    val formaGota = RoundedCornerShape(
-        topStart = CornerSize(50),
-        topEnd = CornerSize(50),
-        bottomEnd = CornerSize(50),
-        bottomStart = CornerSize(4.dp)
-    )
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .rotate(-45f)
-            .shadow(4.dp, formaGota)
-            .background(MaterialTheme.colorScheme.primary, formaGota),
-        contentAlignment = Alignment.Center
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
-            Modifier
-                .size(12.dp)
-                .background(MaterialTheme.colorScheme.background, CircleShape)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Neutro200)
+        ) {
+            MapaFijo(latitud, longitud, Modifier.fillMaxSize())
+            PinCentral(Modifier.align(Alignment.Center), ancho = 28.dp, alto = 36.dp)
+        }
+        Text(
+            text = "Santa Cruz de la Sierra",
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.ExtraBold),
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(horizontal = 4.dp)
         )
     }
 }
