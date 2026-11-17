@@ -66,6 +66,7 @@
 | | Pantalla | Qué hace |
 |:---:|---|---|
 | 🏛️ | **Bienvenida** | Presenta la app con el escudo de Santa Cruz y el lema. |
+| 🔑 | **Login** | Usuario y contraseña. Según el rol lleva a **Mis reportes** (vecino) o al **panel del administrador** (por ahora, provisorio). La sesión queda guardada. |
 | 📋 | **Mis reportes** | Lista de reportes con categoría y antigüedad ("recién", "hace 3 h", "hace 17 días"), con un color por familia: 🟢 urbano, 🟠 ambiental. |
 | 🔍 | **Detalle** | Categoría, título, fecha y hora de envío, foto y ubicación del reporte. |
 | 🚨 | **Paso 1 · Tipo** | Elegir entre **emergencia en curso** o **reporte de rutina**. |
@@ -91,7 +92,13 @@
 
 ```mermaid
 flowchart LR
-    A([Bienvenida]) --> B[Mis reportes]
+    A([Bienvenida]) -- sin sesión --> L[Login]
+    A -- sesión de vecino --> B[Mis reportes]
+    A -- sesión de admin --> AD[Panel admin]
+    L -- vecino --> B
+    L -- admin --> AD
+    B -- Salir --> L
+    AD -- Salir --> L
     B --> C[Detalle]
     B -- botón Reportar --> P1[1 · Tipo]
     P1 -- Emergencia --> P2E[2 · Incendio / Humo]
@@ -167,6 +174,24 @@ Room es la **fuente de verdad**: la UI siempre lee de la base local. Los reporte
 
 `fechaHora` va en milisegundos UTC. Las fotos todavía no se suben (`fotoUrl` queda en `null`): se quedan en el teléfono.
 
+### Inicio de sesión
+
+La app busca al usuario en el recurso `usuarios` de MockAPI (`GET /usuarios?usuario=…`) y compara usuario y contraseña exactos. Si coinciden, guarda la sesión (sin la contraseña) con **DataStore**; la próxima vez que se abre la app entra directo a la pantalla de su rol.
+
+**JSON del recurso `usuarios`:**
+
+```json
+{
+  "id": "1",
+  "usuario": "vecino1",
+  "contrasena": "1234",
+  "rol": "VECINO",
+  "nombre": "Vecino de prueba"
+}
+```
+
+`rol` es `VECINO` o `ADMIN`. ⚠️ Es un login **solo para la demo**: MockAPI es público y las contraseñas quedan en texto plano. No uses contraseñas reales.
+
 ---
 
 ## 🛠️ Tecnologías
@@ -205,25 +230,33 @@ app/src/main/java/com/example/reportaciudad/
 ├── ReportaCiudadApp.kt                # Application: crea el AppContainer
 ├── AppContainer.kt                    # Inyección de dependencias manual
 ├── data/
-│   ├── model/                         # Reporte, ReporteFormulario, TipoProblema, TipoEmergencia, Ubicacion
+│   ├── model/                         # Reporte, ReporteFormulario, TipoProblema, TipoEmergencia, Ubicacion, Sesion
 │   ├── local/
 │   │   ├── db/                        # Room: ReporteEntity, ReporteDao, ReportaCiudadDatabase
 │   │   ├── ReporteMapper.kt           # ReporteEntity → Reporte
 │   │   ├── AlmacenFotos.kt            # Fotos en files/fotos/
+│   │   ├── SesionStore.kt             # Sesión guardada con DataStore
 │   │   └── UbicacionActual.kt         # GPS / red
 │   └── remote/
 │       ├── ReporteApi.kt              # Endpoints de MockAPI (Retrofit)
 │       ├── ReporteDto.kt              # JSON del recurso "reportes"
-│       ├── ClienteApi.kt              # Retrofit + OkHttp
-│       ├── ReporteRemoteDataSource.kt # Interfaz de la fuente remota
-│       └── RetrofitReporteRemoteDataSource.kt
-├── repository/                        # ReporteRepository + ReporteRepositoryImpl
-├── viewmodel/                         # ReportesViewModel, DetalleViewModel, ReporteFormularioViewModel
+│       ├── UsuarioApi.kt              # GET /usuarios para el login
+│       ├── UsuarioDto.kt              # JSON del recurso "usuarios"
+│       ├── ClienteApi.kt              # Retrofit + OkHttp (uno para toda la app)
+│       ├── ReporteRemoteDataSource.kt # Interfaces de las fuentes remotas
+│       ├── UsuarioRemoteDataSource.kt
+│       ├── RetrofitReporteRemoteDataSource.kt
+│       └── RetrofitUsuarioRemoteDataSource.kt
+├── repository/                        # ReporteRepository y AuthRepository (+ Impl)
+├── viewmodel/                         # Reportes, Detalle, ReporteFormulario, Login y Sesion ViewModels
 ├── navigation/                        # Rutas type-safe + ReportaCiudadNavHost
 ├── util/                              # FechaBolivia: fechas en hora de Bolivia
 └── ui/
     ├── screens/
     │   ├── bienvenida/
+    │   ├── login/
+    │   ├── admin/                     # Panel del administrador (provisorio)
+    │   ├── componentes/               # BotonSalir
     │   ├── inicio/                    # Mis reportes
     │   ├── detalle/
     │   └── reportar/
@@ -301,6 +334,8 @@ La app guarda los reportes en el teléfono con **Room** y los envía a un servid
 - **Las fotos no se suben al servidor**: MockAPI solo guarda JSON. Se quedan en el teléfono y `fotoUrl` va en `null`.
 - **MockAPI es público**: cualquiera con la URL puede leer los reportes (incluidas las coordenadas). Sirve para pruebas y demos, no para datos reales de vecinos.
 - Los reportes sin enviar se reintentan **al abrir la app**, todavía no en segundo plano.
+- **Mis reportes muestra los reportes de este teléfono**, no los del usuario: los reportes no guardan quién los envió. Si dos vecinos usan el mismo celular ven los mismos reportes, y en un celular nuevo la lista empieza vacía. Cerrar sesión no borra la lista (se perderían los que no se enviaron).
+- El **panel del administrador** es provisorio: todavía no lista ni gestiona reportes.
 - La ubicación es la **posición actual del teléfono**; el lugar se guarda como coordenadas, todavía sin nombre de calle.
 - Los mapas usan los servidores comunitarios de OpenStreetMap: adecuados para pruebas y demos, no para muchos usuarios.
 
@@ -322,6 +357,13 @@ La app guarda los reportes en el teléfono con **Room** y los envía a un servid
 - [x] Reportes guardados en el teléfono con Room
 - [x] Envío a un servidor (MockAPI) con Retrofit, con reintento si no hay conexión
 - [x] Arquitectura en capas: `ui` · `navigation` · `viewmodel` · `repository` · `data/local` · `data/remote`
+
+**Etapa 3 — usuarios** 🚧
+
+- [x] Login con usuario y contraseña (MockAPI) y sesión guardada con DataStore
+- [x] Navegación por rol: vecino → Mis reportes, admin → panel
+- [ ] Panel del administrador: listar, revisar, asignar, resolver y rechazar reportes
+- [ ] Guardar en cada reporte quién lo envió
 
 **Próximas etapas**
 
