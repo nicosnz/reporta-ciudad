@@ -19,6 +19,7 @@ object AppViewModelProvider {
         initializer { ReporteFormularioViewModel(repositorio()) }
         initializer { LoginViewModel(contenedor().authRepository) }
         initializer { SesionViewModel(contenedor().authRepository) }
+        initializer { AdminPanelViewModel(contenedor().adminRepository) }
     }
 
     private fun CreationExtras.contenedor(): AppContainer =
