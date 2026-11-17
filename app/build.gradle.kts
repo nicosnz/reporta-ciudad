@@ -19,6 +19,9 @@ android {
         versionName = "1.0"
 
         buildConfigField("String", "API_BASE_URL", "\"https://6af758f6e844c7ff741c63cd.mockapi.io/api/v1/\"")
+        // Subida de fotos sin firma (preset "unsigned"): no lleva el API Secret
+        buildConfigField("String", "CLOUDINARY_URL", "\"https://api.cloudinary.com/v1_1/dsk6bswx6/\"")
+        buildConfigField("String", "CLOUDINARY_PRESET", "\"reportaCiudad\"")
     }
 
     buildTypes {
