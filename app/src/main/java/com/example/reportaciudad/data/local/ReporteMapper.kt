@@ -10,6 +10,10 @@ fun ReporteEntity.aDominio(): Reporte = Reporte(
     latitud = latitud,
     longitud = longitud,
     fotoRuta = fotoRuta,
+    fotoUrl = fotoUrl,
     fechaHora = fechaHora,
-    estadoEnvio = estadoEnvio
+    estadoEnvio = estadoEnvio,
+    estado = estado,
+    motivoRechazo = motivoRechazo,
+    fotoArregloUrl = fotoArregloUrl
 )
