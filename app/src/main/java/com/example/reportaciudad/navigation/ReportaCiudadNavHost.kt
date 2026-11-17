@@ -3,6 +3,7 @@ package com.example.reportaciudad.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
@@ -11,9 +12,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.reportaciudad.data.model.Rol
+import com.example.reportaciudad.data.model.Sesion
+import com.example.reportaciudad.ui.screens.admin.AdminScreen
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
 import com.example.reportaciudad.ui.screens.inicio.InicioScreen
+import com.example.reportaciudad.ui.screens.login.LoginScreen
 import com.example.reportaciudad.ui.screens.reportar.emergencia.SeleccionEmergenciaScreen
 import com.example.reportaciudad.ui.screens.reportar.fotografia.FotografiaScreen
 import com.example.reportaciudad.ui.screens.reportar.localizacion.LocalizacionScreen
@@ -22,23 +27,63 @@ import com.example.reportaciudad.ui.screens.reportar.resumen.ResumenScreen
 import com.example.reportaciudad.ui.screens.reportar.tipo.TipoReporteScreen
 import com.example.reportaciudad.viewmodel.AppViewModelProvider
 import com.example.reportaciudad.viewmodel.DetalleViewModel
+import com.example.reportaciudad.viewmodel.LoginViewModel
 import com.example.reportaciudad.viewmodel.ReporteFormularioViewModel
 import com.example.reportaciudad.viewmodel.ReportesViewModel
+import com.example.reportaciudad.viewmodel.SesionViewModel
+import kotlinx.coroutines.launch
 
 // Único lugar que conoce la navegación: las pantallas solo avisan con callbacks
 @Composable
 fun ReportaCiudadNavHost() {
     val navController = rememberNavController()
+    val alcance = rememberCoroutineScope()
+    // Dueño: la Activity. Una sola sesión para todas las pantallas.
+    val sesionVm: SesionViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
+    // Salir: borra la sesión y vacía la pila; "Atrás" desde el login sale de la app
+    val cerrarSesion: () -> Unit = {
+        sesionVm.cerrarSesion()
+        navController.navigate(Ruta.Login) {
+            popUpTo(navController.graph.id) { inclusive = true }
+        }
+    }
 
     NavHost(navController = navController, startDestination = Ruta.Bienvenida) {
         composable<Ruta.Bienvenida> {
             BienvenidaScreen(
                 onInicio = {
-                    // La bienvenida no queda en la pila: "Atrás" desde Mis reportes sale de la app
-                    navController.navigate(Ruta.Inicio) {
-                        popUpTo<Ruta.Bienvenida> { inclusive = true }
+                    alcance.launch {
+                        // Con sesión guardada se entra directo; si no, al login.
+                        // La bienvenida no queda en la pila.
+                        navController.navigate(destinoSegunSesion(sesionVm.sesionGuardada())) {
+                            popUpTo<Ruta.Bienvenida> { inclusive = true }
+                        }
                     }
                 }
+            )
+        }
+        composable<Ruta.Login> {
+            val vm: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val estado by vm.estado.collectAsStateWithLifecycle()
+            LoginScreen(
+                estado = estado,
+                onUsuarioCambiado = vm::cambiarUsuario,
+                onContrasenaCambiada = vm::cambiarContrasena,
+                onAlternarContrasena = vm::alternarMostrarContrasena,
+                onIngresar = vm::ingresar,
+                onIngresado = { sesion ->
+                    navController.navigate(destinoSegunSesion(sesion)) {
+                        popUpTo<Ruta.Login> { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable<Ruta.Admin> {
+            val sesion by sesionVm.sesion.collectAsStateWithLifecycle()
+            AdminScreen(
+                nombre = sesion?.nombre.orEmpty(),
+                onCerrarSesion = cerrarSesion
             )
         }
         composable<Ruta.Inicio> {
@@ -48,7 +93,8 @@ fun ReportaCiudadNavHost() {
                 reportes = estado.reportes,
                 cargando = estado.cargando,
                 onAbrirReporte = { id -> navController.navigate(Ruta.Detalle(id)) },
-                onReportar = { navController.navigate(Ruta.FlujoReportar) }
+                onReportar = { navController.navigate(Ruta.FlujoReportar) },
+                onCerrarSesion = cerrarSesion
             )
         }
         composable<Ruta.Detalle> {
@@ -130,6 +176,13 @@ fun ReportaCiudadNavHost() {
             }
         }
     }
+}
+
+// Pantalla de entrada según quién inició sesión
+private fun destinoSegunSesion(sesion: Sesion?): Any = when (sesion?.rol) {
+    null -> Ruta.Login
+    Rol.VECINO -> Ruta.Inicio
+    Rol.ADMIN -> Ruta.Admin
 }
 
 // Las pantallas del flujo "Reportar" comparten el ViewModel que pertenece al subgrafo:

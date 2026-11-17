@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 // Rutas type-safe: el compilador verifica destinos y argumentos (nada de strings sueltos)
 object Ruta {
     @Serializable data object Bienvenida
+    @Serializable data object Login
+    @Serializable data object Admin
     @Serializable data object Inicio
     @Serializable data class Detalle(val id: Long)
 
