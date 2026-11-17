@@ -49,6 +49,7 @@ import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.TipoEmergencia
 import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.ui.screens.componentes.BotonSalir
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
 import com.example.reportaciudad.ui.theme.Neutro200
@@ -63,7 +64,8 @@ fun InicioScreen(
     reportes: List<Reporte>,
     cargando: Boolean = false,
     onAbrirReporte: (Long) -> Unit = {},
-    onReportar: () -> Unit = {}
+    onReportar: () -> Unit = {},
+    onCerrarSesion: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -78,17 +80,24 @@ fun InicioScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                Text(
-                    text = "Mis reportes",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 32.sp,
-                        lineHeight = 36.sp,
-                        letterSpacing = (-0.025).em
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-
-                    modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Mis reportes",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontSize = 32.sp,
+                            lineHeight = 36.sp,
+                            letterSpacing = (-0.025).em
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.weight(1f)
+                    )
+                    BotonSalir(onClick = onCerrarSesion)
+                }
             }
             if (reportes.isEmpty() && !cargando) {
                 item {
