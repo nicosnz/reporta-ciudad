@@ -42,9 +42,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.Familia
+import com.example.reportaciudad.data.model.MotivoRechazo
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.ui.screens.componentes.BarraEstado
+import com.example.reportaciudad.ui.screens.componentes.explicacion
+import com.example.reportaciudad.ui.theme.Neutro900
 import com.example.reportaciudad.viewmodel.DetalleUiState
 import java.io.File
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
@@ -98,6 +107,8 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Encabezado(reporte)
+
+        if (reporte.enviado) TarjetaEstado(reporte) else TarjetaSinEnviar()
 
         reporte.fotoRuta?.let { ruta ->
             AsyncImage(
@@ -173,6 +184,68 @@ private fun Encabezado(reporte: Reporte) {
     }
 }
 
+
+@Composable
+private fun TarjetaEstado(reporte: Reporte) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Superficie, RoundedCornerShape(24.dp))
+            .padding(horizontal = 18.dp, vertical = 16.dp)
+            .semantics(mergeDescendants = true) {},
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        BarraEstado(estado = reporte.estado, anchoSegmento = 22.dp, altoSegmento = 5.dp, tamanoTexto = 15.sp)
+        Text(
+            text = reporte.estado.explicacion,
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 21.sp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        if (reporte.estado == EstadoReporte.RECHAZADO) {
+            reporte.motivoRechazo?.let { MotivoRechazoCaja(it) }
+        }
+    }
+}
+
+@Composable
+private fun MotivoRechazoCaja(motivo: MotivoRechazo) {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(SpanStyle(fontWeight = FontWeight.ExtraBold)) { append("Motivo: ${motivo.nombre}.") }
+            if (motivo.explicacion.isNotEmpty()) append(" ${motivo.explicacion}")
+        },
+        style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, lineHeight = 19.sp),
+        color = Emergencia,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(EmergenciaClaro, RoundedCornerShape(14.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+    )
+}
+
+// El reporte quedó guardado en el teléfono y todavía no llegó al servidor: no tiene estado
+@Composable
+private fun TarjetaSinEnviar() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Superficie, RoundedCornerShape(24.dp))
+            .padding(horizontal = 18.dp, vertical = 16.dp)
+            .semantics(mergeDescendants = true) {},
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Text(
+            text = "Sin enviar",
+            style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.sp),
+            color = Neutro900
+        )
+        Text(
+            text = "Todavía no llegó a la municipalidad. Lo enviamos cuando vuelva la señal.",
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 21.sp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
 
 @Composable
 private fun TarjetaUbicacion(lugar: String) {
