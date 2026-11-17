@@ -68,7 +68,7 @@
 | 🏛️ | **Bienvenida** | Presenta la app con el escudo de Santa Cruz y el lema. |
 | 🔑 | **Login** | Usuario y contraseña. Según el rol lleva a **Mis reportes** (vecino) o al **panel del administrador** (por ahora, provisorio). La sesión queda guardada. |
 | 📋 | **Mis reportes** | Lista de reportes con categoría y antigüedad ("recién", "hace 3 h", "hace 17 días"), con un color por familia: 🟢 urbano, 🟠 ambiental. |
-| 🔍 | **Detalle** | Categoría, título, fecha y hora de envío, foto y ubicación del reporte. |
+| 🔍 | **Detalle** | Categoría, título, fecha y hora de envío, **estado** del reporte (con el motivo si se rechazó), foto (o **antes / después** si se resolvió) y un **minimapa** del lugar. |
 | 🚨 | **Paso 1 · Tipo** | Elegir entre **emergencia en curso** o **reporte de rutina**. |
 | 🗂️ | **Paso 2 · Categoría** | Emergencias: incendio o humo. Rutina: basura, bache, alumbrado o fuga de agua. |
 | 📷 | **Paso 3 · Fotografía** | Cámara dentro de la app (CameraX): visor con guías, destello, *Repetir* o *Usar foto*. |
@@ -151,12 +151,15 @@ Paso 5  →  vm.enviar()  →  repository.enviar(borrador)
 ### Envío: primero el teléfono, después el servidor
 
 ```
-1. Room      INSERT con estado PENDIENTE   → aparece en Mis reportes al instante
-2. MockAPI   POST /reportes                → devuelve el id del servidor
-3. Room      estado ENVIADO (+ remoteId)   o   ERROR si no hubo conexión
+1. Room        INSERT con estado PENDIENTE   → aparece en Mis reportes al instante
+2. Cloudinary  POST /image/upload            → URL de la foto (se guarda en Room enseguida)
+3. MockAPI     POST /reportes con fotoUrl    → devuelve el id del servidor
+4. Room        estado ENVIADO (+ remoteId)   o   ERROR si falló la foto o el reporte
 ```
 
-Room es la **fuente de verdad**: la UI siempre lee de la base local. Los reportes que no se pudieron enviar se marcan *"sin enviar"* en la lista y se reintentan al volver a abrir la app.
+Room es la **fuente de verdad**: la UI siempre lee de la base local. Los reportes que no se pudieron enviar se marcan *"sin enviar"* en la lista y se reintentan al volver a abrir la app. Si la foto ya se había subido, el reintento no la vuelve a subir.
+
+La cámara saca la foto a unos **1280×960** (no a la resolución completa del sensor), así pesa unos cientos de KB y se sube rápido con datos móviles.
 
 **JSON del recurso `reportes`:**
 
@@ -168,11 +171,28 @@ Room es la **fuente de verdad**: la UI siempre lee de la base local. Los reporte
   "latitud": -17.7836,
   "longitud": -63.1812,
   "fechaHora": 1794500000000,
-  "fotoUrl": null
+  "fotoUrl": "https://res.cloudinary.com/dsk6bswx6/image/upload/…/reporte_1794500000000.jpg",
+  "estado": "EN_REVISION",
+  "motivoRechazo": "",
+  "fotoArregloUrl": ""
 }
 ```
 
-`fechaHora` va en milisegundos UTC. Las fotos todavía no se suben (`fotoUrl` queda en `null`): se quedan en el teléfono.
+`fechaHora` va en milisegundos UTC. Un reporte sin `estado` cuenta como `RECIBIDO`.
+
+### Estados del reporte
+
+La municipalidad cambia `estado` en el servidor (por ahora, a mano en el panel de MockAPI). La app los trae con `GET /reportes/{id}` cada vez que se entra a **Mis reportes** o al **detalle**, y los guarda en Room. Sin conexión se ve el último estado conocido. Resuelto y rechazado son finales: no se vuelven a consultar.
+
+| `estado` | Barra | Qué ve el vecino |
+|---|---|---|
+| `RECIBIDO` | ▰▱▱▱ | Llegó a la municipalidad, nadie lo revisó |
+| `EN_REVISION` | ▰▰▱▱ | Lo están evaluando |
+| `ASIGNADO` | ▰▰▰▱ | Lo tiene el equipo que lo va a arreglar |
+| `RESUELTO` | ▰▰▰▰ | Arreglado; si hay `fotoArregloUrl`, fotos **antes / después** |
+| `RECHAZADO` | ▰▰▰▰ (rojo) | No se va a atender; muestra `motivoRechazo` |
+
+`motivoRechazo`: `DUPLICADO`, `NO_CORRESPONDE`, `NO_ENCONTRADO` u `OTRO`.
 
 ### Inicio de sesión
 
@@ -205,8 +225,9 @@ La app busca al usuario en el recurso `usuarios` de MockAPI (`GET /usuarios?usua
 | Red | Retrofit + kotlinx.serialization + OkHttp | 3.0.0 |
 | Estado | ViewModel + StateFlow (Lifecycle) | 2.11.0 |
 | Servidor | [MockAPI](https://mockapi.io) (API REST de prueba) | — |
+| Fotos | [Cloudinary](https://cloudinary.com) (subida sin firma) | — |
 | Cámara | CameraX (`camera-camera2`, `camera-lifecycle`, `camera-view`) | 1.6.2 |
-| Imágenes | Coil | 3.4.0 |
+| Imágenes | Coil (+ `coil-network-okhttp` para URLs) | 3.4.0 |
 | Mapas | osmdroid + tiles de OpenStreetMap | 6.1.20 |
 | Ubicación | `LocationManager` de Android (sin Google Play Services) | — |
 | Build | Gradle Kotlin DSL + catálogo de versiones, AGP | 9.3 |
@@ -230,7 +251,7 @@ app/src/main/java/com/example/reportaciudad/
 ├── ReportaCiudadApp.kt                # Application: crea el AppContainer
 ├── AppContainer.kt                    # Inyección de dependencias manual
 ├── data/
-│   ├── model/                         # Reporte, ReporteFormulario, TipoProblema, TipoEmergencia, Ubicacion, Sesion
+│   ├── model/                         # Reporte, EstadoReporte, ReporteFormulario, TipoProblema, TipoEmergencia, Ubicacion, Sesion
 │   ├── local/
 │   │   ├── db/                        # Room: ReporteEntity, ReporteDao, ReportaCiudadDatabase
 │   │   ├── ReporteMapper.kt           # ReporteEntity → Reporte
@@ -245,6 +266,9 @@ app/src/main/java/com/example/reportaciudad/
 │       ├── ClienteApi.kt              # Retrofit + OkHttp (uno para toda la app)
 │       ├── ReporteRemoteDataSource.kt # Interfaces de las fuentes remotas
 │       ├── UsuarioRemoteDataSource.kt
+│       ├── FotoRemoteDataSource.kt
+│       ├── CloudinaryApi.kt           # Subida de fotos (multipart)
+│       ├── CloudinaryFotoRemoteDataSource.kt
 │       ├── RetrofitReporteRemoteDataSource.kt
 │       └── RetrofitUsuarioRemoteDataSource.kt
 ├── repository/                        # ReporteRepository y AuthRepository (+ Impl)
@@ -256,7 +280,7 @@ app/src/main/java/com/example/reportaciudad/
     │   ├── bienvenida/
     │   ├── login/
     │   ├── admin/                     # Panel del administrador (provisorio)
-    │   ├── componentes/               # BotonSalir
+    │   ├── componentes/               # BotonSalir, BarraEstado
     │   ├── inicio/                    # Mis reportes
     │   ├── detalle/
     │   └── reportar/
@@ -331,8 +355,9 @@ La URL del servidor está en `app/build.gradle.kts` (`API_BASE_URL`).
 
 La app guarda los reportes en el teléfono con **Room** y los envía a un servidor de prueba en **MockAPI**. Por ahora:
 
-- **Las fotos no se suben al servidor**: MockAPI solo guarda JSON. Se quedan en el teléfono y `fotoUrl` va en `null`.
+- **Las fotos se suben a Cloudinary con un preset sin firma**: el *cloud name* y el preset van dentro de la app, así que cualquiera que los saque podría subir imágenes a la cuenta. Las fotos tienen URL pública. En producción, las subidas las debería firmar un backend.
 - **MockAPI es público**: cualquiera con la URL puede leer los reportes (incluidas las coordenadas). Sirve para pruebas y demos, no para datos reales de vecinos.
+- Los **estados se cambian a mano** en MockAPI hasta que exista el panel del administrador.
 - Los reportes sin enviar se reintentan **al abrir la app**, todavía no en segundo plano.
 - **Mis reportes muestra los reportes de este teléfono**, no los del usuario: los reportes no guardan quién los envió. Si dos vecinos usan el mismo celular ven los mismos reportes, y en un celular nuevo la lista empieza vacía. Cerrar sesión no borra la lista (se perderían los que no se enviaron).
 - El **panel del administrador** es provisorio: todavía no lista ni gestiona reportes.
@@ -362,14 +387,16 @@ La app guarda los reportes en el teléfono con **Room** y los envía a un servid
 
 - [x] Login con usuario y contraseña (MockAPI) y sesión guardada con DataStore
 - [x] Navegación por rol: vecino → Mis reportes, admin → panel
+- [x] Fotos subidas a Cloudinary, sacadas a unos 1280×960
+- [x] Estados del reporte (Recibido, En revisión, Asignado, Resuelto, Rechazado) en la lista y el detalle
+- [x] Detalle con motivo de rechazo, fotos antes / después y minimapa
 - [ ] Panel del administrador: listar, revisar, asignar, resolver y rechazar reportes
 - [ ] Guardar en cada reporte quién lo envió
 
 **Próximas etapas**
 
-- [ ] Subir las fotos a un servicio de archivos y guardar su URL
 - [ ] Reintentar los envíos en segundo plano (WorkManager)
-- [ ] Estados del reporte: Recibido, Visto, Asignado, Resuelto
+- [ ] Avisar al vecino cuando cambia el estado de su reporte
 - [ ] Nombre de la calle a partir de las coordenadas
 - [ ] Mostrar la foto real en la lista de Mis reportes
 - [ ] Alertas de incendio por niveles
