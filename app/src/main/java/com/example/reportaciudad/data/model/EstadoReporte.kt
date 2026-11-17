@@ -12,6 +12,24 @@ enum class EstadoReporte(val nombre: String, val paso: Int) {
     // Resuelto y rechazado ya no cambian: no hace falta volver a consultarlos
     val esFinal: Boolean get() = this == RESUELTO || this == RECHAZADO
 
+    // Al que avanza el administrador con el botón principal. Null en los finales.
+    // Rechazar no está acá: se puede desde cualquier estado abierto, con un motivo.
+    val siguiente: EstadoReporte?
+        get() = when (this) {
+            RECIBIDO -> EN_REVISION
+            EN_REVISION -> ASIGNADO
+            ASIGNADO -> RESUELTO
+            RESUELTO, RECHAZADO -> null
+        }
+
+    // En qué pestaña del panel del administrador aparece
+    val bandeja: Bandeja
+        get() = when (this) {
+            RECIBIDO, EN_REVISION -> Bandeja.PENDIENTES
+            ASIGNADO -> Bandeja.EN_CURSO
+            RESUELTO, RECHAZADO -> Bandeja.CERRADOS
+        }
+
     companion object {
         // Un reporte viejo sin estado, o con un valor desconocido, cuenta como recién recibido
         fun desdeTexto(texto: String?): EstadoReporte =
