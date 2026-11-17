@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -26,8 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
@@ -42,9 +39,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.Familia
+import com.example.reportaciudad.data.model.MotivoRechazo
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.ui.screens.componentes.BarraEstado
+import com.example.reportaciudad.ui.screens.componentes.explicacion
+import com.example.reportaciudad.ui.screens.reportar.localizacion.PinCentral
+import com.example.reportaciudad.ui.screens.reportar.resumen.MapaFijo
+import com.example.reportaciudad.ui.theme.Fondo
+import com.example.reportaciudad.ui.theme.Neutro900
+import com.example.reportaciudad.ui.theme.UrbanoOscuro
 import com.example.reportaciudad.viewmodel.DetalleUiState
 import java.io.File
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
@@ -99,20 +109,90 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
     ) {
         Encabezado(reporte)
 
-        reporte.fotoRuta?.let { ruta ->
-            AsyncImage(
-                model = File(ruta),
-                contentDescription = "Foto del reporte",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-                    .clip(RoundedCornerShape(32.dp))
-                    .background(Neutro200)
-            )
+        if (reporte.enviado) TarjetaEstado(reporte) else TarjetaSinEnviar()
+
+        val fotoArreglo = reporte.fotoArregloUrl
+        if (reporte.estado == EstadoReporte.RESUELTO && fotoArreglo != null) {
+            FotosAntesDespues(antes = reporte.modeloFoto(), despues = fotoArreglo)
+        } else {
+            // Sin foto no se muestra ninguna de ejemplo
+            reporte.modeloFoto()?.let { foto ->
+                AsyncImage(
+                    model = foto,
+                    contentDescription = "Foto del reporte",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .clip(RoundedCornerShape(28.dp))
+                        .background(Neutro200)
+                )
+            }
         }
 
-        TarjetaUbicacion(lugar = reporte.lugar)
+        TarjetaMapa(latitud = reporte.latitud, longitud = reporte.longitud)
+    }
+}
+
+// La foto del teléfono si todavía está (carga sin internet); si no, la de Cloudinary
+private fun Reporte.modeloFoto(): Any? =
+    fotoRuta?.let(::File)?.takeIf { it.exists() } ?: fotoUrl
+
+@Composable
+private fun FotosAntesDespues(antes: Any?, despues: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        FotoConEtiqueta(
+            modelo = antes,
+            etiqueta = "Antes",
+            colorEtiqueta = Neutro700,
+            descripcion = "Tu foto, antes del arreglo",
+            modifier = Modifier.weight(1f)
+        )
+        FotoConEtiqueta(
+            modelo = despues,
+            etiqueta = "Después",
+            colorEtiqueta = UrbanoOscuro,
+            descripcion = "Foto del arreglo",
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun FotoConEtiqueta(
+    modelo: Any?,
+    etiqueta: String,
+    colorEtiqueta: Color,
+    descripcion: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(190.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(Neutro200)
+    ) {
+        if (modelo != null) {
+            AsyncImage(
+                model = modelo,
+                contentDescription = descripcion,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        Text(
+            text = etiqueta,
+            style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp),
+            color = colorEtiqueta,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(10.dp)
+                .background(Fondo.copy(alpha = 0.92f), CircleShape)
+                .padding(horizontal = 10.dp, vertical = 4.dp)
+        )
     }
 }
 
@@ -175,52 +255,93 @@ private fun Encabezado(reporte: Reporte) {
 
 
 @Composable
-private fun TarjetaUbicacion(lugar: String) {
-    Row(
+private fun TarjetaEstado(reporte: Reporte) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Superficie, RoundedCornerShape(28.dp))
-            .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
+            .background(Superficie, RoundedCornerShape(24.dp))
+            .padding(horizontal = 18.dp, vertical = 16.dp)
+            .semantics(mergeDescendants = true) {},
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        PinUbicacion()
-        Column {
-            Text(
-                text = lugar,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = "Santa Cruz de la Sierra",
-                style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
-                color = Neutro700
-            )
+        BarraEstado(estado = reporte.estado, anchoSegmento = 22.dp, altoSegmento = 5.dp, tamanoTexto = 15.sp)
+        Text(
+            text = reporte.estado.explicacion,
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 21.sp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        if (reporte.estado == EstadoReporte.RECHAZADO) {
+            reporte.motivoRechazo?.let { MotivoRechazoCaja(it) }
         }
     }
 }
 
-// Gota verde con un punto crema: una forma con tres esquinas redondas y una en punta, girada -45°
 @Composable
-private fun PinUbicacion() {
-    val formaGota = RoundedCornerShape(
-        topStart = CornerSize(50),
-        topEnd = CornerSize(50),
-        bottomEnd = CornerSize(50),
-        bottomStart = CornerSize(4.dp)
-    )
-    Box(
+private fun MotivoRechazoCaja(motivo: MotivoRechazo) {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(SpanStyle(fontWeight = FontWeight.ExtraBold)) { append("Motivo: ${motivo.nombre}.") }
+            if (motivo.explicacion.isNotEmpty()) append(" ${motivo.explicacion}")
+        },
+        style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, lineHeight = 19.sp),
+        color = Emergencia,
         modifier = Modifier
-            .size(36.dp)
-            .rotate(-45f)
-            .shadow(4.dp, formaGota)
-            .background(MaterialTheme.colorScheme.primary, formaGota),
-        contentAlignment = Alignment.Center
+            .fillMaxWidth()
+            .background(EmergenciaClaro, RoundedCornerShape(14.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+    )
+}
+
+// El reporte quedó guardado en el teléfono y todavía no llegó al servidor: no tiene estado
+@Composable
+private fun TarjetaSinEnviar() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Superficie, RoundedCornerShape(24.dp))
+            .padding(horizontal = 18.dp, vertical = 16.dp)
+            .semantics(mergeDescendants = true) {},
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Text(
+            text = "Sin enviar",
+            style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.sp),
+            color = Neutro900
+        )
+        Text(
+            text = "Todavía no llegó a la municipalidad. Lo enviamos cuando vuelva la señal.",
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 21.sp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+// Minimapa fijo en lugar de las coordenadas. Sin conexión queda el fondo gris con el pin:
+// no se muestra ningún error.
+@Composable
+private fun TarjetaMapa(latitud: Double, longitud: Double) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Superficie, RoundedCornerShape(28.dp))
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
-            Modifier
-                .size(12.dp)
-                .background(MaterialTheme.colorScheme.background, CircleShape)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Neutro200)
+        ) {
+            MapaFijo(latitud, longitud, Modifier.fillMaxSize())
+            PinCentral(Modifier.align(Alignment.Center), ancho = 28.dp, alto = 36.dp)
+        }
+        Text(
+            text = "Santa Cruz de la Sierra",
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.ExtraBold),
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(horizontal = 4.dp)
         )
     }
 }

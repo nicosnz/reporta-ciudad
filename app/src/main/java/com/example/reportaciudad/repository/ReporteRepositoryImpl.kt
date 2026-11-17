@@ -9,6 +9,7 @@ import com.example.reportaciudad.data.model.EstadoEnvio
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.ReporteFormulario
 import com.example.reportaciudad.data.model.Ubicacion
+import com.example.reportaciudad.data.remote.FotoRemoteDataSource
 import com.example.reportaciudad.data.remote.ReporteRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,6 +20,7 @@ import java.io.File
 class ReporteRepositoryImpl(
     private val dao: ReporteDao,
     private val remoto: ReporteRemoteDataSource,
+    private val fotos: FotoRemoteDataSource,
     private val almacenFotos: AlmacenFotos,
     private val ubicacionActual: UbicacionActual,
     private val ahora: () -> Long = System::currentTimeMillis
@@ -63,17 +65,45 @@ class ReporteRepositoryImpl(
         }
     }
 
-    private suspend fun sincronizar(reporte: ReporteEntity): EstadoEnvio =
-        remoto.enviar(reporte.aDominio()).fold(
+    override suspend fun actualizarEstados() {
+        dao.enviadosAbiertos().forEach { actualizarDesdeServidor(it) }
+    }
+
+    override suspend fun actualizarEstado(id: Long) {
+        val reporte = dao.porId(id) ?: return
+        if (reporte.estadoEnvio == EstadoEnvio.ENVIADO && !reporte.estado.esFinal) actualizarDesdeServidor(reporte)
+    }
+
+    private suspend fun actualizarDesdeServidor(reporte: ReporteEntity) {
+        val remoteId = reporte.remoteId ?: return
+        remoto.seguimiento(remoteId).onSuccess { s ->
+            dao.actualizarEstado(reporte.id, s.estado, s.motivoRechazo, s.fotoArregloUrl)
+        }
+    }
+
+    // 1) Sube la foto a Cloudinary (si todavía no se subió)  2) Manda el reporte a MockAPI con su URL
+    private suspend fun sincronizar(reporte: ReporteEntity): EstadoEnvio {
+        val fotoUrl = reporte.fotoUrl ?: subirFoto(reporte).getOrElse { return marcarError(reporte) }
+        return remoto.enviar(reporte.copy(fotoUrl = fotoUrl).aDominio()).fold(
             onSuccess = { remoteId ->
                 dao.actualizarEnvio(reporte.id, EstadoEnvio.ENVIADO, remoteId)
                 EstadoEnvio.ENVIADO
             },
-            onFailure = {
-                dao.actualizarEnvio(reporte.id, EstadoEnvio.ERROR, null)
-                EstadoEnvio.ERROR
-            }
+            onFailure = { marcarError(reporte) }
         )
+    }
+
+    // URL de la foto subida, o null si el reporte no tiene foto (o el archivo ya no está).
+    // Se guarda enseguida en Room: si después falla el envío, el reintento no la vuelve a subir.
+    private suspend fun subirFoto(reporte: ReporteEntity): Result<String?> {
+        val archivo = reporte.fotoRuta?.let(::File)?.takeIf { it.exists() } ?: return Result.success(null)
+        return fotos.subir(archivo).onSuccess { url -> dao.actualizarFotoUrl(reporte.id, url) }
+    }
+
+    private suspend fun marcarError(reporte: ReporteEntity): EstadoEnvio {
+        dao.actualizarEnvio(reporte.id, EstadoEnvio.ERROR, null)
+        return EstadoEnvio.ERROR
+    }
 
     override fun nuevoArchivoFoto(): File = almacenFotos.crearArchivo()
 

@@ -1,0 +1,97 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "0992aa2327a60e3bf3a54e6b0a392e7c",
+    "entities": [
+      {
+        "tableName": "reportes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` TEXT, `emergencia` TEXT, `problema` TEXT, `latitud` REAL NOT NULL, `longitud` REAL NOT NULL, `fotoRuta` TEXT, `fotoUrl` TEXT, `fechaHora` INTEGER NOT NULL, `estadoEnvio` TEXT NOT NULL, `estado` TEXT NOT NULL DEFAULT 'RECIBIDO', `motivoRechazo` TEXT, `fotoArregloUrl` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remoteId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "emergencia",
+            "columnName": "emergencia",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "problema",
+            "columnName": "problema",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "latitud",
+            "columnName": "latitud",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitud",
+            "columnName": "longitud",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fotoRuta",
+            "columnName": "fotoRuta",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fotoUrl",
+            "columnName": "fotoUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fechaHora",
+            "columnName": "fechaHora",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estadoEnvio",
+            "columnName": "estadoEnvio",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estado",
+            "columnName": "estado",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'RECIBIDO'"
+          },
+          {
+            "fieldPath": "motivoRechazo",
+            "columnName": "motivoRechazo",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fotoArregloUrl",
+            "columnName": "fotoArregloUrl",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0992aa2327a60e3bf3a54e6b0a392e7c')"
+    ]
+  }
+}

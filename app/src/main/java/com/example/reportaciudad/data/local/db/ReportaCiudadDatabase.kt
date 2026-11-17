@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [ReporteEntity::class], version = 1, exportSchema = true)
+@Database(entities = [ReporteEntity::class], version = 2, exportSchema = true)
 abstract class ReportaCiudadDatabase : RoomDatabase() {
 
     abstract fun reporteDao(): ReporteDao
@@ -13,8 +15,20 @@ abstract class ReportaCiudadDatabase : RoomDatabase() {
     companion object {
         private const val NOMBRE = "reporta_ciudad.db"
 
+        // Versión 2: estado del reporte, motivo de rechazo y URLs de las fotos.
+        // Los reportes que ya estaban quedan como RECIBIDO y sin URLs.
+        val MIGRACION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE reportes ADD COLUMN fotoUrl TEXT")
+                db.execSQL("ALTER TABLE reportes ADD COLUMN estado TEXT NOT NULL DEFAULT 'RECIBIDO'")
+                db.execSQL("ALTER TABLE reportes ADD COLUMN motivoRechazo TEXT")
+                db.execSQL("ALTER TABLE reportes ADD COLUMN fotoArregloUrl TEXT")
+            }
+        }
+
         fun crear(context: Context): ReportaCiudadDatabase =
             Room.databaseBuilder(context.applicationContext, ReportaCiudadDatabase::class.java, NOMBRE)
+                .addMigrations(MIGRACION_1_2)
                 .build()
     }
 }

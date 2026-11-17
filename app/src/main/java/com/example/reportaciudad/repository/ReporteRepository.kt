@@ -22,6 +22,13 @@ interface ReporteRepository {
     // Reenvía los reportes que quedaron sin enviar
     suspend fun reintentarPendientes()
 
+    // Trae del servidor el estado de los reportes enviados que todavía pueden cambiar.
+    // Sin conexión no hace nada: se sigue viendo el último estado conocido.
+    suspend fun actualizarEstados()
+
+    // Lo mismo para un solo reporte (al abrir su detalle)
+    suspend fun actualizarEstado(id: Long)
+
     fun nuevoArchivoFoto(): File
 
     fun descartarFoto(ruta: String?)

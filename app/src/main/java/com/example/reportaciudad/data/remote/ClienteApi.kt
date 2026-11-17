@@ -14,11 +14,13 @@ object ClienteApi {
     // MockAPI agrega campos propios (createdAt…): se ignoran en vez de fallar
     private val json = Json { ignoreUnknownKeys = true }
 
-    // Un solo Retrofit para toda la app: ReporteApi y UsuarioApi comparten conexión
+    // Un Retrofit por servidor: MockAPI (reportes y usuarios) y Cloudinary (fotos)
     fun crear(baseUrl: String = BuildConfig.API_BASE_URL): Retrofit {
         val http = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
+            // Subir una foto con señal débil puede tardar más que una petición JSON
+            .writeTimeout(30, TimeUnit.SECONDS)
             .apply {
                 // El log de peticiones solo en debug: incluye coordenadas y contraseñas
                 if (BuildConfig.DEBUG) {

@@ -1,9 +1,10 @@
 package com.example.reportaciudad.data.remote
 
+import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.Reporte
 import kotlinx.serialization.Serializable
 
-// JSON del recurso "reportes" en MockAPI. Los enums viajan como texto (BACHE, INCENDIO…).
+// JSON del recurso "reportes" en MockAPI. Los enums viajan como texto (BACHE, INCENDIO, EN_REVISION…).
 @Serializable
 data class ReporteDto(
     // Lo asigna MockAPI: no se manda al crear (los valores por defecto no se serializan)
@@ -15,8 +16,12 @@ data class ReporteDto(
     val longitud: Double,
     // Milisegundos desde 1970 (UTC)
     val fechaHora: Long,
-    // Todavía no se suben fotos: queda null hasta tener un servicio de archivos
-    val fotoUrl: String?
+    // URL de la foto en Cloudinary; null si el reporte se envió sin foto
+    val fotoUrl: String?,
+    // Los cambia el administrador. Un reporte viejo puede no tenerlos: se leen como RECIBIDO y vacío.
+    val estado: String? = null,
+    val motivoRechazo: String? = null,
+    val fotoArregloUrl: String? = null
 )
 
 fun Reporte.aDto(): ReporteDto = ReporteDto(
@@ -25,5 +30,11 @@ fun Reporte.aDto(): ReporteDto = ReporteDto(
     latitud = latitud,
     longitud = longitud,
     fechaHora = fechaHora,
-    fotoUrl = null
+    fotoUrl = fotoUrl,
+    // Todo reporte nuevo empieza como recibido
+    estado = EstadoReporte.RECIBIDO.name,
+    // Se mandan vacíos a propósito: si faltan en el POST, MockAPI los rellena con texto de
+    // ejemplo ("motivoRechazo 1", "fotoArregloUrl 1"). "" no es el valor por defecto, así que se serializa.
+    motivoRechazo = "",
+    fotoArregloUrl = ""
 )

@@ -24,9 +24,18 @@ data class Reporte(
     val latitud: Double,
     val longitud: Double,
     val fotoRuta: String? = null,
+    // URL de la foto en Cloudinary; null mientras no se haya subido
+    val fotoUrl: String? = null,
     val fechaHora: Long = System.currentTimeMillis(),
-    val estadoEnvio: EstadoEnvio = EstadoEnvio.PENDIENTE
+    val estadoEnvio: EstadoEnvio = EstadoEnvio.PENDIENTE,
+    val estado: EstadoReporte = EstadoReporte.RECIBIDO,
+    val motivoRechazo: MotivoRechazo? = null,
+    // Foto que sube la cuadrilla cuando lo arregla
+    val fotoArregloUrl: String? = null
 ) {
+    // El estado solo tiene sentido si el reporte llegó al servidor
+    val enviado: Boolean get() = estadoEnvio == EstadoEnvio.ENVIADO
+
     val categoria: String get() = emergencia?.nombre ?: problema?.nombre.orEmpty()
 
     val titulo: String

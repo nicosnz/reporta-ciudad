@@ -49,6 +49,7 @@ import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.TipoEmergencia
 import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.BotonSalir
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
@@ -166,6 +167,10 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp, lineHeight = 18.sp),
                     color = Neutro700
                 )
+                // Solo los que llegaron al servidor tienen estado; los otros dicen "sin enviar"
+                if (reporte.enviado) {
+                    BarraEstado(estado = reporte.estado, modifier = Modifier.padding(top = 2.dp))
+                }
             }
             Icon(
                 imageVector = IconoChevron,

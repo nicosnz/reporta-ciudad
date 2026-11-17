@@ -1,6 +1,7 @@
 package com.example.reportaciudad.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -91,6 +92,8 @@ fun ReportaCiudadNavHost() {
         composable<Ruta.Inicio> {
             val vm: ReportesViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
+            // Corre cada vez que se vuelve a Mis reportes (al volver del detalle o del flujo Reportar)
+            LaunchedEffect(Unit) { vm.actualizarEstados() }
             InicioScreen(
                 reportes = estado.reportes,
                 cargando = estado.cargando,

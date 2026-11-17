@@ -256,9 +256,10 @@ private fun TarjetaUbicacion(latitud: Double, longitud: Double) {
     )
 }
 
-// Mapa de OpenStreetMap centrado en el punto del reporte; solo se muestra, no se mueve
+// Mapa de OpenStreetMap centrado en el punto del reporte; solo se muestra, no se mueve.
+// También lo usa el detalle del reporte.
 @Composable
-private fun MapaFijo(latitud: Double, longitud: Double, modifier: Modifier = Modifier) {
+internal fun MapaFijo(latitud: Double, longitud: Double, modifier: Modifier = Modifier) {
     if (LocalInspectionMode.current) return   // el Preview no puede cargar el mapa
     val context = LocalContext.current
     val mapa = remember(latitud, longitud) {
