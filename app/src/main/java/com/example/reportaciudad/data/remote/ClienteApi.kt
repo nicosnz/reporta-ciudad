@@ -14,12 +14,13 @@ object ClienteApi {
     // MockAPI agrega campos propios (createdAt…): se ignoran en vez de fallar
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun crear(baseUrl: String = BuildConfig.API_BASE_URL): ReporteApi {
+    // Un solo Retrofit para toda la app: ReporteApi y UsuarioApi comparten conexión
+    fun crear(baseUrl: String = BuildConfig.API_BASE_URL): Retrofit {
         val http = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .apply {
-                // El log de peticiones solo en debug: incluye coordenadas
+                // El log de peticiones solo en debug: incluye coordenadas y contraseñas
                 if (BuildConfig.DEBUG) {
                     addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 }
@@ -31,6 +32,5 @@ object ClienteApi {
             .client(http)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
-            .create(ReporteApi::class.java)
     }
 }
