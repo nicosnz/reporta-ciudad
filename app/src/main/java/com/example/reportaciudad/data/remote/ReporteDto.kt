@@ -32,5 +32,9 @@ fun Reporte.aDto(): ReporteDto = ReporteDto(
     fechaHora = fechaHora,
     fotoUrl = fotoUrl,
     // Todo reporte nuevo empieza como recibido
-    estado = EstadoReporte.RECIBIDO.name
+    estado = EstadoReporte.RECIBIDO.name,
+    // Se mandan vacíos a propósito: si faltan en el POST, MockAPI los rellena con texto de
+    // ejemplo ("motivoRechazo 1", "fotoArregloUrl 1"). "" no es el valor por defecto, así que se serializa.
+    motivoRechazo = "",
+    fotoArregloUrl = ""
 )

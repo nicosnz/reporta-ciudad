@@ -26,7 +26,8 @@ class RetrofitReporteRemoteDataSource(
             SeguimientoReporte(
                 estado = EstadoReporte.desdeTexto(dto.estado),
                 motivoRechazo = MotivoRechazo.desdeTexto(dto.motivoRechazo),
-                fotoArregloUrl = dto.fotoArregloUrl?.takeIf { it.isNotBlank() }
+                // Solo una URL real: descarta vacíos y textos de relleno de MockAPI
+                fotoArregloUrl = dto.fotoArregloUrl?.trim()?.takeIf { it.startsWith("http") }
             )
         }
 
