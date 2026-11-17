@@ -6,6 +6,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.reportaciudad.AppContainer
 import com.example.reportaciudad.ReportaCiudadApp
 import com.example.reportaciudad.repository.ReporteRepository
 
@@ -16,8 +17,11 @@ object AppViewModelProvider {
         initializer { ReportesViewModel(repositorio()) }
         initializer { DetalleViewModel(createSavedStateHandle(), repositorio()) }
         initializer { ReporteFormularioViewModel(repositorio()) }
+        initializer { LoginViewModel(contenedor().authRepository) }
     }
 
-    private fun CreationExtras.repositorio(): ReporteRepository =
-        (this[APPLICATION_KEY] as ReportaCiudadApp).container.reporteRepository
+    private fun CreationExtras.contenedor(): AppContainer =
+        (this[APPLICATION_KEY] as ReportaCiudadApp).container
+
+    private fun CreationExtras.repositorio(): ReporteRepository = contenedor().reporteRepository
 }
