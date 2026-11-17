@@ -3,6 +3,7 @@ package com.example.reportaciudad.data.remote
 import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.MotivoRechazo
 import com.example.reportaciudad.data.model.Reporte
+import com.example.reportaciudad.data.model.ReporteServidor
 
 // Lo que puede cambiar en el servidor después de enviar el reporte
 data class SeguimientoReporte(
@@ -20,4 +21,7 @@ interface ReporteRemoteDataSource {
 
     // Estado actual del reporte en el servidor
     suspend fun seguimiento(remoteId: String): Result<SeguimientoReporte>
+
+    // Todos los reportes del servidor, de todos los vecinos (para el administrador)
+    suspend fun listarTodos(): Result<List<ReporteServidor>>
 }

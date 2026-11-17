@@ -3,6 +3,7 @@ package com.example.reportaciudad.data.remote
 import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.MotivoRechazo
 import com.example.reportaciudad.data.model.Reporte
+import com.example.reportaciudad.data.model.ReporteServidor
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
 import java.io.IOException
@@ -30,6 +31,10 @@ class RetrofitReporteRemoteDataSource(
                 fotoArregloUrl = dto.fotoArregloUrl?.trim()?.takeIf { it.startsWith("http") }
             )
         }
+
+    // Los que vienen sin id se descartan (aServidor devuelve null)
+    override suspend fun listarTodos(): Result<List<ReporteServidor>> =
+        llamar { api.listar().mapNotNull { it.aServidor() } }
 
     private inline fun <T> llamar(bloque: () -> T): Result<T> =
         try {

@@ -26,6 +26,7 @@ import com.example.reportaciudad.ui.screens.reportar.localizacion.LocalizacionSc
 import com.example.reportaciudad.ui.screens.reportar.problema.SeleccionProblemaScreen
 import com.example.reportaciudad.ui.screens.reportar.resumen.ResumenScreen
 import com.example.reportaciudad.ui.screens.reportar.tipo.TipoReporteScreen
+import com.example.reportaciudad.viewmodel.AdminPanelViewModel
 import com.example.reportaciudad.viewmodel.AppViewModelProvider
 import com.example.reportaciudad.viewmodel.DetalleViewModel
 import com.example.reportaciudad.viewmodel.LoginViewModel
@@ -83,9 +84,14 @@ fun ReportaCiudadNavHost() {
             )
         }
         composable<Ruta.Admin> {
-            val sesion by sesionVm.sesion.collectAsStateWithLifecycle()
+            val vm: AdminPanelViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val estado by vm.estado.collectAsStateWithLifecycle()
+            // Cada vez que se entra (y cuando exista el detalle, al volver de él)
+            LaunchedEffect(Unit) { vm.cargar() }
             AdminScreen(
-                nombre = sesion?.nombre.orEmpty(),
+                estado = estado,
+                onElegirBandeja = vm::elegirBandeja,
+                onReintentar = vm::cargar,
                 onCerrarSesion = cerrarSesion
             )
         }

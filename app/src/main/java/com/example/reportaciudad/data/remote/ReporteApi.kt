@@ -11,6 +11,10 @@ interface ReporteApi {
     @POST("reportes")
     suspend fun crear(@Body reporte: ReporteDto): ReporteDto
 
+    // Todos los reportes: los usa el administrador
+    @GET("reportes")
+    suspend fun listar(): List<ReporteDto>
+
     @GET("reportes/{id}")
     suspend fun obtener(@Path("id") id: String): ReporteDto
 }
