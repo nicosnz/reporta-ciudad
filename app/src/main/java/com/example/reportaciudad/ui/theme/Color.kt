@@ -26,3 +26,6 @@ val Neutro900 = Color(0xFF2E2B25)
 val EmergenciaClaro = Color(0xFFF6D6D0)
 val EmergenciaDeshabilitado = Color(0xFFD29A8F)
 val UrbanoDeshabilitado = Color(0xFF9CC9A8)
+
+// Estado "Asignado" del reporte (azul): distinto de los colores de familia
+val EstadoAsignado = Color(0xFF1F5C99)
