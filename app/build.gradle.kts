@@ -75,5 +75,7 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
     implementation(libs.coil.compose)
+    // Sin este módulo Coil 3 no carga imágenes por URL (las fotos de Cloudinary)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.osmdroid.android)
 }

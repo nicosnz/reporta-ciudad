@@ -53,7 +53,9 @@ import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.explicacion
+import com.example.reportaciudad.ui.theme.Fondo
 import com.example.reportaciudad.ui.theme.Neutro900
+import com.example.reportaciudad.ui.theme.UrbanoOscuro
 import com.example.reportaciudad.viewmodel.DetalleUiState
 import java.io.File
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
@@ -110,20 +112,88 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
 
         if (reporte.enviado) TarjetaEstado(reporte) else TarjetaSinEnviar()
 
-        reporte.fotoRuta?.let { ruta ->
-            AsyncImage(
-                model = File(ruta),
-                contentDescription = "Foto del reporte",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-                    .clip(RoundedCornerShape(32.dp))
-                    .background(Neutro200)
-            )
+        val fotoArreglo = reporte.fotoArregloUrl
+        if (reporte.estado == EstadoReporte.RESUELTO && fotoArreglo != null) {
+            FotosAntesDespues(antes = reporte.modeloFoto(), despues = fotoArreglo)
+        } else {
+            // Sin foto no se muestra ninguna de ejemplo
+            reporte.modeloFoto()?.let { foto ->
+                AsyncImage(
+                    model = foto,
+                    contentDescription = "Foto del reporte",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .clip(RoundedCornerShape(28.dp))
+                        .background(Neutro200)
+                )
+            }
         }
 
         TarjetaUbicacion(lugar = reporte.lugar)
+    }
+}
+
+// La foto del teléfono si todavía está (carga sin internet); si no, la de Cloudinary
+private fun Reporte.modeloFoto(): Any? =
+    fotoRuta?.let(::File)?.takeIf { it.exists() } ?: fotoUrl
+
+@Composable
+private fun FotosAntesDespues(antes: Any?, despues: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        FotoConEtiqueta(
+            modelo = antes,
+            etiqueta = "Antes",
+            colorEtiqueta = Neutro700,
+            descripcion = "Tu foto, antes del arreglo",
+            modifier = Modifier.weight(1f)
+        )
+        FotoConEtiqueta(
+            modelo = despues,
+            etiqueta = "Después",
+            colorEtiqueta = UrbanoOscuro,
+            descripcion = "Foto del arreglo",
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun FotoConEtiqueta(
+    modelo: Any?,
+    etiqueta: String,
+    colorEtiqueta: Color,
+    descripcion: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(190.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(Neutro200)
+    ) {
+        if (modelo != null) {
+            AsyncImage(
+                model = modelo,
+                contentDescription = descripcion,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        Text(
+            text = etiqueta,
+            style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp),
+            color = colorEtiqueta,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(10.dp)
+                .background(Fondo.copy(alpha = 0.92f), CircleShape)
+                .padding(horizontal = 10.dp, vertical = 4.dp)
+        )
     }
 }
 
