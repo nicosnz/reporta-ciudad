@@ -3,6 +3,7 @@ package com.example.reportaciudad.ui.screens.reportar.localizacion
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.activity.compose.LocalActivity
@@ -34,7 +35,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,14 +56,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.example.reportaciudad.data.UbicacionActual
+import com.example.reportaciudad.data.model.Ubicacion
 import com.example.reportaciudad.ui.theme.Fondo
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro900
 import com.example.reportaciudad.ui.theme.Texto
 import com.example.reportaciudad.ui.theme.Urbano
-import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourcePolicy
 import org.osmdroid.tileprovider.tilesource.XYTileSource
@@ -84,11 +84,16 @@ internal const val ZOOM_CALLE = 18.0
 private val PIN_ANCHO = 44.dp
 private val PIN_ALTO = 56.dp
 
-// El punto del reporte es la ubicación actual del teléfono: el mapa solo la muestra, no se puede mover.
+// Paso 4. El punto del reporte es la ubicación actual del teléfono: el mapa solo la muestra, no se puede mover.
+// La búsqueda por GPS la hace el ViewModel; la pantalla pide el permiso y muestra el resultado.
 @Composable
 fun LocalizacionScreen(
-    onVolver: () -> Unit = {},
-    onConfirmar: (latitud: Double, longitud: Double) -> Unit = { _, _ -> }
+    ubicacion: Ubicacion?,
+    buscando: Boolean = false,
+    sinUbicacion: Boolean = false,
+    onBuscarUbicacion: () -> Unit = {},
+    onConfirmar: () -> Unit = {},
+    onVolver: () -> Unit = {}
 ) {
     PasoReporte(
         paso = 4,
@@ -101,37 +106,28 @@ fun LocalizacionScreen(
             ZonaMapa(Modifier.weight(1f)) { PinCentral(Modifier.align(Alignment.Center)) }
             BotonConfirmar(habilitado = true, onClick = {})
         } else {
-            ContenidoMapa(onConfirmar)
+            ContenidoMapa(ubicacion, buscando, sinUbicacion, onBuscarUbicacion, onConfirmar)
         }
     }
 }
 
 @Composable
-private fun ColumnScope.ContenidoMapa(onConfirmar: (Double, Double) -> Unit) {
+private fun ColumnScope.ContenidoMapa(
+    ubicacion: Ubicacion?,
+    buscando: Boolean,
+    sinUbicacion: Boolean,
+    onBuscarUbicacion: () -> Unit,
+    onConfirmar: () -> Unit
+) {
     val context = LocalContext.current
     val permiso = rememberPermisoUbicacion()
-    // GeoPoint es Parcelable: se conserva al rotar o al volver desde el paso 5
-    var ubicacion by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
     val mapa = remember { crearMapa(context) }
-    val scope = rememberCoroutineScope()
-    var buscando by remember { mutableStateOf(false) }
-    var sinUbicacion by remember { mutableStateOf(false) }
+    // Aviso del mapa (los tiles necesitan internet); la ubicación GPS funciona igual sin señal
     var sinConexion by remember { mutableStateOf(!hayConexion(context)) }
 
     fun buscarUbicacion() {
-        if (buscando) return
         sinConexion = !hayConexion(context)
-        sinUbicacion = false
-        buscando = true
-        scope.launch {
-            val actual = UbicacionActual.obtener(context)
-            if (actual != null) {
-                ubicacion = GeoPoint(actual.latitude, actual.longitude)
-            } else {
-                sinUbicacion = true
-            }
-            buscando = false
-        }
+        onBuscarUbicacion()
     }
 
     // Al entrar (o apenas se da el permiso) toma la ubicación del teléfono
@@ -142,7 +138,7 @@ private fun ColumnScope.ContenidoMapa(onConfirmar: (Double, Double) -> Unit) {
     LaunchedEffect(ubicacion) {
         ubicacion?.let {
             mapa.controller.setZoom(ZOOM_CALLE)
-            mapa.controller.setCenter(it)
+            mapa.controller.setCenter(GeoPoint(it.latitud, it.longitud))
         }
     }
 
@@ -196,7 +192,7 @@ private fun ColumnScope.ContenidoMapa(onConfirmar: (Double, Double) -> Unit) {
 
     BotonConfirmar(
         habilitado = ubicacion != null,
-        onClick = { ubicacion?.let { onConfirmar(it.latitude, it.longitude) } }
+        onClick = onConfirmar
     )
 }
 
@@ -369,7 +365,7 @@ private class PermisoUbicacion(val concedido: Boolean, val bloqueado: Boolean, v
 private fun rememberPermisoUbicacion(): PermisoUbicacion {
     val context = LocalContext.current
     val activity = LocalActivity.current
-    var concedido by remember { mutableStateOf(UbicacionActual.tienePermiso(context)) }
+    var concedido by remember { mutableStateOf(tienePermisoUbicacion(context)) }
     var bloqueado by remember { mutableStateOf(false) }
     val permisos = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
@@ -381,7 +377,7 @@ private fun rememberPermisoUbicacion(): PermisoUbicacion {
 
     // Si lo activó desde los ajustes, al volver a la app se entera
     LifecycleResumeEffect(Unit) {
-        concedido = UbicacionActual.tienePermiso(context)
+        concedido = tienePermisoUbicacion(context)
         if (concedido) bloqueado = false
         onPauseOrDispose { }
     }
@@ -396,6 +392,11 @@ private fun rememberPermisoUbicacion(): PermisoUbicacion {
 
     return PermisoUbicacion(concedido, bloqueado) { lanzador.launch(permisos) }
 }
+
+private fun tienePermisoUbicacion(context: Context) =
+    listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION).any {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
 
 private fun hayConexion(context: Context): Boolean {
     val manager = context.getSystemService(ConnectivityManager::class.java) ?: return false

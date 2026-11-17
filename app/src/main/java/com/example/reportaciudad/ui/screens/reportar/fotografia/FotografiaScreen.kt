@@ -76,7 +76,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import coil3.compose.AsyncImage
-import com.example.reportaciudad.data.AlmacenFotos
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro900
@@ -85,42 +84,36 @@ import java.io.File
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
 import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
+// Paso 3. La foto vive en el borrador del ViewModel: la pantalla solo la muestra y avisa lo que pasa.
 @Composable
 fun FotografiaScreen(
-    onVolver: () -> Unit = {},
-    onFotoTomada: (String) -> Unit = {}
+    fotoRuta: String?,
+    crearArchivoFoto: () -> File,
+    onFotoSacada: (String) -> Unit = {},
+    onRepetir: () -> Unit = {},
+    onUsarFoto: () -> Unit = {},
+    // Volver descarta la foto (si había) antes de salir del paso
+    onVolver: () -> Unit = {}
 ) {
-
-    var fotoRuta by rememberSaveable { mutableStateOf<String?>(null) }
-
-
-    val descartarYVolver = {
-        AlmacenFotos.borrar(fotoRuta)
-        fotoRuta = null
-        onVolver()
-    }
-    BackHandler(enabled = fotoRuta != null) { descartarYVolver() }
+    BackHandler(enabled = fotoRuta != null) { onVolver() }
 
     PasoReporte(
         paso = 3,
         titulo = "Fotografía",
         subtitulo = "Saca una foto clara del problema.",
-        onVolver = descartarYVolver,
+        onVolver = onVolver,
         compacto = true
     ) {
         if (LocalInspectionMode.current) {
-
             ZonaCamara(Modifier.weight(1f)) { GuiasEncuadre() }
             ZonaAcciones { BotonDisparo(habilitado = true, onClick = {}) }
         } else {
             ContenidoCamara(
                 fotoRuta = fotoRuta,
-                onFotoSacada = { fotoRuta = it },
-                onRepetir = {
-                    AlmacenFotos.borrar(fotoRuta)
-                    fotoRuta = null
-                },
-                onUsarFoto = { fotoRuta?.let(onFotoTomada) }
+                crearArchivoFoto = crearArchivoFoto,
+                onFotoSacada = onFotoSacada,
+                onRepetir = onRepetir,
+                onUsarFoto = onUsarFoto
             )
         }
     }
@@ -129,6 +122,7 @@ fun FotografiaScreen(
 @Composable
 private fun ColumnScope.ContenidoCamara(
     fotoRuta: String?,
+    crearArchivoFoto: () -> File,
     onFotoSacada: (String) -> Unit,
     onRepetir: () -> Unit,
     onUsarFoto: () -> Unit
@@ -150,7 +144,7 @@ private fun ColumnScope.ContenidoCamara(
                 destello.snapTo(1f)
                 destello.animateTo(0f, tween(durationMillis = 260, easing = LinearOutSlowInEasing))
             }
-            val archivo = AlmacenFotos.crearArchivo(context)
+            val archivo = crearArchivoFoto()
             try {
                 controlador.tomarFoto(archivo, ContextCompat.getMainExecutor(context))
                 onFotoSacada(archivo.absolutePath)

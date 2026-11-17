@@ -44,10 +44,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.reportaciudad.data.reportes.reportes as todosLosReportes
+import com.example.reportaciudad.data.model.EstadoEnvio
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
+import com.example.reportaciudad.data.model.TipoEmergencia
+import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.ui.screens.componentes.BotonSalir
+import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro300
@@ -58,9 +61,11 @@ import com.example.reportaciudad.ui.theme.UrbanoOscuro
 
 @Composable
 fun InicioScreen(
-    navController: NavController,
-    reportes: List<Reporte> = todosLosReportes,
-    onReportar: () -> Unit = {}
+    reportes: List<Reporte>,
+    cargando: Boolean = false,
+    onAbrirReporte: (Long) -> Unit = {},
+    onReportar: () -> Unit = {},
+    onCerrarSesion: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -75,19 +80,26 @@ fun InicioScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                Text(
-                    text = "Mis reportes",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 32.sp,
-                        lineHeight = 36.sp,
-                        letterSpacing = (-0.025).em
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-
-                    modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Mis reportes",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontSize = 32.sp,
+                            lineHeight = 36.sp,
+                            letterSpacing = (-0.025).em
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.weight(1f)
+                    )
+                    BotonSalir(onClick = onCerrarSesion)
+                }
             }
-            if (reportes.isEmpty()) {
+            if (reportes.isEmpty() && !cargando) {
                 item {
                     Text(
                         text = "Todavía no hiciste ningún reporte.\nToca Reportar para enviar el primero.",
@@ -102,7 +114,7 @@ fun InicioScreen(
             }
             else{
                 items(reportes, key = { it.id }) { reporte ->
-                    FilaReporte(reporte = reporte, onClick = { navController.navigate("detalle/${reporte.id}") })
+                    FilaReporte(reporte = reporte, onClick = { onAbrirReporte(reporte.id) })
                 }
             }
 
@@ -130,6 +142,7 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
                 colorAro = when (reporte.familia) {
                     Familia.URBANO -> UrbanoOscuro
                     Familia.AMBIENTAL -> AmbientalOscuro
+                    Familia.EMERGENCIA -> Emergencia
                 }
             )
             Column(
@@ -145,7 +158,11 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
                     )
                 )
                 Text(
-                    text = "${reporte.categoria} · ${reporte.antiguedad}",
+                    text = buildString {
+                        append("${reporte.categoria} · ${reporte.antiguedad}")
+                        // Guardado en el teléfono, todavía no llegó al servidor
+                        if (reporte.estadoEnvio != EstadoEnvio.ENVIADO) append(" · sin enviar")
+                    },
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp, lineHeight = 18.sp),
                     color = Neutro700
                 )
@@ -258,3 +275,17 @@ private val IconoCamara = iconoDeLinea(
     "M9 13a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"
 )
 
+@Preview(showBackground = true, widthDp = 390, heightDp = 844)
+@Composable
+private fun InicioScreenPreview() {
+    ReportaCiudadTheme {
+        InicioScreen(
+            reportes = listOf(
+                Reporte(id = 2, problema = TipoProblema.BACHE, latitud = -17.78, longitud = -63.18,
+                    estadoEnvio = EstadoEnvio.ENVIADO),
+                Reporte(id = 1, emergencia = TipoEmergencia.INCENDIO, latitud = -17.78, longitud = -63.18,
+                    estadoEnvio = EstadoEnvio.ERROR)
+            )
+        )
+    }
+}
