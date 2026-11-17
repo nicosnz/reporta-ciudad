@@ -151,6 +151,7 @@ fun LoginScreen(
             ) {
                 CampoLogin(
                     etiqueta = "Usuario",
+                    ejemplo = "Ej.: vecino1",
                     valor = estado.usuario,
                     onValorCambiado = onUsuarioCambiado,
                     colorBorde = bordeCampo,
@@ -159,6 +160,7 @@ fun LoginScreen(
                 )
                 CampoLogin(
                     etiqueta = "Contraseña",
+                    ejemplo = "Tu contraseña",
                     valor = estado.contrasena,
                     onValorCambiado = onContrasenaCambiada,
                     colorBorde = bordeCampo,
@@ -216,6 +218,8 @@ fun LoginScreen(
 @Composable
 private fun CampoLogin(
     etiqueta: String,
+    // Texto de ayuda dentro del campo vacío; desaparece al escribir
+    ejemplo: String,
     valor: String,
     onValorCambiado: (String) -> Unit,
     colorBorde: Color,
@@ -241,6 +245,13 @@ private fun CampoLogin(
             keyboardActions = acciones,
             visualTransformation = transformacion,
             trailingIcon = iconoFinal,
+            placeholder = {
+                Text(
+                    text = ejemplo,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
+                    color = Neutro700
+                )
+            },
             textStyle = TextStyle(fontFamily = MaterialTheme.typography.bodyLarge.fontFamily, fontSize = 16.sp),
             shape = RoundedCornerShape(20.dp),
             colors = OutlinedTextFieldDefaults.colors(
