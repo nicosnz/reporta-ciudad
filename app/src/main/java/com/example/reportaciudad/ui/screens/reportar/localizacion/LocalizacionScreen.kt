@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -102,12 +101,7 @@ fun LocalizacionScreen(
         onVolver = onVolver,
         compacto = true
     ) {
-        if (LocalInspectionMode.current) {
-            ZonaMapa(Modifier.weight(1f)) { PinCentral(Modifier.align(Alignment.Center)) }
-            BotonConfirmar(habilitado = true, onClick = {})
-        } else {
-            ContenidoMapa(ubicacion, buscando, sinUbicacion, onBuscarUbicacion, onConfirmar)
-        }
+        ContenidoMapa(ubicacion, buscando, sinUbicacion, onBuscarUbicacion, onConfirmar)
     }
 }
 

@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -47,7 +46,6 @@ import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.MotivoRechazo
 import com.example.reportaciudad.data.model.Reporte
-import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.explicacion
 import com.example.reportaciudad.ui.screens.reportar.localizacion.PinCentral
@@ -63,7 +61,6 @@ import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro700
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
 import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
@@ -363,15 +360,3 @@ private val IconoVolver: ImageVector = ImageVector.Builder(
         )
     }
 }.build()
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun DetalleScreenPreview() {
-    ReportaCiudadTheme {
-        DetalleScreen(
-            estado = DetalleUiState.Encontrado(
-                Reporte(id = 1, problema = TipoProblema.BACHE, latitud = -17.7833, longitud = -63.1821)
-            )
-        )
-    }
-}

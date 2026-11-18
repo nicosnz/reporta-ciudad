@@ -64,7 +64,6 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -104,18 +103,13 @@ fun FotografiaScreen(
         onVolver = onVolver,
         compacto = true
     ) {
-        if (LocalInspectionMode.current) {
-            ZonaCamara(Modifier.weight(1f)) { GuiasEncuadre() }
-            ZonaAcciones { BotonDisparo(habilitado = true, onClick = {}) }
-        } else {
-            ContenidoCamara(
-                fotoRuta = fotoRuta,
-                crearArchivoFoto = crearArchivoFoto,
-                onFotoSacada = onFotoSacada,
-                onRepetir = onRepetir,
-                onUsarFoto = onUsarFoto
-            )
-        }
+        ContenidoCamara(
+            fotoRuta = fotoRuta,
+            crearArchivoFoto = crearArchivoFoto,
+            onFotoSacada = onFotoSacada,
+            onRepetir = onRepetir,
+            onUsarFoto = onUsarFoto
+        )
     }
 }
 

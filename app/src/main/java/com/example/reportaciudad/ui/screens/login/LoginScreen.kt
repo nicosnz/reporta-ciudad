@@ -51,17 +51,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.R
-import com.example.reportaciudad.data.model.Rol
 import com.example.reportaciudad.data.model.Sesion
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.Neutro700
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.Urbano
 import com.example.reportaciudad.ui.theme.UrbanoClaro
@@ -391,35 +388,3 @@ private val IconoAlerta = iconoDeLinea(
 )
 
 private val IconoCheck = iconoDeLinea("Check", 3f, "M20 6L9 17l-5-5")
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun LoginScreenPreview() {
-    ReportaCiudadTheme {
-        LoginScreen(estado = LoginUiState(usuario = "vecino1", contrasena = "1234"))
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun LoginScreenErrorPreview() {
-    ReportaCiudadTheme {
-        LoginScreen(
-            estado = LoginUiState(usuario = "vecino1", contrasena = "1234", error = ErrorLogin.CREDENCIALES)
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun LoginScreenExitoPreview() {
-    ReportaCiudadTheme {
-        LoginScreen(
-            estado = LoginUiState(
-                usuario = "vecino1",
-                contrasena = "1234",
-                sesion = Sesion(usuarioId = "1", usuario = "vecino1", nombre = "vecino1", rol = Rol.VECINO)
-            )
-        )
-    }
-}
