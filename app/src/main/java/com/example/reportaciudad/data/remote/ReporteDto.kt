@@ -2,6 +2,7 @@ package com.example.reportaciudad.data.remote
 
 import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.Reporte
+import com.example.reportaciudad.data.model.ReporteServidor
 import kotlinx.serialization.Serializable
 
 // JSON del recurso "reportes" en MockAPI. Los enums viajan como texto (BACHE, INCENDIO, EN_REVISION…).
@@ -37,4 +38,17 @@ fun Reporte.aDto(): ReporteDto = ReporteDto(
     // ejemplo ("motivoRechazo 1", "fotoArregloUrl 1"). "" no es el valor por defecto, así que se serializa.
     motivoRechazo = "",
     fotoArregloUrl = ""
+)
+
+fun ReporteServidor.aDto(): ReporteDto = ReporteDto(
+    id = remoteId,
+    emergencia = emergencia?.name,
+    problema = problema?.name,
+    latitud = latitud,
+    longitud = longitud,
+    fechaHora = fechaHora,
+    fotoUrl = fotoUrl,
+    estado = estado.name,
+    motivoRechazo = motivoRechazo?.name ?: "",
+    fotoArregloUrl = fotoArregloUrl ?: ""
 )

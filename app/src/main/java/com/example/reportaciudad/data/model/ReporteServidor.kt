@@ -29,5 +29,6 @@ data class ReporteServidor(
         get() = if (emergencia != null) Familia.EMERGENCIA else problema?.familia ?: Familia.URBANO
 
     val fecha: String get() = FechaBolivia.textoEnvio(fechaHora)
+    val recepcion: String get() = "Recibido $fecha"
     val antiguedad: String get() = FechaBolivia.antiguedad(fechaHora)
 }
