@@ -34,9 +34,10 @@
 
 <table>
   <tr>
-    <td align="center"><img src="docs/capturas/01-bienvenida.jpg" width="220" alt="Pantalla de bienvenida"><br><sub><b>Bienvenida</b></sub></td>
-    <td align="center"><img src="docs/capturas/02-mis-reportes.jpg" width="220" alt="Lista de mis reportes"><br><sub><b>Mis reportes</b></sub></td>
-    <td align="center"><img src="docs/capturas/03-detalle.jpg" width="220" alt="Detalle de un reporte"><br><sub><b>Detalle del reporte</b></sub></td>
+    <td align="center"><img src="docs/capturas/01-bienvenida.png" width="200" alt="Pantalla de bienvenida"><br><sub><b>Bienvenida</b></sub></td>
+    <td align="center"><img src="docs/capturas/02-login.png" width="200" alt="Inicio de sesión"><br><sub><b>Login</b></sub></td>
+    <td align="center"><img src="docs/capturas/03-mis-reportes.png" width="200" alt="Lista de mis reportes"><br><sub><b>Mis reportes</b></sub></td>
+    <td align="center"><img src="docs/capturas/04-detalle.png" width="200" alt="Detalle de un reporte"><br><sub><b>Detalle del reporte</b></sub></td>
   </tr>
 </table>
 
@@ -44,18 +45,22 @@
 
 <table>
   <tr>
-    <td align="center"><img src="docs/capturas/04-reportar-tipo.jpg" width="160" alt="Paso 1: tipo de reporte"><br><sub><b>1 · ¿Qué está pasando?</b></sub></td>
-    <td align="center"><img src="docs/capturas/05-reportar-problema.jpg" width="160" alt="Paso 2: tipo de problema"><br><sub><b>2 · Tipo de problema</b></sub></td>
-    <td align="center"><img src="docs/capturas/06-reportar-fotografia.jpg" width="160" alt="Paso 3: fotografía"><br><sub><b>3 · Fotografía</b></sub></td>
-    <td align="center"><img src="docs/capturas/07-reportar-localizacion.jpg" width="160" alt="Paso 4: localización"><br><sub><b>4 · Localización</b></sub></td>
-    <td align="center"><img src="docs/capturas/08-reportar-resumen.jpg" width="160" alt="Paso 5: resumen"><br><sub><b>5 · Resumen</b></sub></td>
+    <td align="center"><img src="docs/capturas/05-reportar-tipo.png" width="160" alt="Paso 1: tipo de reporte"><br><sub><b>1 · ¿Qué está pasando?</b></sub></td>
+    <td align="center"><img src="docs/capturas/06-reportar-problema.png" width="160" alt="Paso 2: tipo de problema"><br><sub><b>2 · Tipo de problema</b></sub></td>
+    <td align="center"><img src="docs/capturas/07-reportar-fotografia.png" width="160" alt="Paso 3: fotografía"><br><sub><b>3 · Fotografía</b></sub></td>
+    <td align="center"><img src="docs/capturas/08-reportar-localizacion.png" width="160" alt="Paso 4: localización"><br><sub><b>4 · Localización</b></sub></td>
+    <td align="center"><img src="docs/capturas/09-reportar-resumen.png" width="160" alt="Paso 5: resumen"><br><sub><b>5 · Resumen</b></sub></td>
+    <td align="center"><img src="docs/capturas/10-reporte-enviado.png" width="160" alt="Reporte enviado"><br><sub><b>¡Reporte enviado!</b></sub></td>
   </tr>
 </table>
 
+### Administrador
+
 <table>
   <tr>
-    <td align="center"><img src="docs/capturas/09-reporte-enviado.jpg" width="220" alt="Reporte enviado"><br><sub><b>¡Reporte enviado!</b></sub></td>
-    <td align="center"><img src="docs/capturas/10-mis-reportes-actualizado.jpg" width="220" alt="Mis reportes con el reporte nuevo"><br><sub><b>El reporte aparece en la lista</b></sub></td>
+    <td align="center"><img src="docs/capturas/11-admin-panel.png" width="200" alt="Panel del administrador"><br><sub><b>Panel de reportes</b></sub></td>
+    <td align="center"><img src="docs/capturas/12-admin-detalle.png" width="200" alt="Detalle del reporte para el administrador"><br><sub><b>Gestionar un reporte</b></sub></td>
+    <td align="center"><img src="docs/capturas/13-admin-foto-arreglo.png" width="200" alt="Foto del arreglo"><br><sub><b>Foto del arreglo</b></sub></td>
   </tr>
 </table>
 
