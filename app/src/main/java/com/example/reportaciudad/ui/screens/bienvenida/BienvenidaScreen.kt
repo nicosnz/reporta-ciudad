@@ -1,6 +1,5 @@
 package com.example.reportaciudad.ui.screens.bienvenida
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,12 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.UrbanoClaro
 
 @Composable
@@ -92,7 +86,6 @@ fun BienvenidaScreen(
                 modifier = Modifier.size(200.dp)
             )
 
-
             Spacer(Modifier.height(64.dp))
 
             Text(
@@ -132,27 +125,4 @@ fun BienvenidaScreen(
     }
 }
 
-
-
-
-private val FlechaDerecha: ImageVector = ImageVector.Builder(
-    name = "FlechaDerecha",
-    defaultWidth = 24.dp,
-    defaultHeight = 24.dp,
-    viewportWidth = 24f,
-    viewportHeight = 24f
-).apply {
-    path(
-        stroke = SolidColor(Color.Black),
-        strokeLineWidth = 2.75f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round
-    ) {
-        moveTo(5f, 12f)
-        horizontalLineTo(19f)
-        moveTo(12f, 5f)
-        lineTo(19f, 12f)
-        lineTo(12f, 19f)
-    }
-}.build()
-
+private val FlechaDerecha = iconoDeLinea("FlechaDerecha", 2.75f, "M5 12h14", "M12 5l7 7-7 7")

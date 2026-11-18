@@ -55,8 +55,9 @@ import com.example.reportaciudad.ui.screens.componentes.AvisoConexion
 import com.example.reportaciudad.ui.screens.componentes.BotonVolver
 import com.example.reportaciudad.ui.screens.componentes.EncabezadoReporte
 import com.example.reportaciudad.ui.screens.componentes.FotosAntesDespues
+import com.example.reportaciudad.ui.screens.componentes.IconoCheck
 import com.example.reportaciudad.ui.screens.componentes.TarjetaMapa
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.EmergenciaDeshabilitado
@@ -528,7 +529,5 @@ private fun OpcionMotivo(motivo: MotivoRechazo, elegido: Boolean, habilitado: Bo
         )
     }
 }
-
-private val IconoCheck = iconoDeLinea("Check", 3f, "M20 6L9 17l-5-5")
 
 private val IconoCerrar = iconoDeLinea("Cerrar", 3f, "M18 6L6 18", "M6 6l12 12")

@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import coil3.compose.AsyncImage
+import com.example.reportaciudad.ui.screens.componentes.IconoCheck
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
 import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import kotlinx.coroutines.launch
@@ -55,7 +56,6 @@ import com.example.reportaciudad.ui.screens.componentes.ZonaCamara
 import com.example.reportaciudad.ui.screens.componentes.abrirAjustesDeLaApp
 import com.example.reportaciudad.ui.screens.componentes.rememberPermisoCamara
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
 // Paso 3. La foto vive en el borrador del ViewModel: la pantalla solo la muestra y avisa lo que pasa.
 @Composable
@@ -160,7 +160,6 @@ private fun ColumnScope.ContenidoCamara(
             )
         }
 
-
         Box(
             Modifier
                 .fillMaxSize()
@@ -180,7 +179,6 @@ private fun ColumnScope.ContenidoCamara(
         }
     }
 }
-
 
 @Composable
 private fun EtiquetaFotoTomada(modifier: Modifier = Modifier) {
@@ -232,8 +230,3 @@ private fun BotonesRevision(onRepetir: () -> Unit, onUsarFoto: () -> Unit) {
         }
     }
 }
-
-
-private val IconoCheck = iconoDeLinea("Check", 2.75f, "M20 6L9 17l-5-5")
-
-

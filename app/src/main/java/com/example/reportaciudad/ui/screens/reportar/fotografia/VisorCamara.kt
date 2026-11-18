@@ -22,7 +22,6 @@ import java.util.concurrent.Executor
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-
 @Composable
 fun rememberControladorCamara(): LifecycleCameraController {
     val context = LocalContext.current
@@ -65,7 +64,6 @@ fun VisorCamara(controlador: LifecycleCameraController, modifier: Modifier = Mod
         }
     )
 }
-
 
 suspend fun LifecycleCameraController.tomarFoto(archivo: File, ejecutor: Executor): File =
     suspendCancellableCoroutine { continuacion ->

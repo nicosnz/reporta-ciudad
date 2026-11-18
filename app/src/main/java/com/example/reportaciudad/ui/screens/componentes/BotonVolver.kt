@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.Superficie
 
 @Composable
@@ -32,5 +31,3 @@ fun BotonVolver(onClick: () -> Unit, modifier: Modifier = Modifier, habilitado: 
         }
     }
 }
-
-private val IconoVolver = iconoDeLinea("Volver", 2.75f, "M12 19l-7-7 7-7", "M19 12H5")

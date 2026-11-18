@@ -63,8 +63,8 @@ import com.example.reportaciudad.ui.screens.componentes.SinPermiso
 import com.example.reportaciudad.ui.screens.componentes.ZonaAcciones
 import com.example.reportaciudad.ui.screens.componentes.ZonaCamara
 import com.example.reportaciudad.ui.screens.componentes.abrirAjustesDeLaApp
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.screens.componentes.rememberPermisoCamara
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.screens.reportar.fotografia.VisorCamara
 import com.example.reportaciudad.ui.screens.reportar.fotografia.rememberControladorCamara
 import com.example.reportaciudad.ui.screens.reportar.fotografia.tomarFoto

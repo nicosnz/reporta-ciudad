@@ -23,11 +23,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
-
 
 @Composable
 fun TipoReporteScreen(
@@ -68,7 +67,6 @@ fun TipoReporteScreen(
         )
     }
 }
-
 
 @Composable
 private fun BotonOpcion(
@@ -120,4 +118,3 @@ private val IconoDocumento = iconoDeLinea(
     "M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z",
     "M9 17v-5M12 17v-1M15 17v-3"
 )
-

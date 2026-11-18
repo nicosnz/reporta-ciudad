@@ -62,7 +62,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.Neutro900
 
 @Composable
@@ -230,9 +229,3 @@ fun abrirAjustesDeLaApp(context: Context) {
     ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
 }
-
-private val IconoCamara = iconoDeLinea(
-    "Camara", 2f,
-    "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z",
-    "M9 13a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"
-)

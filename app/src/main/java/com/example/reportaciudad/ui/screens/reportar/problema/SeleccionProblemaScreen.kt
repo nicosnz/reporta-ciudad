@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.TipoProblema
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
@@ -32,7 +33,6 @@ import com.example.reportaciudad.ui.theme.UrbanoOscuro
 import com.example.reportaciudad.ui.screens.reportar.componentes.BotonSeleccionar
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
 import com.example.reportaciudad.ui.screens.reportar.componentes.TarjetaOpcion
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
 @Composable
 fun SeleccionProblemaScreen(
@@ -129,4 +129,3 @@ private val IconoGota = iconoDeLinea(
     "Gota", 2f,
     "M7.5 19.42c2.6 2.1 6.4 2.1 9 0c2.6-2.1 3.26-5.71 1.57-8.55l-4.9-7.26c-.42-.62-1.28-.8-1.93-.4a1.38 1.38 0 0 0-.41.4l-4.9 7.26c-1.69 2.84-1.03 6.45 1.57 8.55z"
 )
-

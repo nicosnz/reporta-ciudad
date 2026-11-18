@@ -58,6 +58,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.example.reportaciudad.data.model.Ubicacion
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.Fondo
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro900
@@ -72,7 +73,6 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.CopyrightOverlay
 import java.io.File
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.screens.componentes.abrirAjustesDeLaApp
 
 // Plaza 24 de Septiembre, Santa Cruz de la Sierra: el mapa se ve aquí mientras no hay ubicación del teléfono
@@ -351,7 +351,6 @@ private fun AvisoSinPermiso(bloqueado: Boolean, onPedir: () -> Unit, onAbrirAjus
         }
     }
 }
-
 
 private class PermisoUbicacion(val concedido: Boolean, val bloqueado: Boolean, val pedir: () -> Unit)
 

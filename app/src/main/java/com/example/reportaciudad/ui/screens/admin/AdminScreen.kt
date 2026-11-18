@@ -53,7 +53,8 @@ import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.ReporteServidor
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.BotonSalir
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
+import com.example.reportaciudad.ui.screens.componentes.IconoChevron
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.Neutro200
@@ -358,8 +359,6 @@ private val Bandeja.icono: ImageVector
         Bandeja.EN_CURSO -> IconoCamion
         Bandeja.CERRADOS -> IconoCerrado
     }
-
-private val IconoChevron = iconoDeLinea("Chevron", 2.25f, "M9 18l6-6-6-6")
 
 private val IconoBandeja = iconoDeLinea(
     "Bandeja", 2.25f,

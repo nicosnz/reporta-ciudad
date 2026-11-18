@@ -13,12 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.ui.theme.Superficie
@@ -47,24 +41,9 @@ fun BotonSalir(onClick: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
-private val IconoSalir: ImageVector = ImageVector.Builder(
-    name = "Salir",
-    defaultWidth = 24.dp,
-    defaultHeight = 24.dp,
-    viewportWidth = 24f,
-    viewportHeight = 24f
-).apply {
-    listOf(
-        "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4",
-        "M16 17l5-5-5-5",
-        "M21 12H9"
-    ).forEach { trazo ->
-        addPath(
-            pathData = addPathNodes(trazo),
-            stroke = SolidColor(Color.Black),
-            strokeLineWidth = 2.25f,
-            strokeLineCap = StrokeCap.Round,
-            strokeLineJoin = StrokeJoin.Round
-        )
-    }
-}.build()
+private val IconoSalir = iconoDeLinea(
+    "Salir", 2.25f,
+    "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4",
+    "M16 17l5-5-5-5",
+    "M21 12H9"
+)

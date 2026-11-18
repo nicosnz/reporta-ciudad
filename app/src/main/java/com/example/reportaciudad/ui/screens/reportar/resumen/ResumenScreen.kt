@@ -47,6 +47,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import coil3.compose.AsyncImage
 import com.example.reportaciudad.data.model.ReporteFormulario
+import com.example.reportaciudad.ui.screens.componentes.IconoCheck
 import com.example.reportaciudad.viewmodel.Envio
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.TipoProblema
@@ -63,7 +64,6 @@ import org.osmdroid.util.GeoPoint
 import java.io.File
 import java.util.Locale
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.screens.reportar.localizacion.PinCentral
 import com.example.reportaciudad.ui.screens.reportar.localizacion.ZOOM_CALLE
 import com.example.reportaciudad.ui.screens.reportar.localizacion.crearMapa
@@ -344,5 +344,3 @@ private fun ModalReporteEnviado(sinConexion: Boolean, onVerMisReportes: () -> Un
         }
     }
 }
-
-private val IconoCheck = iconoDeLinea("Check", 2.75f, "M20 6L9 17l-5-5")

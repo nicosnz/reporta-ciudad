@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.reportaciudad.data.model.TipoEmergencia
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.EmergenciaDeshabilitado
@@ -23,7 +24,6 @@ import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.screens.reportar.componentes.BotonSeleccionar
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
 import com.example.reportaciudad.ui.screens.reportar.componentes.TarjetaOpcion
-import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
 
 @Composable
 fun SeleccionEmergenciaScreen(
@@ -92,4 +92,3 @@ private val IconoHumo = iconoDeLinea(
     "M5 17h14",
     "M8 20h8"
 )
-

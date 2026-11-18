@@ -30,12 +30,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +43,8 @@ import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.BotonSalir
+import com.example.reportaciudad.ui.screens.componentes.IconoCamara
+import com.example.reportaciudad.ui.screens.componentes.IconoChevron
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.AmbientalOscuro
 import com.example.reportaciudad.ui.theme.Neutro200
@@ -178,7 +175,6 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
     }
 }
 
-
 @Composable
 private fun MiniaturaReporte(colorAro: Color) {
     Box(
@@ -240,7 +236,6 @@ private fun BarraInferior(onReportar: () -> Unit) {
     }
 }
 
-
 private fun Modifier.sobresalir(alto: Dp) = layout { measurable, constraints ->
     val placeable = measurable.measure(constraints)
     val desplazamiento = alto.roundToPx()
@@ -248,30 +243,3 @@ private fun Modifier.sobresalir(alto: Dp) = layout { measurable, constraints ->
         placeable.place(0, -desplazamiento)
     }
 }
-
-private fun iconoDeLinea(nombre: String, vararg trazos: String): ImageVector =
-    ImageVector.Builder(
-        name = nombre,
-        defaultWidth = 24.dp,
-        defaultHeight = 24.dp,
-        viewportWidth = 24f,
-        viewportHeight = 24f
-    ).apply {
-        trazos.forEach { trazo ->
-            addPath(
-                pathData = addPathNodes(trazo),
-                stroke = SolidColor(Color.Black),
-                strokeLineWidth = 2.75f,
-                strokeLineCap = StrokeCap.Round,
-                strokeLineJoin = StrokeJoin.Round
-            )
-        }
-    }.build()
-
-private val IconoChevron = iconoDeLinea("Chevron", "M9 18l6-6-6-6")
-
-private val IconoCamara = iconoDeLinea(
-    "Camara",
-    "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z",
-    "M9 13a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"
-)

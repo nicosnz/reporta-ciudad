@@ -34,11 +34,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -56,6 +51,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.R
 import com.example.reportaciudad.data.model.Sesion
+import com.example.reportaciudad.ui.screens.componentes.IconoCheck
+import com.example.reportaciudad.ui.screens.componentes.iconoDeLinea
 import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.Neutro700
@@ -348,25 +345,6 @@ private fun AvisoExito(sesion: Sesion) {
     }
 }
 
-private fun iconoDeLinea(nombre: String, grosor: Float, vararg trazos: String): ImageVector =
-    ImageVector.Builder(
-        name = nombre,
-        defaultWidth = 24.dp,
-        defaultHeight = 24.dp,
-        viewportWidth = 24f,
-        viewportHeight = 24f
-    ).apply {
-        trazos.forEach { trazo ->
-            addPath(
-                pathData = addPathNodes(trazo),
-                stroke = SolidColor(Color.Black),
-                strokeLineWidth = grosor,
-                strokeLineCap = StrokeCap.Round,
-                strokeLineJoin = StrokeJoin.Round
-            )
-        }
-    }.build()
-
 private val IconoOjo = iconoDeLinea(
     "Ojo", 2f,
     "M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z",
@@ -386,5 +364,3 @@ private val IconoAlerta = iconoDeLinea(
     "M12 8v5",
     "M12 16.5v.01"
 )
-
-private val IconoCheck = iconoDeLinea("Check", 3f, "M20 6L9 17l-5-5")
