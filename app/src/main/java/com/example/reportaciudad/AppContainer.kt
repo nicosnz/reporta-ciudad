@@ -33,20 +33,28 @@ class AppContainer(context: Context) {
     // La comparten el vecino y el administrador
     private val reporteRemoto by lazy { RetrofitReporteRemoteDataSource(retrofit.create(ReporteApi::class.java)) }
 
+    private val fotoRemota by lazy {
+        CloudinaryFotoRemoteDataSource(
+            api = retrofitCloudinary.create(CloudinaryApi::class.java),
+            preset = BuildConfig.CLOUDINARY_PRESET
+        )
+    }
+
+    private val almacenFotos by lazy { AlmacenFotos(appContext) }
+
     val reporteRepository: ReporteRepository by lazy {
         ReporteRepositoryImpl(
             dao = baseDeDatos.reporteDao(),
             remoto = reporteRemoto,
-            fotos = CloudinaryFotoRemoteDataSource(
-                api = retrofitCloudinary.create(CloudinaryApi::class.java),
-                preset = BuildConfig.CLOUDINARY_PRESET
-            ),
-            almacenFotos = AlmacenFotos(appContext),
+            fotos = fotoRemota,
+            almacenFotos = almacenFotos,
             ubicacionActual = UbicacionActual(appContext)
         )
     }
 
-    val adminRepository: AdminRepository by lazy { AdminRepositoryImpl(remoto = reporteRemoto) }
+    val adminRepository: AdminRepository by lazy {
+        AdminRepositoryImpl(remoto = reporteRemoto, fotos = fotoRemota, almacenFotos = almacenFotos)
+    }
 
     val authRepository: AuthRepository by lazy {
         AuthRepositoryImpl(
