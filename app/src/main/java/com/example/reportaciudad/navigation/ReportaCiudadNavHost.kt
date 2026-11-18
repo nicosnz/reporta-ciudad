@@ -152,7 +152,16 @@ fun ReportaCiudadNavHost() {
         ) {
             val vm: DetalleViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
-            DetalleScreen(estado = estado, onBack = { navController.popBackStack() })
+            val cancelacion by vm.cancelacion.collectAsStateWithLifecycle()
+            DetalleScreen(
+                estado = estado,
+                cancelacion = cancelacion,
+                onBack = { navController.popBackStack() },
+                onAbrirCancelacion = vm::abrirCancelacion,
+                onCerrarCancelacion = vm::cerrarCancelacion,
+                onConfirmarCancelacion = vm::confirmarCancelacion,
+                onEliminado = { navController.popBackStack() }
+            )
         }
 
         navigation(startDestination = Ruta.PASO_TIPO, route = Ruta.FLUJO_REPORTAR) {

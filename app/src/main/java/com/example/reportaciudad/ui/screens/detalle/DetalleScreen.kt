@@ -12,11 +12,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import com.example.reportaciudad.ui.theme.Fondo
+import com.example.reportaciudad.ui.theme.Texto
+import com.example.reportaciudad.viewmodel.CancelacionUiState
+import com.example.reportaciudad.viewmodel.ErrorCancelacion
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +59,17 @@ import com.example.reportaciudad.ui.theme.Neutro700
 import com.example.reportaciudad.ui.theme.Superficie
 
 @Composable
-fun DetalleScreen(estado: DetalleUiState, onBack: () -> Unit = {}) {
+fun DetalleScreen(
+    estado: DetalleUiState,
+    cancelacion: CancelacionUiState = CancelacionUiState(),
+    onBack: () -> Unit = {},
+    onAbrirCancelacion: () -> Unit = {},
+    onCerrarCancelacion: () -> Unit = {},
+    onConfirmarCancelacion: () -> Unit = {},
+    onEliminado: () -> Unit = {}
+) {
+    LaunchedEffect(cancelacion.eliminado) { if (cancelacion.eliminado) onEliminado() }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,13 +92,27 @@ fun DetalleScreen(estado: DetalleUiState, onBack: () -> Unit = {}) {
                     .fillMaxWidth()
                     .padding(top = 48.dp)
             )
-            is DetalleUiState.Encontrado -> ContenidoDetalle(estado.reporte)
+            is DetalleUiState.Encontrado -> {
+                ContenidoDetalle(estado.reporte, cancelacion, onAbrirCancelacion)
+                if (cancelacion.dialogoAbierto) {
+                    DialogoCancelacion(
+                        reporte = estado.reporte,
+                        cancelando = cancelacion.cancelando,
+                        onCerrar = onCerrarCancelacion,
+                        onConfirmar = onConfirmarCancelacion
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
+private fun ColumnScope.ContenidoDetalle(
+    reporte: Reporte,
+    cancelacion: CancelacionUiState,
+    onAbrirCancelacion: () -> Unit
+) {
     Column(
         modifier = Modifier
             .weight(1f)
@@ -117,7 +153,100 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
         }
 
         TarjetaMapa(latitud = reporte.latitud, longitud = reporte.longitud)
+
+        cancelacion.error?.let { AvisoCancelacion(it) }
+
+        if (reporte.puedeCancelarse) {
+            TextButton(
+                onClick = onAbrirCancelacion,
+                enabled = !cancelacion.cancelando,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .heightIn(min = 48.dp)
+                    .testTag("boton_cancelar_reporte")
+            ) {
+                Text(
+                    text = if (reporte.enviado) "Cancelar reporte" else "Eliminar reporte",
+                    style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.sp),
+                    color = Emergencia
+                )
+            }
+        }
     }
+}
+
+private val Reporte.puedeCancelarse: Boolean
+    get() = !enviado || estado.vecinoPuedeCancelar
+
+@Composable
+private fun AvisoCancelacion(error: ErrorCancelacion) {
+    Text(
+        text = when (error) {
+            ErrorCancelacion.SIN_CONEXION -> "No se pudo cancelar el reporte. Revisa tu conexión e intenta de nuevo."
+            ErrorCancelacion.YA_EN_REVISION ->
+                "Ya no se puede cancelar: la municipalidad empezó a revisar tu reporte."
+        },
+        style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, lineHeight = 19.sp),
+        color = Emergencia,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(EmergenciaClaro, RoundedCornerShape(14.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+    )
+}
+
+@Composable
+private fun DialogoCancelacion(
+    reporte: Reporte,
+    cancelando: Boolean,
+    onCerrar: () -> Unit,
+    onConfirmar: () -> Unit
+) {
+    val titulo = if (reporte.enviado) "¿Cancelar este reporte?" else "¿Eliminar este reporte?"
+    val texto = when {
+        !reporte.enviado ->
+            "Todavía no llegó a la municipalidad. Se borra de tu teléfono y no se va a enviar."
+        reporte.emergencia != null ->
+            "Hazlo solo si fue una falsa alarma o el problema ya no está. " +
+                "No van a mandar a nadie y no se puede deshacer."
+        else ->
+            "La municipalidad todavía no lo revisó. Si lo cancelas, no lo van a atender y no se puede deshacer."
+    }
+
+    AlertDialog(
+        onDismissRequest = onCerrar,
+        containerColor = Fondo,
+        title = { Text(titulo, style = MaterialTheme.typography.titleLarge, color = Texto) },
+        text = {
+            Text(
+                text = texto,
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 21.sp),
+                color = Texto
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirmar,
+                enabled = !cancelando,
+                modifier = Modifier.testTag("boton_confirmar_cancelacion")
+            ) {
+                if (cancelando) {
+                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp, color = Emergencia)
+                } else {
+                    Text(
+                        text = if (reporte.enviado) "Sí, cancelar" else "Sí, eliminar",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Emergencia
+                    )
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onCerrar, enabled = !cancelando) {
+                Text("No, volver", style = MaterialTheme.typography.labelLarge, color = Texto)
+            }
+        }
+    )
 }
 
 private fun Reporte.modeloFoto(): Any? =
