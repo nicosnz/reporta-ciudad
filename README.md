@@ -264,23 +264,21 @@ app/src/main/java/com/example/reportaciudad/
 │       ├── UsuarioApi.kt              # GET /usuarios para el login
 │       ├── UsuarioDto.kt              # JSON del recurso "usuarios"
 │       ├── ClienteApi.kt              # Retrofit + OkHttp (uno para toda la app)
-│       ├── ReporteRemoteDataSource.kt # Interfaces de las fuentes remotas
-│       ├── UsuarioRemoteDataSource.kt
-│       ├── FotoRemoteDataSource.kt
+│       ├── LlamarApi.kt               # Errores de red → Result.failure
+│       ├── ReporteRemoteDataSource.kt # Reportes en MockAPI
+│       ├── UsuarioRemoteDataSource.kt # Usuarios en MockAPI
 │       ├── CloudinaryApi.kt           # Subida de fotos (multipart)
-│       ├── CloudinaryFotoRemoteDataSource.kt
-│       ├── RetrofitReporteRemoteDataSource.kt
-│       └── RetrofitUsuarioRemoteDataSource.kt
-├── repository/                        # ReporteRepository y AuthRepository (+ Impl)
-├── viewmodel/                         # Reportes, Detalle, ReporteFormulario, Login y Sesion ViewModels
+│       └── FotoRemoteDataSource.kt    # Fotos en Cloudinary
+├── repository/                        # ReporteRepository, AdminRepository y AuthRepository
+├── viewmodel/                         # Un ViewModel por pantalla (vecino y administrador)
 ├── navigation/                        # Rutas type-safe + ReportaCiudadNavHost
 ├── util/                              # FechaBolivia: fechas en hora de Bolivia
 └── ui/
     ├── screens/
     │   ├── bienvenida/
     │   ├── login/
-    │   ├── admin/                     # Panel del administrador (provisorio)
-    │   ├── componentes/               # BotonSalir, BarraEstado
+    │   ├── admin/                     # Panel, detalle y foto del arreglo del administrador
+    │   ├── componentes/               # Iconos, botones, cámara, mapa y fotos compartidos
     │   ├── inicio/                    # Mis reportes
     │   ├── detalle/
     │   └── reportar/
