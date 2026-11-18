@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/CameraX-1.6-138A48" alt="CameraX 1.6">
   <img src="https://img.shields.io/badge/mapas-OpenStreetMap-7EBC6F?logo=openstreetmap&logoColor=white" alt="OpenStreetMap">
   <img src="https://img.shields.io/badge/Room-2.8-138A48" alt="Room 2.8">
-  <img src="https://img.shields.io/badge/etapa%202-Room%20%2B%20MockAPI-B8801F" alt="Etapa 2: Room + MockAPI">
+  <img src="https://img.shields.io/badge/etapa%203-usuarios%20y%20admin-B8801F" alt="Etapa 3: usuarios y administrador">
 </p>
 
 <p align="center">
@@ -71,14 +71,17 @@
 | | Pantalla | Qué hace |
 |:---:|---|---|
 | 🏛️ | **Bienvenida** | Presenta la app con el escudo de Santa Cruz y el lema. |
-| 🔑 | **Login** | Usuario y contraseña. Según el rol lleva a **Mis reportes** (vecino) o al **panel del administrador** (por ahora, provisorio). La sesión queda guardada. |
+| 🔑 | **Login** | Usuario y contraseña. Según el rol lleva a **Mis reportes** (vecino) o al **panel del administrador**. La sesión queda guardada. |
 | 📋 | **Mis reportes** | Lista de reportes con categoría y antigüedad ("recién", "hace 3 h", "hace 17 días"), con un color por familia: 🟢 urbano, 🟠 ambiental. |
-| 🔍 | **Detalle** | Categoría, título, fecha y hora de envío, **estado** del reporte (con el motivo si se rechazó), foto (o **antes / después** si se resolvió) y un **minimapa** del lugar. |
+| 🔍 | **Detalle** | Categoría, título, fecha y hora de envío, **estado** del reporte (con el motivo si se rechazó), foto (o **antes / después** si se resolvió) y un **minimapa** del lugar. Mientras está en *Recibido*, el vecino puede **cancelarlo**; si todavía no se envió, puede **eliminarlo**. |
 | 🚨 | **Paso 1 · Tipo** | Elegir entre **emergencia en curso** o **reporte de rutina**. |
 | 🗂️ | **Paso 2 · Categoría** | Emergencias: incendio o humo. Rutina: basura, bache, alumbrado o fuga de agua. |
 | 📷 | **Paso 3 · Fotografía** | Cámara dentro de la app (CameraX): visor con guías, destello, *Repetir* o *Usar foto*. |
 | 📍 | **Paso 4 · Localización** | Toma la ubicación **GPS** del teléfono y la muestra en un mapa de OpenStreetMap. |
 | ✅ | **Paso 5 · Resumen** | Revisa categoría, foto y mapa antes de enviar; confirma con el modal **¡Reporte enviado!** |
+| 🗃️ | **Panel del administrador** | Reportes de todos los vecinos en tres bandejas: **Pendientes**, **En curso** y **Cerrados**. |
+| 🛠️ | **Gestionar un reporte** | El administrador lo pasa a *En revisión* y a *Asignado*, o lo **rechaza** eligiendo un motivo. |
+| 📸 | **Foto del arreglo** | Foto con la cámara o de la galería; al confirmarla, el reporte pasa a **Resuelto**. |
 
 **Detalles que cuidamos**
 
@@ -105,6 +108,8 @@ flowchart LR
     B -- Salir --> L
     AD -- Salir --> L
     B --> C[Detalle]
+    AD --> AR[Gestionar reporte]
+    AR -- Marcar resuelto --> AF[Foto del arreglo]
     B -- botón Reportar --> P1[1 · Tipo]
     P1 -- Emergencia --> P2E[2 · Incendio / Humo]
     P1 -- Rutina --> P2R[2 · Tipo de problema]
@@ -187,7 +192,7 @@ La cámara saca la foto a unos **1280×960** (no a la resolución completa del s
 
 ### Estados del reporte
 
-La municipalidad cambia `estado` en el servidor (por ahora, a mano en el panel de MockAPI). La app los trae con `GET /reportes/{id}` cada vez que se entra a **Mis reportes** o al **detalle**, y los guarda en Room. Sin conexión se ve el último estado conocido. Resuelto y rechazado son finales: no se vuelven a consultar.
+El administrador cambia `estado` desde su panel, con `PUT /reportes/{id}`. La app del vecino los trae con `GET /reportes/{id}` cada vez que se entra a **Mis reportes** o al **detalle**, y los guarda en Room. Sin conexión se ve el último estado conocido. Resuelto, rechazado y cancelado son finales: no se vuelven a consultar.
 
 | `estado` | Barra | Qué ve el vecino |
 |---|---|---|
@@ -196,8 +201,11 @@ La municipalidad cambia `estado` en el servidor (por ahora, a mano en el panel d
 | `ASIGNADO` | ▰▰▰▱ | Lo tiene el equipo que lo va a arreglar |
 | `RESUELTO` | ▰▰▰▰ | Arreglado; si hay `fotoArregloUrl`, fotos **antes / después** |
 | `RECHAZADO` | ▰▰▰▰ (rojo) | No se va a atender; muestra `motivoRechazo` |
+| `CANCELADO` | ▱▱▱▱ (gris) | El vecino lo retiró antes de que lo revisaran |
 
 `motivoRechazo`: `DUPLICADO`, `NO_CORRESPONDE`, `NO_ENCONTRADO` u `OTRO`.
+
+**Cancelar un reporte.** El vecino puede cancelarlo solo mientras está en `RECIBIDO`. La app vuelve a consultar el estado en el servidor justo antes de cancelar: si el administrador ya empezó a revisarlo, no lo cambia y avisa al vecino. El reporte no se borra del servidor, pasa a `CANCELADO` para que quede el historial. Si todavía no se había enviado, se borra del teléfono junto con su foto. Un reporte enviado no se puede editar: si hubo un error, se cancela y se reporta de nuevo.
 
 ### Inicio de sesión
 
@@ -360,10 +368,10 @@ La app guarda los reportes en el teléfono con **Room** y los envía a un servid
 
 - **Las fotos se suben a Cloudinary con un preset sin firma**: el *cloud name* y el preset van dentro de la app, así que cualquiera que los saque podría subir imágenes a la cuenta. Las fotos tienen URL pública. En producción, las subidas las debería firmar un backend.
 - **MockAPI es público**: cualquiera con la URL puede leer los reportes (incluidas las coordenadas). Sirve para pruebas y demos, no para datos reales de vecinos.
-- Los **estados se cambian a mano** en MockAPI hasta que exista el panel del administrador.
 - Los reportes sin enviar se reintentan **al abrir la app**, todavía no en segundo plano.
 - **Mis reportes muestra los reportes de este teléfono**, no los del usuario: los reportes no guardan quién los envió. Si dos vecinos usan el mismo celular ven los mismos reportes, y en un celular nuevo la lista empieza vacía. Cerrar sesión no borra la lista (se perderían los que no se enviaron).
-- El **panel del administrador** es provisorio: todavía no lista ni gestiona reportes.
+- El **rol de administrador lo controla solo la app**: MockAPI acepta cambios de cualquiera que conozca la URL.
+- El **panel del administrador necesita conexión**: no guarda los reportes en el teléfono.
 - La ubicación es la **posición actual del teléfono**; el lugar se guarda como coordenadas, todavía sin nombre de calle.
 - Los mapas usan los servidores comunitarios de OpenStreetMap: adecuados para pruebas y demos, no para muchos usuarios.
 
@@ -393,7 +401,8 @@ La app guarda los reportes en el teléfono con **Room** y los envía a un servid
 - [x] Fotos subidas a Cloudinary, sacadas a unos 1280×960
 - [x] Estados del reporte (Recibido, En revisión, Asignado, Resuelto, Rechazado) en la lista y el detalle
 - [x] Detalle con motivo de rechazo, fotos antes / después y minimapa
-- [ ] Panel del administrador: listar, revisar, asignar, resolver y rechazar reportes
+- [x] Panel del administrador: listar, revisar, asignar, resolver y rechazar reportes
+- [x] El vecino puede cancelar un reporte mientras está en Recibido
 - [ ] Guardar en cada reporte quién lo envió
 
 **Próximas etapas**
