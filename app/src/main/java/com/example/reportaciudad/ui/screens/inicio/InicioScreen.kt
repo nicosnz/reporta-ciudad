@@ -39,7 +39,6 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -47,8 +46,6 @@ import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.data.model.EstadoEnvio
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.Reporte
-import com.example.reportaciudad.data.model.TipoEmergencia
-import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.BotonSalir
 import com.example.reportaciudad.ui.theme.Emergencia
@@ -56,7 +53,6 @@ import com.example.reportaciudad.ui.theme.AmbientalOscuro
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro300
 import com.example.reportaciudad.ui.theme.Neutro700
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
 
@@ -279,18 +275,3 @@ private val IconoCamara = iconoDeLinea(
     "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z",
     "M9 13a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"
 )
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun InicioScreenPreview() {
-    ReportaCiudadTheme {
-        InicioScreen(
-            reportes = listOf(
-                Reporte(id = 2, problema = TipoProblema.BACHE, latitud = -17.78, longitud = -63.18,
-                    estadoEnvio = EstadoEnvio.ENVIADO),
-                Reporte(id = 1, emergencia = TipoEmergencia.INCENDIO, latitud = -17.78, longitud = -63.18,
-                    estadoEnvio = EstadoEnvio.ERROR)
-            )
-        )
-    }
-}

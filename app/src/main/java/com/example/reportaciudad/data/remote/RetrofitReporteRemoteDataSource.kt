@@ -36,6 +36,16 @@ class RetrofitReporteRemoteDataSource(
     override suspend fun listarTodos(): Result<List<ReporteServidor>> =
         llamar { api.listar().mapNotNull { it.aServidor() } }
 
+    override suspend fun obtener(remoteId: String): Result<ReporteServidor> =
+        llamar { api.obtener(remoteId) }.mapCatching { dto ->
+            dto.aServidor() ?: error("El servidor no devolvió el reporte")
+        }
+
+    override suspend fun actualizar(reporte: ReporteServidor): Result<ReporteServidor> =
+        llamar { api.actualizar(reporte.remoteId, reporte.aDto()) }.mapCatching { dto ->
+            dto.aServidor() ?: error("El servidor no devolvió el reporte")
+        }
+
     private inline fun <T> llamar(bloque: () -> T): Result<T> =
         try {
             Result.success(bloque())

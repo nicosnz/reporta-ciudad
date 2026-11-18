@@ -13,8 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.reportaciudad.data.model.Rol
 import com.example.reportaciudad.data.model.Sesion
+import com.example.reportaciudad.ui.screens.admin.AdminDetalleScreen
+import com.example.reportaciudad.ui.screens.admin.AdminFotoArregloScreen
 import com.example.reportaciudad.ui.screens.admin.AdminScreen
 import com.example.reportaciudad.ui.screens.bienvenida.BienvenidaScreen
 import com.example.reportaciudad.ui.screens.detalle.DetalleScreen
@@ -26,6 +29,8 @@ import com.example.reportaciudad.ui.screens.reportar.localizacion.LocalizacionSc
 import com.example.reportaciudad.ui.screens.reportar.problema.SeleccionProblemaScreen
 import com.example.reportaciudad.ui.screens.reportar.resumen.ResumenScreen
 import com.example.reportaciudad.ui.screens.reportar.tipo.TipoReporteScreen
+import com.example.reportaciudad.viewmodel.AdminDetalleViewModel
+import com.example.reportaciudad.viewmodel.AdminFotoArregloViewModel
 import com.example.reportaciudad.viewmodel.AdminPanelViewModel
 import com.example.reportaciudad.viewmodel.AppViewModelProvider
 import com.example.reportaciudad.viewmodel.DetalleViewModel
@@ -91,8 +96,41 @@ fun ReportaCiudadNavHost() {
             AdminScreen(
                 estado = estado,
                 onElegirBandeja = vm::elegirBandeja,
+                onAbrirReporte = { remoteId -> navController.navigate(Ruta.AdminDetalle(remoteId)) },
                 onReintentar = vm::cargar,
                 onCerrarSesion = cerrarSesion
+            )
+        }
+        composable<Ruta.AdminDetalle> { entrada ->
+            val vm: AdminDetalleViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val estado by vm.estado.collectAsStateWithLifecycle()
+            LaunchedEffect(Unit) { vm.cargar() }
+            AdminDetalleScreen(
+                estado = estado,
+                onVolver = { navController.popBackStack() },
+                onReintentar = vm::cargar,
+                onAvanzar = vm::avanzar,
+                onMarcarResuelto = {
+                    navController.navigate(Ruta.AdminFotoArreglo(entrada.toRoute<Ruta.AdminDetalle>().remoteId))
+                },
+                onAbrirRechazo = vm::abrirHojaRechazo,
+                onCerrarRechazo = vm::cerrarHojaRechazo,
+                onElegirMotivo = vm::elegirMotivo,
+                onConfirmarRechazo = vm::confirmarRechazo
+            )
+        }
+        composable<Ruta.AdminFotoArreglo> {
+            val vm: AdminFotoArregloViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val estado by vm.estado.collectAsStateWithLifecycle()
+            AdminFotoArregloScreen(
+                estado = estado,
+                crearArchivoFoto = vm::nuevoArchivoFoto,
+                onFotoSacada = vm::fotoSacada,
+                onFotoElegida = vm::fotoElegida,
+                onRepetir = vm::repetir,
+                onConfirmar = vm::confirmar,
+                onVolver = { navController.popBackStack() },
+                onResuelto = { navController.popBackStack() }
             )
         }
         composable<Ruta.Inicio> {

@@ -32,14 +32,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -58,7 +56,6 @@ import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro700
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
 import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
@@ -260,7 +257,6 @@ private fun TarjetaUbicacion(latitud: Double, longitud: Double) {
 // También lo usa el detalle del reporte.
 @Composable
 internal fun MapaFijo(latitud: Double, longitud: Double, modifier: Modifier = Modifier) {
-    if (LocalInspectionMode.current) return   // el Preview no puede cargar el mapa
     val context = LocalContext.current
     val mapa = remember(latitud, longitud) {
         crearMapa(context).apply {
@@ -350,18 +346,3 @@ private fun ModalReporteEnviado(sinConexion: Boolean, onVerMisReportes: () -> Un
 }
 
 private val IconoCheck = iconoDeLinea("Check", 2.75f, "M20 6L9 17l-5-5")
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun ResumenScreenPreview() {
-    ReportaCiudadTheme {
-        ResumenScreen(
-            borrador = ReporteFormulario(
-                problema = TipoProblema.BACHE,
-                fotoRuta = "",
-                latitud = -17.7833,
-                longitud = -63.1821
-            )
-        )
-    }
-}

@@ -44,17 +44,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.reportaciudad.data.model.Bandeja
-import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.ReporteServidor
-import com.example.reportaciudad.data.model.TipoEmergencia
-import com.example.reportaciudad.data.model.TipoProblema
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
 import com.example.reportaciudad.ui.screens.componentes.BotonSalir
 import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
@@ -63,7 +59,6 @@ import com.example.reportaciudad.ui.theme.Emergencia
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro300
 import com.example.reportaciudad.ui.theme.Neutro700
-import com.example.reportaciudad.ui.theme.ReportaCiudadTheme
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.Urbano
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
@@ -74,6 +69,7 @@ import com.example.reportaciudad.viewmodel.AdminPanelUiState
 fun AdminScreen(
     estado: AdminPanelUiState,
     onElegirBandeja: (Bandeja) -> Unit = {},
+    onAbrirReporte: (String) -> Unit = {},
     onReintentar: () -> Unit = {},
     onCerrarSesion: () -> Unit = {}
 ) {
@@ -105,7 +101,7 @@ fun AdminScreen(
                         item { SinReportes(estado.bandeja) }
                     } else {
                         items(estado.visibles, key = { it.remoteId }) { reporte ->
-                            FilaReporte(reporte)
+                            FilaReporte(reporte, onClick = { onAbrirReporte(reporte.remoteId) })
                         }
                     }
                 }
@@ -158,10 +154,10 @@ private fun subtitulo(bandeja: Bandeja, n: Int): String {
     }
 }
 
-// Sin onClick por ahora: el detalle del reporte es otra historia (HU-ADM-02)
 @Composable
-private fun FilaReporte(reporte: ReporteServidor) {
+private fun FilaReporte(reporte: ReporteServidor, onClick: () -> Unit) {
     Surface(
+        onClick = onClick,
         shape = RoundedCornerShape(26.dp),
         color = Superficie,
         contentColor = MaterialTheme.colorScheme.onBackground,
@@ -199,6 +195,12 @@ private fun FilaReporte(reporte: ReporteServidor) {
                 )
                 BarraEstado(estado = reporte.estado, modifier = Modifier.padding(top = 2.dp))
             }
+            Icon(
+                imageVector = IconoChevron,
+                contentDescription = null,
+                tint = Neutro700,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }
@@ -357,6 +359,8 @@ private val Bandeja.icono: ImageVector
         Bandeja.CERRADOS -> IconoCerrado
     }
 
+private val IconoChevron = iconoDeLinea("Chevron", 2.25f, "M9 18l6-6-6-6")
+
 private val IconoBandeja = iconoDeLinea(
     "Bandeja", 2.25f,
     "M22 12h-6l-2 3h-4l-2-3H2",
@@ -376,43 +380,3 @@ private val IconoCerrado = iconoDeLinea(
     "M22 11.08V12a10 10 0 1 1-5.93-9.14",
     "M22 4L12 14.01l-3-3"
 )
-
-private fun ejemplo(id: String, problema: TipoProblema? = null, emergencia: TipoEmergencia? = null,
-                    estado: EstadoReporte, horas: Long) = ReporteServidor(
-    remoteId = id, emergencia = emergencia, problema = problema,
-    latitud = -17.78, longitud = -63.18,
-    fechaHora = System.currentTimeMillis() - horas * 3_600_000,
-    fotoUrl = null, estado = estado, motivoRechazo = null, fotoArregloUrl = null
-)
-
-private val reportesDeEjemplo = listOf(
-    ejemplo("1", emergencia = TipoEmergencia.INCENDIO, estado = EstadoReporte.RECIBIDO, horas = 0),
-    ejemplo("2", problema = TipoProblema.BACHE, estado = EstadoReporte.EN_REVISION, horas = 2),
-    ejemplo("3", problema = TipoProblema.BASURA, estado = EstadoReporte.ASIGNADO, horas = 24),
-    ejemplo("4", problema = TipoProblema.ALUMBRADO, estado = EstadoReporte.RESUELTO, horas = 72),
-    ejemplo("5", problema = TipoProblema.FUGA_DE_AGUA, estado = EstadoReporte.RECHAZADO, horas = 120)
-)
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun AdminPendientesPreview() {
-    ReportaCiudadTheme {
-        AdminScreen(AdminPanelUiState(reportes = reportesDeEjemplo, cargando = false))
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun AdminCerradosPreview() {
-    ReportaCiudadTheme {
-        AdminScreen(AdminPanelUiState(bandeja = Bandeja.CERRADOS, reportes = reportesDeEjemplo, cargando = false))
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-private fun AdminErrorPreview() {
-    ReportaCiudadTheme {
-        AdminScreen(AdminPanelUiState(cargando = false, error = true))
-    }
-}
