@@ -148,7 +148,7 @@ private fun subtitulo(bandeja: Bandeja, n: Int): String {
     return when (bandeja) {
         Bandeja.PENDIENTES -> "$reportes por atender"
         Bandeja.EN_CURSO -> "$reportes con cuadrilla asignada"
-        Bandeja.CERRADOS -> if (n == 1) "1 reporte resuelto o rechazado" else "$n reportes resueltos o rechazados"
+        Bandeja.CERRADOS -> if (n == 1) "1 reporte resuelto, rechazado o cancelado" else "$n reportes resueltos, rechazados o cancelados"
     }
 }
 
