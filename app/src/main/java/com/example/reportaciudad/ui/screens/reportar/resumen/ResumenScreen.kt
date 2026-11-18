@@ -315,7 +315,7 @@ private fun ModalReporteEnviado(sinConexion: Boolean, onVerMisReportes: () -> Un
                     text = if (sinConexion) {
                         "No hay conexión ahora. Quedó guardado en tu teléfono y lo enviamos cuando vuelva la señal."
                     } else {
-                        "Tu reporte ya está en el mapa público. Te avisamos cuando cambie de estado."
+                        "La municipalidad ya recibió tu reporte. Puedes seguir su estado en Mis reportes."
                     },
                     style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 22.sp),
                     color = Neutro700,
