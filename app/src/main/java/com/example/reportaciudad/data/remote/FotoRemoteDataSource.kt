@@ -1,10 +1,26 @@
 package com.example.reportaciudad.data.remote
 
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-// Dónde se guardan las fotos de los reportes. Hoy Cloudinary; se puede cambiar sin tocar el repositorio.
-interface FotoRemoteDataSource {
+// Sube las fotos de los reportes a Cloudinary.
+class FotoRemoteDataSource(
+    private val api: CloudinaryApi,
+    // Preset "unsigned": la configuración (carpeta, formatos, tamaño) vive en Cloudinary
+    private val preset: String
+) {
 
     // Devuelve la URL pública de la foto. Falla con IOException si no hay conexión.
-    suspend fun subir(archivo: File): Result<String>
+    suspend fun subir(archivo: File): Result<String> =
+        llamarApi {
+            val parte = MultipartBody.Part.createFormData(
+                "file",
+                archivo.name,
+                archivo.asRequestBody("image/jpeg".toMediaType())
+            )
+            api.subir(parte, preset.toRequestBody(MultipartBody.FORM)).url
+        }
 }

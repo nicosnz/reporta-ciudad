@@ -12,20 +12,40 @@ data class SeguimientoReporte(
     val fotoArregloUrl: String?
 )
 
-// Fuente remota de reportes. El repositorio solo conoce esta interfaz:
-// se puede cambiar MockAPI por un servidor real sin tocar nada más.
-interface ReporteRemoteDataSource {
+// Reportes en el servidor (MockAPI). Para cambiar de servidor solo hay que tocar esta clase y ReporteApi.
+class ReporteRemoteDataSource(
+    private val api: ReporteApi
+) {
 
     // Devuelve el id que le asignó el servidor
-    suspend fun enviar(reporte: Reporte): Result<String>
+    suspend fun enviar(reporte: Reporte): Result<String> =
+        llamarApi { api.crear(reporte.aDto()) }.mapCatching { creado ->
+            creado.id ?: error("El servidor no devolvió un id")
+        }
 
     // Estado actual del reporte en el servidor
-    suspend fun seguimiento(remoteId: String): Result<SeguimientoReporte>
+    suspend fun seguimiento(remoteId: String): Result<SeguimientoReporte> =
+        llamarApi {
+            val dto = api.obtener(remoteId)
+            SeguimientoReporte(
+                estado = EstadoReporte.desdeTexto(dto.estado),
+                motivoRechazo = MotivoRechazo.desdeTexto(dto.motivoRechazo),
+                // Solo una URL real: descarta vacíos y textos de relleno de MockAPI
+                fotoArregloUrl = dto.fotoArregloUrl?.trim()?.takeIf { it.startsWith("http") }
+            )
+        }
 
-    // Todos los reportes del servidor, de todos los vecinos (para el administrador)
-    suspend fun listarTodos(): Result<List<ReporteServidor>>
+    // Los que vienen sin id se descartan (aServidor devuelve null)
+    suspend fun listarTodos(): Result<List<ReporteServidor>> =
+        llamarApi { api.listar().mapNotNull { it.aServidor() } }
 
-    suspend fun obtener(remoteId: String): Result<ReporteServidor>
+    suspend fun obtener(remoteId: String): Result<ReporteServidor> =
+        llamarApi { api.obtener(remoteId) }.mapCatching { dto ->
+            dto.aServidor() ?: error("El servidor no devolvió el reporte")
+        }
 
-    suspend fun actualizar(reporte: ReporteServidor): Result<ReporteServidor>
+    suspend fun actualizar(reporte: ReporteServidor): Result<ReporteServidor> =
+        llamarApi { api.actualizar(reporte.remoteId, reporte.aDto()) }.mapCatching { dto ->
+            dto.aServidor() ?: error("El servidor no devolvió el reporte")
+        }
 }
