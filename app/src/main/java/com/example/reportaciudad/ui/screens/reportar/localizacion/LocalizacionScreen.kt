@@ -73,7 +73,7 @@ import org.osmdroid.views.overlay.CopyrightOverlay
 import java.io.File
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
 import com.example.reportaciudad.ui.screens.reportar.componentes.iconoDeLinea
-import com.example.reportaciudad.ui.screens.reportar.fotografia.abrirAjustesDeLaApp
+import com.example.reportaciudad.ui.screens.componentes.abrirAjustesDeLaApp
 
 // Plaza 24 de Septiembre, Santa Cruz de la Sierra: el mapa se ve aquí mientras no hay ubicación del teléfono
 private val CENTRO_SANTA_CRUZ = GeoPoint(-17.7833, -63.1821)

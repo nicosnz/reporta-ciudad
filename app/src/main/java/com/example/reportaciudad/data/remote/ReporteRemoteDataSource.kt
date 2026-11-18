@@ -24,4 +24,8 @@ interface ReporteRemoteDataSource {
 
     // Todos los reportes del servidor, de todos los vecinos (para el administrador)
     suspend fun listarTodos(): Result<List<ReporteServidor>>
+
+    suspend fun obtener(remoteId: String): Result<ReporteServidor>
+
+    suspend fun actualizar(reporte: ReporteServidor): Result<ReporteServidor>
 }

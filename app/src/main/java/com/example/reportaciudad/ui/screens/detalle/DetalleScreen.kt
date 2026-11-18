@@ -2,40 +2,26 @@ package com.example.reportaciudad.ui.screens.detalle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import androidx.compose.ui.semantics.semantics
@@ -43,27 +29,22 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.example.reportaciudad.data.model.EstadoReporte
-import com.example.reportaciudad.data.model.Familia
 import com.example.reportaciudad.data.model.MotivoRechazo
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.ui.screens.componentes.BarraEstado
+import com.example.reportaciudad.ui.screens.componentes.BotonVolver
+import com.example.reportaciudad.ui.screens.componentes.EncabezadoReporte
+import com.example.reportaciudad.ui.screens.componentes.FotosAntesDespues
+import com.example.reportaciudad.ui.screens.componentes.TarjetaMapa
 import com.example.reportaciudad.ui.screens.componentes.explicacion
-import com.example.reportaciudad.ui.screens.reportar.localizacion.PinCentral
-import com.example.reportaciudad.ui.screens.reportar.resumen.MapaFijo
-import com.example.reportaciudad.ui.theme.Fondo
 import com.example.reportaciudad.ui.theme.Neutro900
-import com.example.reportaciudad.ui.theme.UrbanoOscuro
 import com.example.reportaciudad.viewmodel.DetalleUiState
 import java.io.File
 import com.example.reportaciudad.ui.theme.EmergenciaClaro
 import com.example.reportaciudad.ui.theme.Emergencia
-import com.example.reportaciudad.ui.theme.AmbientalEtiqueta
-import com.example.reportaciudad.ui.theme.AmbientalEtiquetaTexto
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro700
 import com.example.reportaciudad.ui.theme.Superficie
-import com.example.reportaciudad.ui.theme.UrbanoEtiqueta
-import com.example.reportaciudad.ui.theme.UrbanoEtiquetaTexto
 
 @Composable
 fun DetalleScreen(estado: DetalleUiState, onBack: () -> Unit = {}) {
@@ -104,13 +85,22 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
             .padding(start = 16.dp, top = 20.dp, end = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Encabezado(reporte)
+        EncabezadoReporte(
+            categoria = reporte.categoria,
+            familia = reporte.familia,
+            titulo = reporte.titulo,
+            fecha = "Enviado ${reporte.fecha}"
+        )
 
         if (reporte.enviado) TarjetaEstado(reporte) else TarjetaSinEnviar()
 
         val fotoArreglo = reporte.fotoArregloUrl
         if (reporte.estado == EstadoReporte.RESUELTO && fotoArreglo != null) {
-            FotosAntesDespues(antes = reporte.modeloFoto(), despues = fotoArreglo)
+            FotosAntesDespues(
+                antes = reporte.modeloFoto(),
+                despues = fotoArreglo,
+                descripcionAntes = "Tu foto, antes del arreglo"
+            )
         } else {
             // Sin foto no se muestra ninguna de ejemplo
             reporte.modeloFoto()?.let { foto ->
@@ -134,122 +124,6 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
 // La foto del teléfono si todavía está (carga sin internet); si no, la de Cloudinary
 private fun Reporte.modeloFoto(): Any? =
     fotoRuta?.let(::File)?.takeIf { it.exists() } ?: fotoUrl
-
-@Composable
-private fun FotosAntesDespues(antes: Any?, despues: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        FotoConEtiqueta(
-            modelo = antes,
-            etiqueta = "Antes",
-            colorEtiqueta = Neutro700,
-            descripcion = "Tu foto, antes del arreglo",
-            modifier = Modifier.weight(1f)
-        )
-        FotoConEtiqueta(
-            modelo = despues,
-            etiqueta = "Después",
-            colorEtiqueta = UrbanoOscuro,
-            descripcion = "Foto del arreglo",
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
-
-@Composable
-private fun FotoConEtiqueta(
-    modelo: Any?,
-    etiqueta: String,
-    colorEtiqueta: Color,
-    descripcion: String,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .height(190.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(Neutro200)
-    ) {
-        if (modelo != null) {
-            AsyncImage(
-                model = modelo,
-                contentDescription = descripcion,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-        Text(
-            text = etiqueta,
-            style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp),
-            color = colorEtiqueta,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(10.dp)
-                .background(Fondo.copy(alpha = 0.92f), CircleShape)
-                .padding(horizontal = 10.dp, vertical = 4.dp)
-        )
-    }
-}
-
-@Composable
-private fun BotonVolver(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Surface(
-        onClick = onClick,
-        shape = CircleShape,
-        color = Superficie,
-        contentColor = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier.size(48.dp)
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = IconoVolver,
-                contentDescription = "Volver",
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-
-@Composable
-private fun Encabezado(reporte: Reporte) {
-    val (fondoEtiqueta, textoEtiqueta) = when (reporte.familia) {
-        Familia.URBANO -> UrbanoEtiqueta to UrbanoEtiquetaTexto
-        Familia.AMBIENTAL -> AmbientalEtiqueta to AmbientalEtiquetaTexto
-        Familia.EMERGENCIA -> EmergenciaClaro to Emergencia
-    }
-
-    Column(
-        modifier = Modifier.padding(horizontal = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Text(
-            text = reporte.categoria,
-            style = MaterialTheme.typography.labelLarge.copy(fontSize = 13.sp),
-            color = textoEtiqueta,
-            modifier = Modifier
-                .background(fondoEtiqueta, CircleShape)
-                .padding(horizontal = 12.dp, vertical = 5.dp)
-        )
-        Text(
-            text = reporte.titulo,
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontSize = 28.sp,
-                lineHeight = 32.sp,
-                letterSpacing = (-0.025).em
-            ),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            text = "Enviado ${reporte.fecha}",
-            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
-            color = Neutro700
-        )
-    }
-}
-
 
 @Composable
 private fun TarjetaEstado(reporte: Reporte) {
@@ -312,51 +186,3 @@ private fun TarjetaSinEnviar() {
         )
     }
 }
-
-// Minimapa fijo en lugar de las coordenadas. Sin conexión queda el fondo gris con el pin:
-// no se muestra ningún error.
-@Composable
-private fun TarjetaMapa(latitud: Double, longitud: Double) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Superficie, RoundedCornerShape(28.dp))
-            .padding(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(Neutro200)
-        ) {
-            MapaFijo(latitud, longitud, Modifier.fillMaxSize())
-            PinCentral(Modifier.align(Alignment.Center), ancho = 28.dp, alto = 36.dp)
-        }
-        Text(
-            text = "Santa Cruz de la Sierra",
-            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.ExtraBold),
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(horizontal = 4.dp)
-        )
-    }
-}
-
-private val IconoVolver: ImageVector = ImageVector.Builder(
-    name = "Volver",
-    defaultWidth = 24.dp,
-    defaultHeight = 24.dp,
-    viewportWidth = 24f,
-    viewportHeight = 24f
-).apply {
-    listOf("M12 19l-7-7 7-7", "M19 12H5").forEach { trazo ->
-        addPath(
-            pathData = addPathNodes(trazo),
-            stroke = SolidColor(Color.Black),
-            strokeLineWidth = 2.75f,
-            strokeLineCap = StrokeCap.Round,
-            strokeLineJoin = StrokeJoin.Round
-        )
-    }
-}.build()

@@ -69,6 +69,7 @@ import com.example.reportaciudad.viewmodel.AdminPanelUiState
 fun AdminScreen(
     estado: AdminPanelUiState,
     onElegirBandeja: (Bandeja) -> Unit = {},
+    onAbrirReporte: (String) -> Unit = {},
     onReintentar: () -> Unit = {},
     onCerrarSesion: () -> Unit = {}
 ) {
@@ -100,7 +101,7 @@ fun AdminScreen(
                         item { SinReportes(estado.bandeja) }
                     } else {
                         items(estado.visibles, key = { it.remoteId }) { reporte ->
-                            FilaReporte(reporte)
+                            FilaReporte(reporte, onClick = { onAbrirReporte(reporte.remoteId) })
                         }
                     }
                 }
@@ -153,10 +154,10 @@ private fun subtitulo(bandeja: Bandeja, n: Int): String {
     }
 }
 
-// Sin onClick por ahora: el detalle del reporte es otra historia (HU-ADM-02)
 @Composable
-private fun FilaReporte(reporte: ReporteServidor) {
+private fun FilaReporte(reporte: ReporteServidor, onClick: () -> Unit) {
     Surface(
+        onClick = onClick,
         shape = RoundedCornerShape(26.dp),
         color = Superficie,
         contentColor = MaterialTheme.colorScheme.onBackground,
@@ -194,6 +195,12 @@ private fun FilaReporte(reporte: ReporteServidor) {
                 )
                 BarraEstado(estado = reporte.estado, modifier = Modifier.padding(top = 2.dp))
             }
+            Icon(
+                imageVector = IconoChevron,
+                contentDescription = null,
+                tint = Neutro700,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }
@@ -351,6 +358,8 @@ private val Bandeja.icono: ImageVector
         Bandeja.EN_CURSO -> IconoCamion
         Bandeja.CERRADOS -> IconoCerrado
     }
+
+private val IconoChevron = iconoDeLinea("Chevron", 2.25f, "M9 18l6-6-6-6")
 
 private val IconoBandeja = iconoDeLinea(
     "Bandeja", 2.25f,
