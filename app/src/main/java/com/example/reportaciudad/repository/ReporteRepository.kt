@@ -6,6 +6,7 @@ import com.example.reportaciudad.data.local.aDominio
 import com.example.reportaciudad.data.local.db.ReporteDao
 import com.example.reportaciudad.data.local.db.ReporteEntity
 import com.example.reportaciudad.data.model.EstadoEnvio
+import com.example.reportaciudad.data.model.EstadoReporte
 import com.example.reportaciudad.data.model.Reporte
 import com.example.reportaciudad.data.model.ReporteFormulario
 import com.example.reportaciudad.data.model.Ubicacion
@@ -16,6 +17,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
+
+enum class ResultadoCancelacion {
+    ELIMINADO,
+    CANCELADO,
+    NO_PERMITIDO,
+    SIN_CONEXION
+}
 
 class ReporteRepository(
     private val dao: ReporteDao,
@@ -68,6 +76,33 @@ class ReporteRepository(
     suspend fun actualizarEstado(id: Long) {
         val reporte = dao.porId(id) ?: return
         if (reporte.estadoEnvio == EstadoEnvio.ENVIADO && !reporte.estado.esFinal) actualizarDesdeServidor(reporte)
+    }
+
+    suspend fun cancelar(id: Long): ResultadoCancelacion = sincronizando.withLock { cancelarBloqueado(id) }
+
+    private suspend fun cancelarBloqueado(id: Long): ResultadoCancelacion {
+        val reporte = dao.porId(id) ?: return ResultadoCancelacion.ELIMINADO
+
+        if (reporte.estadoEnvio != EstadoEnvio.ENVIADO) {
+            dao.borrar(id)
+            almacenFotos.borrar(reporte.fotoRuta)
+            return ResultadoCancelacion.ELIMINADO
+        }
+
+        val remoteId = reporte.remoteId ?: return ResultadoCancelacion.NO_PERMITIDO
+        val actual = remoto.obtener(remoteId).getOrElse { return ResultadoCancelacion.SIN_CONEXION }
+        if (!actual.estado.vecinoPuedeCancelar) {
+            dao.actualizarEstado(id, actual.estado, actual.motivoRechazo, actual.fotoArregloUrl)
+            return ResultadoCancelacion.NO_PERMITIDO
+        }
+
+        return remoto.actualizar(actual.copy(estado = EstadoReporte.CANCELADO)).fold(
+            onSuccess = { guardado ->
+                dao.actualizarEstado(id, guardado.estado, guardado.motivoRechazo, guardado.fotoArregloUrl)
+                ResultadoCancelacion.CANCELADO
+            },
+            onFailure = { ResultadoCancelacion.SIN_CONEXION }
+        )
     }
 
     private suspend fun actualizarDesdeServidor(reporte: ReporteEntity) {

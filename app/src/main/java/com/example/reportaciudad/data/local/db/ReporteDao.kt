@@ -35,6 +35,9 @@ interface ReporteDao {
     @Insert
     suspend fun insertar(reporte: ReporteEntity): Long
 
+    @Query("DELETE FROM reportes WHERE id = :id")
+    suspend fun borrar(id: Long)
+
     @Query("UPDATE reportes SET estadoEnvio = :estado, remoteId = :remoteId WHERE id = :id")
     suspend fun actualizarEnvio(id: Long, estado: EstadoEnvio, remoteId: String?)
 
