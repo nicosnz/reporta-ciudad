@@ -111,7 +111,7 @@ flowchart LR
     M -- Ver mis reportes --> B
 ```
 
-Todas las rutas viven en un único `NavHost` (`navigation/ReportaCiudadNavHost.kt`), con **rutas type-safe** (`navigation/Rutas.kt`). Las pantallas no navegan solas: reciben datos y *callbacks* (`onVolver`, `onSeleccionar`, `onFotoSacada`…) y el `NavHost` decide a dónde ir.
+Todas las rutas viven en un único `NavHost` (`navigation/ReportaCiudadNavHost.kt`), con **rutas de texto** (`navigation/Rutas.kt`, p. ej. `"detalle/{id}"`). Las pantallas no navegan solas: reciben datos y *callbacks* (`onVolver`, `onSeleccionar`, `onFotoSacada`…) y el `NavHost` decide a dónde ir.
 
 ### Arquitectura
 
@@ -220,7 +220,7 @@ La app busca al usuario en el recurso `usuarios` de MockAPI (`GET /usuarios?usua
 |---|---|---|
 | Lenguaje | Kotlin | 2.2 |
 | Interfaz | Jetpack Compose + Material 3 | BOM `2026.02.01` |
-| Navegación | Navigation Compose (rutas type-safe) | 2.8.0 |
+| Navegación | Navigation Compose (rutas de texto) | 2.8.0 |
 | Base de datos | Room + KSP | 2.8.3 |
 | Red | Retrofit + kotlinx.serialization + OkHttp | 3.0.0 |
 | Estado | ViewModel + StateFlow (Lifecycle) | 2.11.0 |
@@ -271,7 +271,7 @@ app/src/main/java/com/example/reportaciudad/
 │       └── FotoRemoteDataSource.kt    # Fotos en Cloudinary
 ├── repository/                        # ReporteRepository, AdminRepository y AuthRepository
 ├── viewmodel/                         # Un ViewModel por pantalla (vecino y administrador)
-├── navigation/                        # Rutas type-safe + ReportaCiudadNavHost
+├── navigation/                        # Rutas de texto + ReportaCiudadNavHost
 ├── util/                              # FechaBolivia: fechas en hora de Bolivia
 └── ui/
     ├── screens/

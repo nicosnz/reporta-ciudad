@@ -1,21 +1,23 @@
 package com.example.reportaciudad.navigation
 
-import kotlinx.serialization.Serializable
-
 object Ruta {
-    @Serializable data object Bienvenida
-    @Serializable data object Login
-    @Serializable data object Admin
-    @Serializable data class AdminDetalle(val remoteId: String)
-    @Serializable data class AdminFotoArreglo(val remoteId: String)
-    @Serializable data object Inicio
-    @Serializable data class Detalle(val id: Long)
+    const val BIENVENIDA = "bienvenida"
+    const val LOGIN = "login"
+    const val ADMIN = "admin"
+    const val ADMIN_DETALLE = "admin/detalle/{remoteId}"
+    const val ADMIN_FOTO_ARREGLO = "admin/foto-arreglo/{remoteId}"
+    const val INICIO = "inicio"
+    const val DETALLE = "detalle/{id}"
 
-    @Serializable data object FlujoReportar
-    @Serializable data object PasoTipo
-    @Serializable data object PasoEmergencia
-    @Serializable data object PasoProblema
-    @Serializable data object PasoFotografia
-    @Serializable data object PasoLocalizacion
-    @Serializable data object PasoResumen
+    const val FLUJO_REPORTAR = "reportar"
+    const val PASO_TIPO = "reportar/tipo"
+    const val PASO_EMERGENCIA = "reportar/emergencia"
+    const val PASO_PROBLEMA = "reportar/problema"
+    const val PASO_FOTOGRAFIA = "reportar/fotografia"
+    const val PASO_LOCALIZACION = "reportar/localizacion"
+    const val PASO_RESUMEN = "reportar/resumen"
+
+    fun adminDetalle(remoteId: String) = "admin/detalle/$remoteId"
+    fun adminFotoArreglo(remoteId: String) = "admin/foto-arreglo/$remoteId"
+    fun detalle(id: Long) = "detalle/$id"
 }

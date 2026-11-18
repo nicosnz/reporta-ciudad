@@ -9,11 +9,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import androidx.navigation.navArgument
 import com.example.reportaciudad.data.model.Rol
 import com.example.reportaciudad.data.model.Sesion
 import com.example.reportaciudad.ui.screens.admin.AdminDetalleScreen
@@ -48,26 +49,26 @@ fun ReportaCiudadNavHost() {
 
     val cerrarSesion: () -> Unit = {
         sesionVm.cerrarSesion()
-        navController.navigate(Ruta.Login) {
+        navController.navigate(Ruta.LOGIN) {
             popUpTo(navController.graph.id) { inclusive = true }
         }
     }
 
-    NavHost(navController = navController, startDestination = Ruta.Bienvenida) {
-        composable<Ruta.Bienvenida> {
+    NavHost(navController = navController, startDestination = Ruta.BIENVENIDA) {
+        composable(Ruta.BIENVENIDA) {
             val haySesion by sesionVm.haySesion.collectAsStateWithLifecycle()
             BienvenidaScreen(
                 haySesion = haySesion,
                 onInicio = {
                     alcance.launch {
                         navController.navigate(destinoSegunSesion(sesionVm.sesionGuardada())) {
-                            popUpTo<Ruta.Bienvenida> { inclusive = true }
+                            popUpTo(Ruta.BIENVENIDA) { inclusive = true }
                         }
                     }
                 }
             )
         }
-        composable<Ruta.Login> {
+        composable(Ruta.LOGIN) {
             val vm: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
             LoginScreen(
@@ -78,24 +79,27 @@ fun ReportaCiudadNavHost() {
                 onIngresar = vm::ingresar,
                 onIngresado = { sesion ->
                     navController.navigate(destinoSegunSesion(sesion)) {
-                        popUpTo<Ruta.Login> { inclusive = true }
+                        popUpTo(Ruta.LOGIN) { inclusive = true }
                     }
                 }
             )
         }
-        composable<Ruta.Admin> {
+        composable(Ruta.ADMIN) {
             val vm: AdminPanelViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
             LaunchedEffect(Unit) { vm.cargar() }
             AdminScreen(
                 estado = estado,
                 onElegirBandeja = vm::elegirBandeja,
-                onAbrirReporte = { remoteId -> navController.navigate(Ruta.AdminDetalle(remoteId)) },
+                onAbrirReporte = { remoteId -> navController.navigate(Ruta.adminDetalle(remoteId)) },
                 onReintentar = vm::cargar,
                 onCerrarSesion = cerrarSesion
             )
         }
-        composable<Ruta.AdminDetalle> { entrada ->
+        composable(
+            Ruta.ADMIN_DETALLE,
+            arguments = listOf(navArgument("remoteId") { type = NavType.StringType })
+        ) { entrada ->
             val vm: AdminDetalleViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
             LaunchedEffect(Unit) { vm.cargar() }
@@ -105,7 +109,7 @@ fun ReportaCiudadNavHost() {
                 onReintentar = vm::cargar,
                 onAvanzar = vm::avanzar,
                 onMarcarResuelto = {
-                    navController.navigate(Ruta.AdminFotoArreglo(entrada.toRoute<Ruta.AdminDetalle>().remoteId))
+                    navController.navigate(Ruta.adminFotoArreglo(entrada.arguments?.getString("remoteId").orEmpty()))
                 },
                 onAbrirRechazo = vm::abrirHojaRechazo,
                 onCerrarRechazo = vm::cerrarHojaRechazo,
@@ -113,7 +117,10 @@ fun ReportaCiudadNavHost() {
                 onConfirmarRechazo = vm::confirmarRechazo
             )
         }
-        composable<Ruta.AdminFotoArreglo> {
+        composable(
+            Ruta.ADMIN_FOTO_ARREGLO,
+            arguments = listOf(navArgument("remoteId") { type = NavType.StringType })
+        ) {
             val vm: AdminFotoArregloViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
             AdminFotoArregloScreen(
@@ -127,53 +134,56 @@ fun ReportaCiudadNavHost() {
                 onResuelto = { navController.popBackStack() }
             )
         }
-        composable<Ruta.Inicio> {
+        composable(Ruta.INICIO) {
             val vm: ReportesViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
             LaunchedEffect(Unit) { vm.actualizarEstados() }
             InicioScreen(
                 reportes = estado.reportes,
                 cargando = estado.cargando,
-                onAbrirReporte = { id -> navController.navigate(Ruta.Detalle(id)) },
-                onReportar = { navController.navigate(Ruta.FlujoReportar) },
+                onAbrirReporte = { id -> navController.navigate(Ruta.detalle(id)) },
+                onReportar = { navController.navigate(Ruta.FLUJO_REPORTAR) },
                 onCerrarSesion = cerrarSesion
             )
         }
-        composable<Ruta.Detalle> {
+        composable(
+            Ruta.DETALLE,
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) {
             val vm: DetalleViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
             DetalleScreen(estado = estado, onBack = { navController.popBackStack() })
         }
 
-        navigation<Ruta.FlujoReportar>(startDestination = Ruta.PasoTipo) {
-            composable<Ruta.PasoTipo> {
+        navigation(startDestination = Ruta.PASO_TIPO, route = Ruta.FLUJO_REPORTAR) {
+            composable(Ruta.PASO_TIPO) {
                 TipoReporteScreen(
                     onVolver = { navController.popBackStack() },
-                    onEmergencia = { navController.navigate(Ruta.PasoEmergencia) },
-                    onRutina = { navController.navigate(Ruta.PasoProblema) }
+                    onEmergencia = { navController.navigate(Ruta.PASO_EMERGENCIA) },
+                    onRutina = { navController.navigate(Ruta.PASO_PROBLEMA) }
                 )
             }
-            composable<Ruta.PasoEmergencia> { entrada ->
+            composable(Ruta.PASO_EMERGENCIA) { entrada ->
                 val vm = entrada.formularioViewModel(navController)
                 SeleccionEmergenciaScreen(
                     onVolver = { navController.popBackStack() },
                     onSeleccionar = { emergencia ->
                         vm.elegirEmergencia(emergencia)
-                        navController.navigate(Ruta.PasoFotografia)
+                        navController.navigate(Ruta.PASO_FOTOGRAFIA)
                     }
                 )
             }
-            composable<Ruta.PasoProblema> { entrada ->
+            composable(Ruta.PASO_PROBLEMA) { entrada ->
                 val vm = entrada.formularioViewModel(navController)
                 SeleccionProblemaScreen(
                     onVolver = { navController.popBackStack() },
                     onSeleccionar = { problema ->
                         vm.elegirProblema(problema)
-                        navController.navigate(Ruta.PasoFotografia)
+                        navController.navigate(Ruta.PASO_FOTOGRAFIA)
                     }
                 )
             }
-            composable<Ruta.PasoFotografia> { entrada ->
+            composable(Ruta.PASO_FOTOGRAFIA) { entrada ->
                 val vm = entrada.formularioViewModel(navController)
                 val estado by vm.estado.collectAsStateWithLifecycle()
                 FotografiaScreen(
@@ -181,14 +191,14 @@ fun ReportaCiudadNavHost() {
                     crearArchivoFoto = vm::nuevoArchivoFoto,
                     onFotoSacada = vm::fotoSacada,
                     onRepetir = vm::descartarFoto,
-                    onUsarFoto = { navController.navigate(Ruta.PasoLocalizacion) },
+                    onUsarFoto = { navController.navigate(Ruta.PASO_LOCALIZACION) },
                     onVolver = {
                         vm.descartarFoto()
                         navController.popBackStack()
                     }
                 )
             }
-            composable<Ruta.PasoLocalizacion> { entrada ->
+            composable(Ruta.PASO_LOCALIZACION) { entrada ->
                 val vm = entrada.formularioViewModel(navController)
                 val estado by vm.estado.collectAsStateWithLifecycle()
                 LocalizacionScreen(
@@ -198,12 +208,12 @@ fun ReportaCiudadNavHost() {
                     onBuscarUbicacion = vm::buscarUbicacion,
                     onConfirmar = {
                         vm.confirmarUbicacion()
-                        navController.navigate(Ruta.PasoResumen)
+                        navController.navigate(Ruta.PASO_RESUMEN)
                     },
                     onVolver = { navController.popBackStack() }
                 )
             }
-            composable<Ruta.PasoResumen> { entrada ->
+            composable(Ruta.PASO_RESUMEN) { entrada ->
                 val vm = entrada.formularioViewModel(navController)
                 val estado by vm.estado.collectAsStateWithLifecycle()
                 ResumenScreen(
@@ -211,21 +221,21 @@ fun ReportaCiudadNavHost() {
                     envio = estado.envio,
                     onVolver = { navController.popBackStack() },
                     onEnviar = vm::enviar,
-                    onVerMisReportes = { navController.popBackStack(Ruta.Inicio, inclusive = false) }
+                    onVerMisReportes = { navController.popBackStack(Ruta.INICIO, inclusive = false) }
                 )
             }
         }
     }
 }
 
-private fun destinoSegunSesion(sesion: Sesion?): Any = when (sesion?.rol) {
-    null -> Ruta.Login
-    Rol.VECINO -> Ruta.Inicio
-    Rol.ADMIN -> Ruta.Admin
+private fun destinoSegunSesion(sesion: Sesion?): String = when (sesion?.rol) {
+    null -> Ruta.LOGIN
+    Rol.VECINO -> Ruta.INICIO
+    Rol.ADMIN -> Ruta.ADMIN
 }
 
 @Composable
 private fun NavBackStackEntry.formularioViewModel(navController: NavController): ReporteFormularioViewModel {
-    val entradaFlujo = remember(this) { navController.getBackStackEntry(Ruta.FlujoReportar) }
+    val entradaFlujo = remember(this) { navController.getBackStackEntry(Ruta.FLUJO_REPORTAR) }
     return viewModel(viewModelStoreOwner = entradaFlujo, factory = AppViewModelProvider.Factory)
 }
