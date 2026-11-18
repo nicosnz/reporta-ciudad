@@ -35,6 +35,7 @@ val EstadoReporte.color: Color
         EstadoReporte.ASIGNADO -> EstadoAsignado
         EstadoReporte.RESUELTO -> UrbanoOscuro
         EstadoReporte.RECHAZADO -> Emergencia
+        EstadoReporte.CANCELADO -> Neutro700
     }
 
 val EstadoReporte.explicacion: String
@@ -47,6 +48,7 @@ val EstadoReporte.explicacion: String
                 "Todavía no está terminado."
         EstadoReporte.RESUELTO -> "¡Listo! El problema ya se arregló. Abajo puedes ver cómo quedó. Gracias por avisar."
         EstadoReporte.RECHAZADO -> "La municipalidad no va a atender este reporte."
+        EstadoReporte.CANCELADO -> "Cancelaste este reporte antes de que lo revisaran. La municipalidad no lo va a atender."
     }
 
 @Composable
@@ -65,6 +67,7 @@ fun BarraEstado(
         repeat(4) { i ->
             val color = when {
                 estado == EstadoReporte.RECHAZADO -> Emergencia
+                estado == EstadoReporte.CANCELADO -> Neutro300
                 i < estado.paso -> Urbano
                 else -> Neutro300
             }

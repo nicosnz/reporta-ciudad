@@ -65,6 +65,7 @@ import com.example.reportaciudad.ui.theme.Fondo
 import com.example.reportaciudad.ui.theme.Neutro200
 import com.example.reportaciudad.ui.theme.Neutro300
 import com.example.reportaciudad.ui.theme.Neutro700
+import com.example.reportaciudad.ui.theme.Neutro900
 import com.example.reportaciudad.ui.theme.Superficie
 import com.example.reportaciudad.ui.theme.Urbano
 import com.example.reportaciudad.ui.theme.UrbanoDeshabilitado
@@ -170,7 +171,9 @@ private fun ColumnScope.ContenidoDetalle(
             fecha = reporte.recepcion,
             estado = reporte.estado
         )
-        if (reporte.estado != EstadoReporte.RECHAZADO) PasosEstado(reporte.estado)
+        if (reporte.estado != EstadoReporte.RECHAZADO && reporte.estado != EstadoReporte.CANCELADO) {
+            PasosEstado(reporte.estado)
+        }
 
         val fotoArreglo = reporte.fotoArregloUrl
         if (reporte.estado == EstadoReporte.RESUELTO && fotoArreglo != null) {
@@ -360,15 +363,37 @@ private fun FotoProblema(fotoUrl: String?) {
 @Composable
 private fun TarjetaCierre(reporte: ReporteServidor) {
     val resuelto = reporte.estado == EstadoReporte.RESUELTO
-    val acento = if (resuelto) Urbano else Emergencia
-    val textoColor = if (resuelto) UrbanoEtiquetaTexto else Emergencia
-    val titulo = if (resuelto) "Resuelto" else listOfNotNull("Rechazado", reporte.motivoRechazo?.nombre).joinToString(" · ")
-    val detalle = if (resuelto) "La cuadrilla terminó el trabajo." else "El vecino ve este motivo en su reporte."
+    val cancelado = reporte.estado == EstadoReporte.CANCELADO
+    val acento = when {
+        resuelto -> Urbano
+        cancelado -> Neutro700
+        else -> Emergencia
+    }
+    val textoColor = when {
+        resuelto -> UrbanoEtiquetaTexto
+        cancelado -> Neutro900
+        else -> Emergencia
+    }
+    val fondo = when {
+        resuelto -> UrbanoEtiqueta
+        cancelado -> Neutro300
+        else -> EmergenciaClaro
+    }
+    val titulo = when {
+        resuelto -> "Resuelto"
+        cancelado -> "Cancelado por el vecino"
+        else -> listOfNotNull("Rechazado", reporte.motivoRechazo?.nombre).joinToString(" · ")
+    }
+    val detalle = when {
+        resuelto -> "La cuadrilla terminó el trabajo."
+        cancelado -> "El vecino retiró el reporte antes de que se revisara."
+        else -> "El vecino ve este motivo en su reporte."
+    }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(if (resuelto) UrbanoEtiqueta else EmergenciaClaro, RoundedCornerShape(24.dp))
+            .background(fondo, RoundedCornerShape(24.dp))
             .padding(16.dp)
             .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(12.dp),

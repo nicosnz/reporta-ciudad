@@ -5,23 +5,26 @@ enum class EstadoReporte(val nombre: String, val paso: Int) {
     EN_REVISION("En revisión", 2),
     ASIGNADO("Asignado", 3),
     RESUELTO("Resuelto", 4),
-    RECHAZADO("Rechazado", 4);
+    RECHAZADO("Rechazado", 4),
+    CANCELADO("Cancelado", 4);
 
-    val esFinal: Boolean get() = this == RESUELTO || this == RECHAZADO
+    val esFinal: Boolean get() = this == RESUELTO || this == RECHAZADO || this == CANCELADO
+
+    val vecinoPuedeCancelar: Boolean get() = this == RECIBIDO
 
     val siguiente: EstadoReporte?
         get() = when (this) {
             RECIBIDO -> EN_REVISION
             EN_REVISION -> ASIGNADO
             ASIGNADO -> RESUELTO
-            RESUELTO, RECHAZADO -> null
+            RESUELTO, RECHAZADO, CANCELADO -> null
         }
 
     val bandeja: Bandeja
         get() = when (this) {
             RECIBIDO, EN_REVISION -> Bandeja.PENDIENTES
             ASIGNADO -> Bandeja.EN_CURSO
-            RESUELTO, RECHAZADO -> Bandeja.CERRADOS
+            RESUELTO, RECHAZADO, CANCELADO -> Bandeja.CERRADOS
         }
 
     companion object {

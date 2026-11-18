@@ -25,7 +25,7 @@ interface ReporteDao {
 
     @Query(
         "SELECT * FROM reportes WHERE estadoEnvio = 'ENVIADO' AND remoteId IS NOT NULL " +
-            "AND estado NOT IN ('RESUELTO', 'RECHAZADO')"
+            "AND estado NOT IN ('RESUELTO', 'RECHAZADO', 'CANCELADO')"
     )
     suspend fun enviadosAbiertos(): List<ReporteEntity>
 
