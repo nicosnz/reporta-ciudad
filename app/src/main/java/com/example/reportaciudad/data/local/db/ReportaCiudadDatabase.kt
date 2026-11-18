@@ -15,8 +15,6 @@ abstract class ReportaCiudadDatabase : RoomDatabase() {
     companion object {
         private const val NOMBRE = "reporta_ciudad.db"
 
-        // Versión 2: estado del reporte, motivo de rechazo y URLs de las fotos.
-        // Los reportes que ya estaban quedan como RECIBIDO y sin URLs.
         val MIGRACION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE reportes ADD COLUMN fotoUrl TEXT")

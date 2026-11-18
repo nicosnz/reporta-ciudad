@@ -17,7 +17,6 @@ sealed interface DetalleUiState {
     data object NoExiste : DetalleUiState
 }
 
-// Pantalla Detalle. El id llega como argumento de la ruta (Detalle(id)) en el SavedStateHandle.
 class DetalleViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: ReporteRepository
@@ -30,12 +29,10 @@ class DetalleViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DetalleUiState.Cargando)
 
     init {
-        // Al abrir el detalle se pide el estado actual; mientras tanto se ve el que había en Room
         viewModelScope.launch { repository.actualizarEstado(id) }
     }
 
     companion object {
-        // Nombre de la propiedad en la ruta Detalle(val id: Long)
         const val ARG_ID = "id"
     }
 }

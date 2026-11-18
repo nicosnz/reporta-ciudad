@@ -39,7 +39,6 @@ import com.example.reportaciudad.ui.theme.UrbanoClaro
 
 @Composable
 fun BienvenidaScreen(
-    // null mientras se lee la sesión guardada: el botón no se muestra para no cambiar de texto
     haySesion: Boolean? = false,
     onInicio: () -> Unit = {}
 ) {

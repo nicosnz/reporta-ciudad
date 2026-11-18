@@ -154,13 +154,11 @@ private fun FilaReporte(reporte: Reporte, onClick: () -> Unit) {
                 Text(
                     text = buildString {
                         append("${reporte.categoria} · ${reporte.antiguedad}")
-                        // Guardado en el teléfono, todavía no llegó al servidor
                         if (reporte.estadoEnvio != EstadoEnvio.ENVIADO) append(" · sin enviar")
                     },
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp, lineHeight = 18.sp),
                     color = Neutro700
                 )
-                // Solo los que llegaron al servidor tienen estado; los otros dicen "sin enviar"
                 if (reporte.enviado) {
                     BarraEstado(estado = reporte.estado, modifier = Modifier.padding(top = 2.dp))
                 }

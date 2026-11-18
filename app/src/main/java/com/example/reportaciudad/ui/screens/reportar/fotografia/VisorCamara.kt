@@ -31,8 +31,6 @@ fun rememberControladorCamara(): LifecycleCameraController {
             cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
             imageCaptureMode = ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
-            // Foto de unos 1280×960 en vez de la resolución completa del sensor (12–50 MP):
-            // pesa unos cientos de KB y se sube rápido con datos móviles
             imageCaptureResolutionSelector = ResolutionSelector.Builder()
                 .setResolutionStrategy(
                     ResolutionStrategy(
@@ -57,7 +55,6 @@ fun VisorCamara(controlador: LifecycleCameraController, modifier: Modifier = Mod
         factory = { context ->
             PreviewView(context).apply {
                 scaleType = PreviewView.ScaleType.FILL_CENTER
-                // COMPATIBLE usa TextureView: respeta las esquinas redondeadas (clip) de Compose
                 implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                 controller = controlador
             }

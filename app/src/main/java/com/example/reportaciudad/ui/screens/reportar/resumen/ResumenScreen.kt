@@ -70,7 +70,6 @@ import com.example.reportaciudad.ui.screens.reportar.localizacion.crearMapa
 import com.example.reportaciudad.ui.screens.reportar.emergencia.icono
 import com.example.reportaciudad.ui.screens.reportar.problema.icono
 
-// Paso 5 del flujo de reporte: revisar lo elegido en los pasos anteriores y enviarlo.
 @Composable
 fun ResumenScreen(
     borrador: ReporteFormulario,
@@ -79,7 +78,6 @@ fun ResumenScreen(
     onEnviar: () -> Unit = {},
     onVerMisReportes: () -> Unit = {}
 ) {
-    // Mientras se envía no se puede salir: se cortaría el envío a medias
     BackHandler(enabled = envio == Envio.ENVIANDO) { }
 
     PasoReporte(
@@ -105,7 +103,6 @@ fun ResumenScreen(
 
         Button(
             onClick = onEnviar,
-            // Solo se puede enviar una vez: mientras se envía y después queda deshabilitado
             enabled = borrador.estaCompleto && envio == Envio.INACTIVO,
             modifier = Modifier
                 .fillMaxWidth()
@@ -125,7 +122,6 @@ fun ResumenScreen(
     }
 }
 
-// Qué se muestra en la tarjeta de categoría según lo elegido en el paso 2
 private class InfoCategoria(
     val tipo: String,
     val nombre: String,
@@ -180,7 +176,6 @@ private fun TarjetaCategoria(info: InfoCategoria) {
     }
 }
 
-// Tarjeta con contenido arriba (foto o mapa) y un pie de texto debajo
 @Composable
 private fun TarjetaConImagen(imagen: @Composable () -> Unit, pie: @Composable () -> Unit) {
     Column(
@@ -243,7 +238,6 @@ private fun TarjetaUbicacion(latitud: Double, longitud: Double) {
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    // Locale.US: siempre con punto decimal, como se escriben las coordenadas
                     text = String.format(Locale.US, "%.5f, %.5f", latitud, longitud),
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                     color = Neutro700
@@ -253,8 +247,6 @@ private fun TarjetaUbicacion(latitud: Double, longitud: Double) {
     )
 }
 
-// Mapa de OpenStreetMap centrado en el punto del reporte; solo se muestra, no se mueve.
-// También lo usa el detalle del reporte.
 @Composable
 internal fun MapaFijo(latitud: Double, longitud: Double, modifier: Modifier = Modifier) {
     val context = LocalContext.current
@@ -276,7 +268,6 @@ internal fun MapaFijo(latitud: Double, longitud: Double, modifier: Modifier = Mo
     )
 }
 
-// Ventana que confirma el envío. Desde acá solo se puede ir a Mis reportes (también con Atrás).
 @Composable
 private fun ModalReporteEnviado(sinConexion: Boolean, onVerMisReportes: () -> Unit) {
     Dialog(

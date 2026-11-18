@@ -12,11 +12,9 @@ import kotlinx.coroutines.launch
 
 data class ReportesUiState(
     val reportes: List<Reporte> = emptyList(),
-    // true hasta que Room responde: evita mostrar "no hay reportes" un instante al abrir
     val cargando: Boolean = true
 )
 
-// Pantalla "Mis reportes"
 class ReportesViewModel(private val repository: ReporteRepository) : ViewModel() {
 
     val estado: StateFlow<ReportesUiState> = repository.reportes
@@ -24,12 +22,9 @@ class ReportesViewModel(private val repository: ReporteRepository) : ViewModel()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ReportesUiState())
 
     init {
-        // Al abrir la app, reenvía lo que quedó sin enviar por falta de conexión
         viewModelScope.launch { repository.reintentarPendientes() }
     }
 
-    // Cada vez que se entra a Mis reportes: trae los estados que cambió la municipalidad.
-    // Room avisa los cambios y la lista se actualiza sola.
     fun actualizarEstados() {
         viewModelScope.launch { repository.actualizarEstados() }
     }

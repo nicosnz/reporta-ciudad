@@ -14,13 +14,11 @@ sealed interface ResultadoLogin {
     data object ErrorServidor : ResultadoLogin
 }
 
-// Inicio y cierre de sesión. La sesión se guarda en el teléfono.
 class AuthRepository(
     private val remoto: UsuarioRemoteDataSource,
     private val sesionStore: SesionStore
 ) {
 
-    // null si nadie inició sesión
     val sesion: Flow<Sesion?> = sesionStore.sesion
 
     suspend fun iniciarSesion(usuario: String, contrasena: String): ResultadoLogin {
@@ -29,7 +27,6 @@ class AuthRepository(
             return if (error is IOException) ResultadoLogin.SinConexion else ResultadoLogin.ErrorServidor
         }
 
-        // El filtro de MockAPI es parcial: se exige el usuario exacto
         val dto = encontrados.find { it.usuario == nombreUsuario && it.contrasena == contrasena }
             ?: return ResultadoLogin.CredencialesIncorrectas
 

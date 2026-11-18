@@ -57,7 +57,6 @@ import com.example.reportaciudad.ui.screens.componentes.abrirAjustesDeLaApp
 import com.example.reportaciudad.ui.screens.componentes.rememberPermisoCamara
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
 
-// Paso 3. La foto vive en el borrador del ViewModel: la pantalla solo la muestra y avisa lo que pasa.
 @Composable
 fun FotografiaScreen(
     fotoRuta: String?,
@@ -65,7 +64,6 @@ fun FotografiaScreen(
     onFotoSacada: (String) -> Unit = {},
     onRepetir: () -> Unit = {},
     onUsarFoto: () -> Unit = {},
-    // Volver descarta la foto (si había) antes de salir del paso
     onVolver: () -> Unit = {}
 ) {
     BackHandler(enabled = fotoRuta != null) { onVolver() }
@@ -120,7 +118,6 @@ private fun ColumnScope.ContenidoCamara(
                 archivo.delete()
                 errorCaptura = true
             } catch (e: IllegalStateException) {
-                // La cámara no llegó a iniciar (sin cámara trasera, o la usa otra app)
                 archivo.delete()
                 errorCaptura = true
             } finally {

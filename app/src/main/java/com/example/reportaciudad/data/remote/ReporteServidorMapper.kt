@@ -6,7 +6,6 @@ import com.example.reportaciudad.data.model.ReporteServidor
 import com.example.reportaciudad.data.model.TipoEmergencia
 import com.example.reportaciudad.data.model.TipoProblema
 
-// JSON de MockAPI → modelo del administrador. Null si el reporte no tiene id (no debería pasar).
 fun ReporteDto.aServidor(): ReporteServidor? {
     val remoteId = id ?: return null
     return ReporteServidor(
@@ -23,5 +22,4 @@ fun ReporteDto.aServidor(): ReporteServidor? {
     )
 }
 
-// Solo una URL de verdad: descarta "" y los textos de relleno de MockAPI ("fotoArregloUrl 1")
 private fun urlReal(texto: String?): String? = texto?.trim()?.takeIf { it.startsWith("http") }

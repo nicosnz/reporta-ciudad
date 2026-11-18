@@ -65,7 +65,6 @@ import com.example.reportaciudad.ui.theme.Urbano
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
 import com.example.reportaciudad.viewmodel.AdminPanelUiState
 
-// Pantalla de inicio del administrador: los reportes de todos los vecinos, en 3 bandejas
 @Composable
 fun AdminScreen(
     estado: AdminPanelUiState,
@@ -74,7 +73,6 @@ fun AdminScreen(
     onReintentar: () -> Unit = {},
     onCerrarSesion: () -> Unit = {}
 ) {
-    // Primera carga o error sin nada que mostrar: ocupan el lugar de la lista
     val sinDatos = estado.reportes.isEmpty()
 
     Column(
@@ -96,7 +94,6 @@ fun AdminScreen(
                 sinDatos && estado.cargando -> item { Cargando() }
                 sinDatos && estado.error -> item { AvisoError(onReintentar = onReintentar) }
                 else -> {
-                    // Había lista pero no se pudo actualizar: se sigue viendo la anterior
                     if (estado.error) item { AvisoError(onReintentar = onReintentar, compacto = true) }
                     if (estado.visibles.isEmpty()) {
                         item { SinReportes(estado.bandeja) }
@@ -206,7 +203,6 @@ private fun FilaReporte(reporte: ReporteServidor, onClick: () -> Unit) {
     }
 }
 
-// Foto del reporte en un círculo con el aro de su familia. Sin foto (o mientras carga): rayas.
 @Composable
 private fun Miniatura(fotoUrl: String?, colorAro: Color) {
     Box(
@@ -267,7 +263,6 @@ private fun SinReportes(bandeja: Bandeja) {
     )
 }
 
-// compacto: arriba de una lista vieja. Si no: ocupa el lugar de la lista.
 @Composable
 private fun AvisoError(onReintentar: () -> Unit, compacto: Boolean = false) {
     Column(
@@ -319,7 +314,6 @@ private fun BarraBandejas(actual: Bandeja, pendientes: Int, onElegir: (Bandeja) 
                 onClick = { onElegir(bandeja) },
                 colors = colores,
                 icon = {
-                    // Solo Pendientes lleva contador: es lo que le toca atender al administrador
                     if (bandeja == Bandeja.PENDIENTES && pendientes > 0) {
                         BadgedBox(
                             badge = {

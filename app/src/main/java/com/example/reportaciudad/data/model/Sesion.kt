@@ -5,7 +5,6 @@ enum class Rol {
     ADMIN
 }
 
-// Quién inició sesión en este teléfono
 data class Sesion(
     val usuarioId: String,
     val usuario: String,

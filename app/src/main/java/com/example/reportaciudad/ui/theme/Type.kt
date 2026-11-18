@@ -6,7 +6,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.example.reportaciudad.R
 
-// Fuente oficial de la app
 val Manrope = FontFamily(
     Font(R.font.manrope_extralight, FontWeight.ExtraLight),
     Font(R.font.manrope_light, FontWeight.Light),
@@ -17,8 +16,6 @@ val Manrope = FontFamily(
     Font(R.font.manrope_extrabold, FontWeight.ExtraBold)
 )
 
-// Estilos por defecto de Material 3, todos con Manrope:
-// títulos y botones (display, headline, title, label) en 800, texto (body) en 400
 private val base = Typography()
 
 val Typography = Typography(

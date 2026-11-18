@@ -10,7 +10,6 @@ import com.example.reportaciudad.AppContainer
 import com.example.reportaciudad.ReportaCiudadApp
 import com.example.reportaciudad.repository.ReporteRepository
 
-// Cómo se crea cada ViewModel: le pasa el repositorio del AppContainer
 object AppViewModelProvider {
 
     val Factory: ViewModelProvider.Factory = viewModelFactory {

@@ -14,11 +14,8 @@ import kotlinx.coroutines.launch
 
 data class AdminPanelUiState(
     val bandeja: Bandeja = Bandeja.PENDIENTES,
-    // Todos los reportes del servidor; cada pestaña muestra los suyos
     val reportes: List<ReporteServidor> = emptyList(),
-    // Pidiendo la lista al servidor
     val cargando: Boolean = true,
-    // La última carga falló (sin conexión o error del servidor)
     val error: Boolean = false
 ) {
     val visibles: List<ReporteServidor> get() = reportes.filter { it.estado.bandeja == bandeja }
@@ -26,7 +23,6 @@ data class AdminPanelUiState(
     fun cantidad(bandeja: Bandeja): Int = reportes.count { it.estado.bandeja == bandeja }
 }
 
-// Pantalla de inicio del administrador: 3 pestañas (Pendientes, En curso, Cerrados)
 class AdminPanelViewModel(private val repository: AdminRepository) : ViewModel() {
 
     private val _estado = MutableStateFlow(AdminPanelUiState())
@@ -38,8 +34,6 @@ class AdminPanelViewModel(private val repository: AdminRepository) : ViewModel()
         _estado.update { it.copy(bandeja = bandeja) }
     }
 
-    // Se llama al entrar a la pantalla y con "Reintentar".
-    // Si falla se sigue mostrando la última lista que se trajo.
     fun cargar() {
         carga?.cancel()
         carga = viewModelScope.launch {

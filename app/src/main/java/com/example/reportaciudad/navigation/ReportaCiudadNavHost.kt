@@ -40,15 +40,12 @@ import com.example.reportaciudad.viewmodel.ReportesViewModel
 import com.example.reportaciudad.viewmodel.SesionViewModel
 import kotlinx.coroutines.launch
 
-// Único lugar que conoce la navegación: las pantallas solo avisan con callbacks
 @Composable
 fun ReportaCiudadNavHost() {
     val navController = rememberNavController()
     val alcance = rememberCoroutineScope()
-    // Dueño: la Activity. Una sola sesión para todas las pantallas.
     val sesionVm: SesionViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
-    // Salir: borra la sesión y vacía la pila; "Atrás" desde el login sale de la app
     val cerrarSesion: () -> Unit = {
         sesionVm.cerrarSesion()
         navController.navigate(Ruta.Login) {
@@ -63,8 +60,6 @@ fun ReportaCiudadNavHost() {
                 haySesion = haySesion,
                 onInicio = {
                     alcance.launch {
-                        // Con sesión guardada se entra directo; si no, al login.
-                        // La bienvenida no queda en la pila.
                         navController.navigate(destinoSegunSesion(sesionVm.sesionGuardada())) {
                             popUpTo<Ruta.Bienvenida> { inclusive = true }
                         }
@@ -91,7 +86,6 @@ fun ReportaCiudadNavHost() {
         composable<Ruta.Admin> {
             val vm: AdminPanelViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
-            // Cada vez que se entra (y cuando exista el detalle, al volver de él)
             LaunchedEffect(Unit) { vm.cargar() }
             AdminScreen(
                 estado = estado,
@@ -136,7 +130,6 @@ fun ReportaCiudadNavHost() {
         composable<Ruta.Inicio> {
             val vm: ReportesViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
-            // Corre cada vez que se vuelve a Mis reportes (al volver del detalle o del flujo Reportar)
             LaunchedEffect(Unit) { vm.actualizarEstados() }
             InicioScreen(
                 reportes = estado.reportes,
@@ -147,7 +140,6 @@ fun ReportaCiudadNavHost() {
             )
         }
         composable<Ruta.Detalle> {
-            // DetalleViewModel lee el id de la ruta desde su SavedStateHandle
             val vm: DetalleViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val estado by vm.estado.collectAsStateWithLifecycle()
             DetalleScreen(estado = estado, onBack = { navController.popBackStack() })
@@ -219,7 +211,6 @@ fun ReportaCiudadNavHost() {
                     envio = estado.envio,
                     onVolver = { navController.popBackStack() },
                     onEnviar = vm::enviar,
-                    // Al salir del subgrafo se descarta el ViewModel del formulario
                     onVerMisReportes = { navController.popBackStack(Ruta.Inicio, inclusive = false) }
                 )
             }
@@ -227,15 +218,12 @@ fun ReportaCiudadNavHost() {
     }
 }
 
-// Pantalla de entrada según quién inició sesión
 private fun destinoSegunSesion(sesion: Sesion?): Any = when (sesion?.rol) {
     null -> Ruta.Login
     Rol.VECINO -> Ruta.Inicio
     Rol.ADMIN -> Ruta.Admin
 }
 
-// Las pantallas del flujo "Reportar" comparten el ViewModel que pertenece al subgrafo:
-// vive mientras el usuario está en el flujo y se descarta al salir.
 @Composable
 private fun NavBackStackEntry.formularioViewModel(navController: NavController): ReporteFormularioViewModel {
     val entradaFlujo = remember(this) { navController.getBackStackEntry(Ruta.FlujoReportar) }

@@ -24,15 +24,12 @@ import com.example.reportaciudad.ui.theme.Neutro700
 
 const val TOTAL_PASOS = 5
 
-// Estructura común de cada paso del flujo de reporte: barra de progreso, volver, título y subtítulo.
-// Cada pantalla pone su contenido debajo sin tocar este encabezado.
 @Composable
 fun PasoReporte(
     paso: Int,
     titulo: String,
     subtitulo: String,
     onVolver: () -> Unit,
-    // Compacto: volver y título en la misma fila, para pasos que necesitan todo el alto (cámara, mapa)
     compacto: Boolean = false,
     contenido: @Composable ColumnScope.() -> Unit
 ) {

@@ -66,7 +66,6 @@ import com.example.reportaciudad.viewmodel.ErrorLogin
 import com.example.reportaciudad.viewmodel.LoginUiState
 import kotlinx.coroutines.delay
 
-// Tiempo que se ve el aviso "¡Inicio de sesión exitoso!" antes de entrar
 private const val ESPERA_EXITO_MS = 900L
 
 @Composable
@@ -212,7 +211,6 @@ fun LoginScreen(
 @Composable
 private fun CampoLogin(
     etiqueta: String,
-    // Texto de ayuda dentro del campo vacío; desaparece al escribir
     ejemplo: String,
     valor: String,
     onValorCambiado: (String) -> Unit,
@@ -255,7 +253,6 @@ private fun CampoLogin(
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
                 disabledTextColor = MaterialTheme.colorScheme.onBackground,
-                // Sin error ni éxito, el foco se marca con el verde de la marca
                 focusedBorderColor = if (colorBorde == Color.Transparent) Urbano else colorBorde,
                 unfocusedBorderColor = colorBorde,
                 disabledBorderColor = colorBorde,

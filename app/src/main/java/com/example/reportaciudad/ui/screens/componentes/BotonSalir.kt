@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.reportaciudad.ui.theme.Superficie
 
-// Cerrar sesión: píldora "Salir" del encabezado (vecino y admin)
 @Composable
 fun BotonSalir(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(

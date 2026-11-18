@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ReporteDao {
 
-
     @Query("SELECT * FROM reportes ORDER BY fechaHora DESC")
     fun observarTodos(): Flow<List<ReporteEntity>>
 
@@ -24,7 +23,6 @@ interface ReporteDao {
     @Query("SELECT * FROM reportes WHERE estadoEnvio != 'ENVIADO'")
     suspend fun pendientes(): List<ReporteEntity>
 
-    // Enviados cuyo estado todavía puede cambiar (resuelto y rechazado son finales)
     @Query(
         "SELECT * FROM reportes WHERE estadoEnvio = 'ENVIADO' AND remoteId IS NOT NULL " +
             "AND estado NOT IN ('RESUELTO', 'RECHAZADO')"

@@ -14,10 +14,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-// Un solo DataStore por archivo en todo el proceso
 private val Context.dataStoreSesion: DataStore<Preferences> by preferencesDataStore(name = "sesion")
 
-// Sesión guardada en el teléfono: sobrevive a cerrar la app. No guarda la contraseña.
 class SesionStore(context: Context) {
 
     private val dataStore = context.applicationContext.dataStoreSesion

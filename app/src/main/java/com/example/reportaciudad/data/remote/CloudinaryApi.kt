@@ -8,7 +8,6 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-// Subida de imágenes a Cloudinary: <CLOUDINARY_URL>/image/upload
 interface CloudinaryApi {
 
     @Multipart
@@ -19,7 +18,6 @@ interface CloudinaryApi {
     ): FotoSubidaDto
 }
 
-// Cloudinary devuelve muchos datos; solo interesa la URL https de la imagen
 @Serializable
 data class FotoSubidaDto(
     @SerialName("secure_url") val url: String

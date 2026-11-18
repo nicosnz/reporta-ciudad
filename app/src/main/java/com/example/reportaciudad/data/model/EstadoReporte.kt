@@ -1,7 +1,5 @@
 package com.example.reportaciudad.data.model
 
-// En qué va la municipalidad con el reporte. Lo cambia el administrador en el servidor.
-// paso: cuántos de los 4 segmentos de la barra se marcan.
 enum class EstadoReporte(val nombre: String, val paso: Int) {
     RECIBIDO("Recibido", 1),
     EN_REVISION("En revisión", 2),
@@ -9,11 +7,8 @@ enum class EstadoReporte(val nombre: String, val paso: Int) {
     RESUELTO("Resuelto", 4),
     RECHAZADO("Rechazado", 4);
 
-    // Resuelto y rechazado ya no cambian: no hace falta volver a consultarlos
     val esFinal: Boolean get() = this == RESUELTO || this == RECHAZADO
 
-    // Al que avanza el administrador con el botón principal. Null en los finales.
-    // Rechazar no está acá: se puede desde cualquier estado abierto, con un motivo.
     val siguiente: EstadoReporte?
         get() = when (this) {
             RECIBIDO -> EN_REVISION
@@ -22,7 +17,6 @@ enum class EstadoReporte(val nombre: String, val paso: Int) {
             RESUELTO, RECHAZADO -> null
         }
 
-    // En qué pestaña del panel del administrador aparece
     val bandeja: Bandeja
         get() = when (this) {
             RECIBIDO, EN_REVISION -> Bandeja.PENDIENTES
@@ -31,7 +25,6 @@ enum class EstadoReporte(val nombre: String, val paso: Int) {
         }
 
     companion object {
-        // Un reporte viejo sin estado, o con un valor desconocido, cuenta como recién recibido
         fun desdeTexto(texto: String?): EstadoReporte =
             entries.find { it.name == texto?.trim()?.uppercase() } ?: RECIBIDO
     }
@@ -44,7 +37,6 @@ enum class MotivoRechazo(val nombre: String, val explicacion: String) {
     OTRO("Otro motivo", "");
 
     companion object {
-        // Vacío: sin motivo. Un valor desconocido se muestra como "Otro motivo".
         fun desdeTexto(texto: String?): MotivoRechazo? {
             val limpio = texto?.trim()?.uppercase()
             if (limpio.isNullOrEmpty()) return null

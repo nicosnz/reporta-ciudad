@@ -23,20 +23,17 @@ data class LoginUiState(
     val mostrarContrasena: Boolean = false,
     val ingresando: Boolean = false,
     val error: ErrorLogin? = null,
-    // Se llena cuando el login sale bien: la pantalla muestra el aviso y después navega
     val sesion: Sesion? = null
 ) {
     val puedeIngresar: Boolean
         get() = usuario.isNotBlank() && contrasena.isNotEmpty() && !ingresando && sesion == null
 }
 
-// Pantalla Login
 class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
 
     private val _estado = MutableStateFlow(LoginUiState())
     val estado: StateFlow<LoginUiState> = _estado.asStateFlow()
 
-    // Al corregir lo escrito, el aviso de error ya no aplica
     fun cambiarUsuario(texto: String) = _estado.update { it.copy(usuario = texto, error = null) }
 
     fun cambiarContrasena(texto: String) = _estado.update { it.copy(contrasena = texto, error = null) }

@@ -5,7 +5,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-
 object FechaBolivia {
 
     private val ZONA: TimeZone = TimeZone.getTimeZone("America/La_Paz")
@@ -15,12 +14,10 @@ object FechaBolivia {
     private const val HORA_MIN = 60L
     private const val DIA_MIN = 24 * HORA_MIN
 
-
     fun textoEnvio(instante: Long): String {
         val formato = SimpleDateFormat("d 'de' MMMM · HH:mm", ESPANOL).apply { timeZone = ZONA }
         return "el ${formato.format(Date(instante))}"
     }
-
 
     fun antiguedad(instante: Long, ahora: Long = System.currentTimeMillis()): String {
         val minutos = (ahora - instante).coerceAtLeast(0) / MINUTO_MS

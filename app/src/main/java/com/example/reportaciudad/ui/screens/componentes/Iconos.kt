@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
-// Ícono de trazos redondeados en una grilla de 24×24. Cada trazo es un path SVG.
 internal fun iconoDeLinea(nombre: String, grosor: Float, vararg trazos: String): ImageVector =
     ImageVector.Builder(
         name = nombre,
@@ -28,7 +27,6 @@ internal fun iconoDeLinea(nombre: String, grosor: Float, vararg trazos: String):
         }
     }.build()
 
-// Íconos que usan varias pantallas
 internal val IconoCheck = iconoDeLinea("Check", 3f, "M20 6L9 17l-5-5")
 
 internal val IconoVolver = iconoDeLinea("Volver", 2.75f, "M12 19l-7-7 7-7", "M19 12H5")

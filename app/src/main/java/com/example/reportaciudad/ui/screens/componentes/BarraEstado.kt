@@ -28,7 +28,6 @@ import com.example.reportaciudad.ui.theme.Neutro700
 import com.example.reportaciudad.ui.theme.Urbano
 import com.example.reportaciudad.ui.theme.UrbanoOscuro
 
-// Color del nombre del estado
 val EstadoReporte.color: Color
     get() = when (this) {
         EstadoReporte.RECIBIDO -> Neutro700
@@ -38,7 +37,6 @@ val EstadoReporte.color: Color
         EstadoReporte.RECHAZADO -> Emergencia
     }
 
-// Qué significa el estado, en palabras del vecino
 val EstadoReporte.explicacion: String
     get() = when (this) {
         EstadoReporte.RECIBIDO -> "Tu reporte llegó a la municipalidad. Todavía nadie lo revisó."
@@ -51,8 +49,6 @@ val EstadoReporte.explicacion: String
         EstadoReporte.RECHAZADO -> "La municipalidad no va a atender este reporte."
     }
 
-// 4 segmentos + el nombre del estado. El nombre va siempre escrito: la barra no depende solo del color.
-// Rechazado: los 4 en rojo.
 @Composable
 fun BarraEstado(
     estado: EstadoReporte,

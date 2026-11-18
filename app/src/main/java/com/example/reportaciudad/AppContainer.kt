@@ -16,7 +16,6 @@ import com.example.reportaciudad.repository.AdminRepository
 import com.example.reportaciudad.repository.AuthRepository
 import com.example.reportaciudad.repository.ReporteRepository
 
-
 class AppContainer(context: Context) {
 
     private val appContext = context.applicationContext
@@ -27,7 +26,6 @@ class AppContainer(context: Context) {
 
     private val retrofitCloudinary by lazy { ClienteApi.crear(BuildConfig.CLOUDINARY_URL) }
 
-    // La comparten el vecino y el administrador
     private val reporteRemoto by lazy { ReporteRemoteDataSource(retrofit.create(ReporteApi::class.java)) }
 
     private val fotoRemota by lazy {

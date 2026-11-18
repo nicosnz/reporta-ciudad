@@ -6,14 +6,11 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-// Sube las fotos de los reportes a Cloudinary.
 class FotoRemoteDataSource(
     private val api: CloudinaryApi,
-    // Preset "unsigned": la configuración (carpeta, formatos, tamaño) vive en Cloudinary
     private val preset: String
 ) {
 
-    // Devuelve la URL pública de la foto. Falla con IOException si no hay conexión.
     suspend fun subir(archivo: File): Result<String> =
         llamarApi {
             val parte = MultipartBody.Part.createFormData(

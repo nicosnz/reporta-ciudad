@@ -102,7 +102,6 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
                 descripcionAntes = "Tu foto, antes del arreglo"
             )
         } else {
-            // Sin foto no se muestra ninguna de ejemplo
             reporte.modeloFoto()?.let { foto ->
                 AsyncImage(
                     model = foto,
@@ -121,7 +120,6 @@ private fun ColumnScope.ContenidoDetalle(reporte: Reporte) {
     }
 }
 
-// La foto del teléfono si todavía está (carga sin internet); si no, la de Cloudinary
 private fun Reporte.modeloFoto(): Any? =
     fotoRuta?.let(::File)?.takeIf { it.exists() } ?: fotoUrl
 
@@ -163,7 +161,6 @@ private fun MotivoRechazoCaja(motivo: MotivoRechazo) {
     )
 }
 
-// El reporte quedó guardado en el teléfono y todavía no llegó al servidor: no tiene estado
 @Composable
 private fun TarjetaSinEnviar() {
     Column(

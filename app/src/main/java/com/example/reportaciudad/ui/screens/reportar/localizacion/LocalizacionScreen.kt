@@ -75,7 +75,6 @@ import java.io.File
 import com.example.reportaciudad.ui.screens.reportar.componentes.PasoReporte
 import com.example.reportaciudad.ui.screens.componentes.abrirAjustesDeLaApp
 
-// Plaza 24 de Septiembre, Santa Cruz de la Sierra: el mapa se ve aquí mientras no hay ubicación del teléfono
 private val CENTRO_SANTA_CRUZ = GeoPoint(-17.7833, -63.1821)
 private const val ZOOM_CIUDAD = 15.0
 internal const val ZOOM_CALLE = 18.0
@@ -83,8 +82,6 @@ internal const val ZOOM_CALLE = 18.0
 private val PIN_ANCHO = 44.dp
 private val PIN_ALTO = 56.dp
 
-// Paso 4. El punto del reporte es la ubicación actual del teléfono: el mapa solo la muestra, no se puede mover.
-// La búsqueda por GPS la hace el ViewModel; la pantalla pide el permiso y muestra el resultado.
 @Composable
 fun LocalizacionScreen(
     ubicacion: Ubicacion?,
@@ -116,7 +113,6 @@ private fun ColumnScope.ContenidoMapa(
     val context = LocalContext.current
     val permiso = rememberPermisoUbicacion()
     val mapa = remember { crearMapa(context) }
-    // Aviso del mapa (los tiles necesitan internet); la ubicación GPS funciona igual sin señal
     var sinConexion by remember { mutableStateOf(!hayConexion(context)) }
 
     fun buscarUbicacion() {
@@ -124,7 +120,6 @@ private fun ColumnScope.ContenidoMapa(
         onBuscarUbicacion()
     }
 
-    // Al entrar (o apenas se da el permiso) toma la ubicación del teléfono
     LaunchedEffect(permiso.concedido) {
         if (permiso.concedido && ubicacion == null) buscarUbicacion()
     }
@@ -190,9 +185,6 @@ private fun ColumnScope.ContenidoMapa(
     )
 }
 
-// OpenStreetMap devuelve una imagen de "Access blocked" (con HTTP 200) si el User-Agent contiene "com.example"
-// u "osmdroid". El MAPNIK de osmdroid manda siempre "paquete/versión" (com.example.reportaciudad/1), así que se
-// usa el mismo servidor y la misma política de uso pero con el User-Agent propio de la app.
 private const val USER_AGENT_OSM = "ReportaCiudad/1.0 (Android; +https://github.com/nicosnz/reporta-ciudad)"
 
 private val TILES_OSM = XYTileSource(
@@ -205,12 +197,10 @@ private val TILES_OSM = XYTileSource(
     )
 )
 
-// Mapa de OpenStreetMap (osmdroid, tiles de tile.openstreetmap.org), solo para mostrar: ignora los toques.
 @SuppressLint("ClickableViewAccessibility")
 internal fun crearMapa(context: Context): MapView {
     Configuration.getInstance().apply {
         load(context, context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
-        // La caché de tiles va a la carpeta de caché, sin pedir permiso de almacenamiento
         userAgentValue = USER_AGENT_OSM
         osmdroidBasePath = File(context.cacheDir, "osmdroid")
         osmdroidTileCache = File(context.cacheDir, "osmdroid/tiles")
@@ -223,7 +213,6 @@ internal fun crearMapa(context: Context): MapView {
         isTilesScaledToDpi = true
         controller.setZoom(ZOOM_CIUDAD)
         controller.setCenter(CENTRO_SANTA_CRUZ)
-        // "© OpenStreetMap contributors": obligatorio por la licencia de los datos y la política de tiles
         overlays.add(CopyrightOverlay(context))
     }
 }
@@ -240,7 +229,6 @@ private fun ZonaMapa(modifier: Modifier = Modifier, contenido: @Composable BoxSc
     )
 }
 
-// La punta del pin queda exactamente en el centro del mapa (el centro de este Canvas).
 @Composable
 internal fun PinCentral(modifier: Modifier = Modifier, ancho: Dp = PIN_ANCHO, alto: Dp = PIN_ALTO) {
     Canvas(modifier.size(ancho, alto * 2)) {
@@ -368,7 +356,6 @@ private fun rememberPermisoUbicacion(): PermisoUbicacion {
             permisos.none { ActivityCompat.shouldShowRequestPermissionRationale(activity, it) }
     }
 
-    // Si lo activó desde los ajustes, al volver a la app se entera
     LifecycleResumeEffect(Unit) {
         concedido = tienePermisoUbicacion(context)
         if (concedido) bloqueado = false

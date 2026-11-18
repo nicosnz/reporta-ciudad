@@ -14,8 +14,6 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
-
-// Ubicación actual del teléfono por GPS o, si no responde, por red (sin Google Play Services)
 class UbicacionActual(context: Context) {
 
     private val context = context.applicationContext
